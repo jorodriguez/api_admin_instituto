@@ -1,7 +1,7 @@
 {
   "name": "node-api-postgres",
   "version": "1.0.0",
-  "description": "RESTful API con node js, express, y postgresql en heroku",
+  "description": "Api diseñada para atender peticiones de clientes",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

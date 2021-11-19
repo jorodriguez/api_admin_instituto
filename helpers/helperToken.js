@@ -95,17 +95,6 @@ const validarTokenCompleto = (request, response) => {
         });
 
         console.log(" " + JSON.stringify(respuesta));
-
-  /*      if (!respuesta.tokenValido) {
-            console.log("%%%%%%%%%%%token invalido%%%%%%%%%%%");
-            //response.status(respuesta.status).send(respuesta);
-            response.status(respuesta.status).json(respuesta);
-            return;
-        } else {
-            console.log("%%%%%%%%%%% PASO token invalido%%%%%%%%%%%");
-            return respuesta;
-        }
-*/
         return respuesta;
     } catch (e) {
         console.log("Algun error al validar el token " + e);
