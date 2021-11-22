@@ -49,27 +49,23 @@ const getAlumnos = (request, response) => {
     }
 };
 
-const createAlumno = (request, response) => {
+const createAlumno = async (request, response) => {
+
     console.log("@create alumno");
     try {
-        //validarToken(request,response);
 
         const p = getParams(request.body);
 
-        console.log("" + JSON.stringify(p));
-
-        console.log("insertando alumno");
-        new Promise((resolve, reject) => {
-            pool.query(`
+        const results = await pool.query(`
                 INSERT INTO CO_ALUMNO(
                     co_sucursal,co_grupo,nombre,
-                    apellidos,fecha_nacimiento,alergias,
+                    apellidos,fecha_nacimiento,direccion,
                     nota,hora_entrada,hora_salida,
                     costo_inscripcion,costo_colegiatura,minutos_gracia,
                     foto,fecha_inscripcion,fecha_reinscripcion,                                      
                     cat_genero,genero,
                     fecha_limite_pago_mensualidad,
-                    numero_dia_limite_pago) 
+                    numero_dia_limite_pago,co_empresa) 
                  VALUES(
                     $1,$2,$3,
                     $4,$5,$6,
@@ -78,182 +74,87 @@ const createAlumno = (request, response) => {
                     $13,$14,($14::date + interval '1 year')
                     ,$15,$16
                     ,$17
-                    ,to_char($17::date,'dd')::integer             
+                    ,to_char($17::date,'dd')::integer
+                    ,$18             
                 ) RETURNING id;`
                 , [
                     p.co_sucursal, p.co_grupo, p.nombre, //3
-                    p.apellidos, p.fecha_nacimiento,p.alergias,//6 
+                    p.apellidos, p.fecha_nacimiento,p.direccion,//6 
                     p.nota, p.hora_entrada, p.hora_salida, //9
-                    p.costo_inscripcion, p.costo_colegiatura, p.minutos_gracia, //12
+                    p.costo_inscripcion, p.costo_colegiatura, (p.minutos_gracia || 0), //12
                     p.foto, p.fecha_inscripcion,//14
                     p.cat_genero, p.genero, //16
-                    p.fecha_limite_pago_mensualidad //17
-                ],
-                (error, results) => {
-                    if (error) {
-                        //handle.callbackError(error, response);
-                        //return;
-                        reject(error);
-                    }
-                    if (results && results.rowCount > 0) {
+                    p.fecha_limite_pago_mensualidad, //17
+                    p.co_empresa
+                ]);
+        
+        console.log(JSON.stringify(results));
 
-                        resolve(results.rows[0].id);
+        const id_alumno = results.rows[0].id;
+        
+        await balance_alumno.registrarBalanceAlumno(id_alumno, p.genero);
 
-                    } else {
-                        reject(null);
-                    }
-                    resolve(null);
-                });
-        }).then((id_alumno) => {
-            console.log("alumno creado");
-            if (id_alumno != null) {
-                inscripcion.createFormatoInscripcionInicial(id_alumno, p.genero)
-                    .then((id_formato) => {
-                        //invocar
-                        inscripcion.actualizarFormatoAlumno(id_alumno, id_formato).then((id) => {
-                            response.status(200).json(id_alumno);
-                        }).catch((e) => {
-                            handle.callbackError(e, response);
-                        });
-                    }).catch((e) => {
-                        handle.callbackError(e, response);
-                    });
+        response.status(200).json(results.rows[0].id);              
 
-                //generare el balanceconsol
-                console.log("Iniciando crear el balance ");
-                balance_alumno.registrarBalanceAlumno(id_alumno, p.genero);
-
-            } else {
-                response.status(200).json(0);
-            }
-        }).catch((e) => {
-            handle.callbackError(e, response);
-            //response.status(200).json(0);
-        });
-    } catch (e) {
+    } catch (e) {        
         handle.callbackErrorNoControlado(e, response);
     }
 };
 
-const modificarFechaLimitePagoMensualidad = (request,response)=>{
-        console.log("modificarFechaLimitePagoMensualidad");
-        try{
-
-            const { fecha,genero }  = request.body;
-            const idAlumno  = request.params.id_alumno;
-
-            if(isEmptyOrNull(idAlumno) || isEmptyOrNull(fecha) || isEmptyOrNull(genero)){
-                console.log("Faltan datos");
-                
-                response.status(200).json(new ExceptionDatosFaltantes("Datos faltantes"));
-
-                return;
-            }
-
-
-            alumnoService
-                .modificarFechaLimitePagoMensualidad(idAlumno,fecha,genero)
-                .then(result =>{
-                    
-                    response.status(200).json(result);
-
-                }).catch(error=>{
-                    console.error(error);
-                    handle.callbackError(error, response);
-                });
-
-        }catch(error){
-            console.log("Error "+error);
-            handle.callbackError(error, response);
-        }
-};
-
-
 // PUT—/alumno/:id | updateAlumno()
-const updateAlumno = (request, response) => {
+const updateAlumno = async (request, response) => {
     console.log("@updateAlumnos");
-    try {
-
-       // validarToken(request,response);
-
+    try {       
         const id = parseInt(request.params.id);
 
         const alumno = request.body;
 
-        //console.log(" CCCC " + JSON.stringify(alumno));
+        console.log(JSON.stringify(alumno));
 
-        const formato = alumno.formato_inscripcion;
-
-        //const padre = alumno.padre;
-
-        //const madre = alumno.madre;
-
-        //const result = Joi.validate(p, schemaValidacionAlumno);        
-
-        new Promise((resolve, reject) => {
-            pool.query(
-                `UPDATE CO_ALUMNO  
-                SET nombre = $2, 
-                apellidos = $3 ,
-                fecha_nacimiento = $4::date,
-                alergias = $5,
-                nota = $6,
-                hora_entrada = $7,
-                hora_salida=$8,
-                costo_inscripcion = $9,
-                costo_colegiatura = $10,
-                minutos_gracia = $11,
-                foto= $12,
-                fecha_reinscripcion = $13,
-                co_grupo = $14, 
-                nombre_carino = $15, 
-                mostrar_nombre_carino = $16,
-                color = $17,
-                cat_genero = $18,                
-                 modifico = $19, 
-                fecha_inscripcion = $20
-                 WHERE id = $1`,
-                [
-                    id,
-                    alumno.nombre, alumno.apellidos, (alumno.fecha_nacimiento == "" ? null : alumno.fecha_nacimiento), alumno.alergias,
-                    alumno.nota, alumno.hora_entrada, alumno.hora_salida,
-                    alumno.costo_inscripcion, alumno.costo_colegiatura, alumno.minutos_gracia,
-                    alumno.foto, (alumno.fecha_reinscripcion == "" ? null : alumno.fecha_reinscripcion),
-                    alumno.co_grupo, alumno.nombre_carino,(alumno.mostrar_nombre_carino || false),
-                    (alumno.color || null),
-                    alumno.cat_genero, alumno.genero,
-                    (alumno.fecha_inscripcion == "" ? null : alumno.fecha_inscripcion)
-                    
-                ],
-                (error, results) => {
-                    if (error) {
-                        reject(error);
-                        return;
-                    }
-
-                    resolve(true);
-                });
-
-        }).then((estado) => {
-            if (estado) {
-                console.log("Se procede a modificar el formato");
-                inscripcion.updateInscripcion(formato).then((id) => {
-                    if (id != null) {
-                        formato_complemento.actualizarValoresEsperados(formato);
-
-                        response.status(200).send(`${id}`);
-                    } else {
-                        handle.callbackError("Error al intentar actualizar la inscripcion", response);
-                    }
-                }).catch((e) => {
-                    reject(e);
-                    handle.callbackError(e, response);
-                });
-            }
-
-        }).catch((error) => {
-            handle.callbackError(error, response);
-        });
+        const result = await pool.query(
+            `UPDATE CO_ALUMNO  
+            SET nombre = $2, 
+            apellidos = $3,
+            fecha_nacimiento = $4::date,
+            direccion = $5,
+            nota = $6,
+            hora_entrada = $7,
+            hora_salida=$8,
+            costo_inscripcion = $9,
+            costo_colegiatura = $10,
+            minutos_gracia = $11,
+            foto= $12,
+            fecha_reinscripcion = $13,
+            co_grupo = $14, 
+            nombre_carino = $15, 
+            mostrar_nombre_carino = $16,
+            color = $17,
+            cat_genero = $18,                
+            modifico = $19, 
+            fecha_inscripcion = $20,
+            telefono = $21,
+            correo = $22,
+            fecha_limite_pago_mensualidad = $23,
+            numero_dia_limite_pago = to_char($23::date,'dd')::integer
+             WHERE id = $1
+             RETURNING ID`,
+            [
+                id,
+                alumno.nombre, alumno.apellidos, (alumno.fecha_nacimiento == "" ? null : alumno.fecha_nacimiento), alumno.direccion,
+                alumno.nota, alumno.hora_entrada, alumno.hora_salida,
+                alumno.costo_inscripcion, alumno.costo_colegiatura, alumno.minutos_gracia,
+                alumno.foto, (alumno.fecha_reinscripcion == "" ? null : alumno.fecha_reinscripcion),
+                alumno.co_grupo, alumno.nombre_carino,(alumno.mostrar_nombre_carino || false),
+                (alumno.color || null),
+                alumno.cat_genero, alumno.genero,
+                (alumno.fecha_inscripcion == "" ? null : alumno.fecha_inscripcion),
+                alumno.telefono,
+                alumno.correo,
+                alumno.fecha_limite_pago
+            ]);
+        
+        response.status(200).json(true);
+      
     } catch (e) {
         handle.callbackErrorNoControlado(e, response);
     }
@@ -329,10 +230,10 @@ const getParams = (body) => {
     const parametros = {
         co_sucursal, co_grupo,
         nombre, apellidos, nombre_carino, fecha_nacimiento, cat_genero,
-        alergias, nota, hora_entrada,
+        direccion, nota, hora_entrada,
         hora_salida, costo_inscripcion, costo_colegiatura,
         minutos_gracia, foto, fecha_inscripcion,
-        genero,fecha_limite_pago_mensualidad
+        genero,fecha_limite_pago_mensualidad,co_empresa
     } = body;
 
     return parametros;
@@ -394,7 +295,6 @@ module.exports = {
     createAlumno,
     updateAlumno,
     bajaAlumno,
-    getAlumnoById,
-    modificarFechaLimitePagoMensualidad,
+    getAlumnoById,  
     activarAlumnoEliminado
 };

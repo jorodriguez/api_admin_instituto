@@ -340,7 +340,7 @@ const enviarEstadoCuenta = async (idAlumno) => {
     } else {
         correoService.enviarCorreoConCopiaTemaNotificacion(
             `Estado de cuenta de ${estadoCuenta.alumno.nombre_alumno}`,
-            estadoCuenta.padres.correos || '',
+            estadoCuenta.alumno.correo || '',
             estadoCuenta.alumno.co_sucursal,
             TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS,
             estadoCuenta,

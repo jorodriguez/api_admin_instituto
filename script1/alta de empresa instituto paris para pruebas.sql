@@ -110,14 +110,6 @@ update co_sucursal set foto = 'https://as1.ftcdn.net/v2/jpg/02/38/52/00/1000_F_2
 where co_empresa = (SELECT ID FROM CO_EMPRESA WHERE NOMBRE = 'Instituto Paris');
 
 --- GRUPOS
-insert into co_grupo(nombre,color,co_empresa,genero)
-values('Grupo 1','#CC10C1',(SELECT ID FROM CO_EMPRESA WHERE NOMBRE = 'Instituto Paris'),1);
-
-insert into co_grupo(nombre,color,co_empresa,genero)
-values('Grupo 2','#CC10C1',(SELECT ID FROM CO_EMPRESA WHERE NOMBRE = 'Instituto Paris'),1);
-
-insert into co_grupo(nombre,color,co_empresa,genero)
-values('Grupo 3','#CC10C1',(SELECT ID FROM CO_EMPRESA WHERE NOMBRE = 'Instituto Paris'),1);
 
 
 --- costo de cargo extra y horas extras

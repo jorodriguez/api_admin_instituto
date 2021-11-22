@@ -289,6 +289,7 @@ const obtenerEstadoCuenta = async (idAlumno) => {
     const alumno = await genericDao.findOne(`
         SELECT al.nombre as nombre_alumno,
 			al.apellidos as apellidos_alumno,
+            al.correo,
 			to_char(al.fecha_limite_pago_mensualidad,'dd-Mon') as fecha_limite_pago_mensualidad,
 			al.fecha_inscripcion,
 			bal.total_adeudo,

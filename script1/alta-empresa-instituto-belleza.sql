@@ -11,3 +11,13 @@ values('Diseñadora de imagen profesional','#BF4B7A',3,1),
 	 ('Diplomado en Maquillaje','#BF4B7A',3,1),
 	 ('Diplomado en Cosmetología','#BF4B7A',3,1),
 	 ('Diplomado en Colorimetría','#BF4B7A',3,1);
+
+
+alter table co_alumno add column direccion text;
+alter table co_alumno add column telefono text;
+alter table co_alumno add column correo text;
+
+  
+
+insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empresa,genero)
+  values('Pago Semanal','Pago por semana',1,true,true,3,1);

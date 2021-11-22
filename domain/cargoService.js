@@ -87,7 +87,7 @@ const obtenerFiltroAniosCargosSucursal = (idSucursal) => {
 
 const obtenerEstadoCuentaAlumno = async (idAlumno) => {
     console.log("@obtenerEstadoCuentaAlumno");    
-     const informacionAlumno = await alumnoDao.getCorreosTokensAlumno(idAlumno);  
+     /*const informacionAlumno = await alumnoDao.getCorreosTokensAlumno(idAlumno);  
      let estado = await cargosDao.obtenerEstadoCuenta(idAlumno);         
      return {...estado,
             padres:{
@@ -95,6 +95,9 @@ const obtenerEstadoCuentaAlumno = async (idAlumno) => {
                     correos:  informacionAlumno ? informacionAlumno.correos : ''
                 }
             };
+            */
+    return await cargosDao.obtenerEstadoCuenta(idAlumno);         
+
 };
 
 const obtenerPreviewEstadoCuenta = async (idAlumno)=>{
