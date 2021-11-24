@@ -15,9 +15,22 @@ values('Diseñadora de imagen profesional','#BF4B7A',3,1),
 
 alter table co_alumno add column direccion text;
 alter table co_alumno add column telefono text;
-alter table co_alumno add column correo text;
+alter table co_alumno add column correo text;  
 
-  
+update cat_cargo set nombre = 'Colegiatura' where id =1
+
+  insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empresa,genero)
+  values('Colegiatura Quincenal','Pago quincenal',1,true,true,3,1);
+
+  insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empresa,genero)
+  values('Colegiatura Semanal','Pago por semana',1,true,true,3,1);
+
 
 insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empresa,genero)
-  values('Pago Semanal','Pago por semana',1,true,true,3,1);
+  values('Credencial','',1,true,true,3,1);
+
+  insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empresa,genero)
+  values('Playera','',1,true,true,3,1);
+
+  insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empresa,genero)
+  values('kit de curso','',1,true,true,3,1);

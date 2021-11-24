@@ -97,24 +97,7 @@ const obtenerSucursalesUsuario = (id) => {
 			        from co_alumno a 
 			        where a.co_sucursal = suc.id
 	  		        and a.eliminado = false
-		    ) AS contador_alumnos,
-		    (
-                SELECT count(a.*) 
-			    from co_asistencia a inner join co_alumno alum on alum.id = a.co_alumno
-			    where a.fecha = getDate('')
-					and alum.co_sucursal = suc.id
-					and a.eliminado = false
-				and alum.eliminado = false
-            ) AS contador_asistencia_alumnos, 
-            (
-                SELECT count(a.*) 
-			    from co_asistencia a inner join co_alumno alum on alum.id = a.co_alumno
-			    where a.fecha = getDate('')
-					and alum.co_sucursal = suc.id			
-					and a.hora_salida is null
-					and a.eliminado = false
-				and alum.eliminado = false
-		    ) AS contador_alumnos_por_entregar, 
+		    ) AS contador_alumnos,		    
             array_to_json(
                 array_agg(row_to_json(rol.*))
         ) as roles

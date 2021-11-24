@@ -84,7 +84,7 @@ const createAlumno = async (request, response) => {
                     p.costo_inscripcion, p.costo_colegiatura, (p.minutos_gracia || 0), //12
                     p.foto, p.fecha_inscripcion,//14
                     p.cat_genero, p.genero, //16
-                    p.fecha_limite_pago_mensualidad, //17
+                    p.fecha_limite_pago, //17
                     p.co_empresa
                 ]);
         
@@ -233,7 +233,7 @@ const getParams = (body) => {
         direccion, nota, hora_entrada,
         hora_salida, costo_inscripcion, costo_colegiatura,
         minutos_gracia, foto, fecha_inscripcion,
-        genero,fecha_limite_pago_mensualidad,co_empresa
+        genero,fecha_limite_pago,co_empresa
     } = body;
 
     return parametros;
