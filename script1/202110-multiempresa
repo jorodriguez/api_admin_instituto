@@ -360,6 +360,13 @@ alter table configuracion add column configuracion_correo text;
 
 --para confuracion por defecto para info de family connect
 
+
+
+
+
+--- para enviar el correo la cuenta de envio
+alter table configuracion add column remitente_from text;
+
 update configuracion set  
 	co_empresa= null, 
   remitente_from = 'Family Connect<familyconnectinfo1@gmail.com>',
@@ -378,12 +385,6 @@ update configuracion set
    }'
 where id = 1;
 
-
-
-
-
---- para enviar el correo la cuenta de envio
-alter table configuracion add column remitente_from text;
 --*-conf defecto
 
 
@@ -398,7 +399,7 @@ alter table co_empresa add column pagina_oficial text;
 --logo para magic
 update co_empresa set logotipo='https://res.cloudinary.com/hmyi1rv5d/image/upload/v1625794226/public/Logo_header_correo_pxlucu.png' where id = 1;
 
-alter table configuracion drop column anexo_pie_correo;
+--alter table configuracion drop column anexo_pie_correo;
 
 --- para mensaje al final de los correos
 alter table co_template add column anexo_pie_correo text;
