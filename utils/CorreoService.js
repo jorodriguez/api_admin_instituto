@@ -189,8 +189,6 @@ const enviarCorreo = async (para, conCopia, asunto, renderHtml,idEmpresa,handler
 
             const configuracionEmpresa = await configuracionService.getConfiguracionEmpresa(idEmpresa);
             console.log("== CONFIGURACION CORREO EMPRESA "+JSON.stringify(configuracionEmpresa));
-            //const mailOptions = configEnv.EMAIL_CONFIG ? configEnv.EMAIL_CONFIG.mailOptions : {};
-            //const configMail = configEnv.EMAIL_CONFIG ? configEnv.EMAIL_CONFIG.configMail : {};
             const configMail = JSON.parse(configuracionEmpresa.configuracion_correo);
 
             const mailData = {

@@ -229,7 +229,8 @@ function enviarReciboComplemento(lista_correos, lista_tokens, nombres_padres, id
                     alumno: alumno,
                     sucursal: sucursal,
                     co_empresa: row.co_empresa,
-                    mensaje_pie: (configEnv.EMAIL_CONFIG && configEnv.EMAIL_CONFIG.template_mail) ? configEnv.EMAIL_CONFIG.template_mail.mensaje_pie : ""  //variables.template_mail.mensaje_pie
+                    mensaje_pie:""
+                    //mensaje_pie: (configEnv.EMAIL_CONFIG && configEnv.EMAIL_CONFIG.template_mail) ? configEnv.EMAIL_CONFIG.template_mail.mensaje_pie : ""  //variables.template_mail.mensaje_pie
                 };
 
                 enviarCorreoReciboPago(
