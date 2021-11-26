@@ -27,7 +27,7 @@ app.get('/', (request, response) => {
 	console.log(process.env);
 	console.log("=====================");
 	console.log(JSON.stringify(pool));
-	response.json({ info: `MagicIntelligence ${version} (env:${process.env.ENV})` });
+	response.json({ info: `Instituto service ${version} (env:${process.env.ENV})` });
 
 });
 
