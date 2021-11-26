@@ -128,3 +128,37 @@ update co_empresa set logotipo = 'https://res.cloudinary.com/civico/image/upload
 
 update co_sucursal set foto = 'https://res.cloudinary.com/civico/image/upload/c_fit,f_auto,fl_lossy,h_1200,q_auto:low,w_1200/v1481128279/entity/image/file/428/000/584839572f41f3e634000428.jpg' where co_empresa = 3
 
+
+--- other
+create table cat_escolaridad(
+	id serial not null,
+	nombre text not null,
+	genero integer references usuario(id),
+	fecha_genero timestamp default current_timestamp,
+	modifico integer references usuario(id),
+	fecha_modifico timestamp,
+	eliminado boolean default false	
+);
+
+alter table co_alumno add column originario text;
+alter table co_alumno add column cat_escolaridad integer;
+alter table co_alumno add constraint fk_cat_escolaridad  foreign key (cat_escolaridad) REFERENCES cat_escolaridad(id);
+
+
+insert into cat_escolaridad(nombre,genero)
+values('Ninguna',1),('Licenciatura',1),('Preparatoria',1),('Secundaria',1);
+
+
+create table cat_horario(
+	id serial not null,
+	nombre text not null,
+	hora_entrada time, 
+	hora_salida time, 
+	genero integer not null references usuario(id),
+	fecha_genero timestamp default current_timestamp,
+	modifico integer references usuario(id),
+	fecha_modifico timestamp,
+	eliminado boolean default false	
+);
+insert into cat_horario(nombre, genero)
+values('Matutino',1),('Vespertino',1);
