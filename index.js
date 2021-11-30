@@ -1,10 +1,3 @@
-/*const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-
-const { pool } = require('./db/conexion');
-*/
-
 const app = require('./routes/app');
 
 const multer = require('multer');
@@ -49,6 +42,7 @@ const reporteAsistenciaUsuario = require('./services/reporte_asistencia_usuario'
 const avisos = require('./services/avisos');
 const grupo = require('./services/grupo');
 const servicios = require('./services/servicios');
+
 const checkAuth = require('./routes/check-auth');
 const loginRoutes = require('./routes/login');
 const alumnoRoute = require('./routes/alumno');
@@ -56,21 +50,8 @@ const asistenciaRoute = require('./routes/asistencia');
 const asistenciaUsuariosRoute = require('./routes/asistenciaUsuarios');
 const usuarioRhRoute = require('./routes/usuariosRh');
 
-console.log("inciando");
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
-
-//usar los queries importados 
-//app.post('/auth/login', authController.login);
-//app.post('/auth/register', authController.createUser);
-
-//app.post('/login', usuario.login);
-/*app.get('/users/:id_sucursal', usuario.getUsers);
-app.get('/users/:id', usuario.getUserById);
-//app.post('/users', usuario.createUser);
-app.put('/users/:id', usuario.updateUser);
-app.delete('/users/:id', usuario.deleteUser);
-*/
 
 //Cambio de sucursal
 app.get('/sucursal_usuario/:id', authController.obtenerSucursalesUsuario);

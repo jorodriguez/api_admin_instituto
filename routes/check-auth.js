@@ -6,7 +6,7 @@ const noTokenProvider = { auth: false, message: 'No token provided.' };
 const failedAuthenticateToken = { auth: false, message: {} };
 
 module.exports = (request, response,next) => {
-    console.log("validar token");
+    console.log("validar token "+JSON.stringify(request.headers));
     try {
         const respuestaNoToken = { tokenValido: false, status: 401, mensajeRetorno: noTokenProvider };
         const respuestaFail = { tokenValido: false, status: 401, tokenExpired: false, mensajeRetorno: failedAuthenticateToken };
