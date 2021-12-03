@@ -2,20 +2,6 @@ const recargoService = require('../domain/recargosService');
 const handle = require('../helpers/handlersErrors');
 const correoService = require('../utils/CorreoService');
 
-async function procesoRecargosMensualidad() {
-    console.log("Inicinado ejecución del proceso para calcular recargos sucursal " );
-    try {
-         const retorno =  await recargoService.ejecutarProcesoRecargoMensualidad();         
-         correoService.enviarCorreo('joel.rod.roj@hotmail.com',"","Recargos Generados",`<h6>${JSON.stringify(retorno)}</h6`,1);
-         return retorno;
-    } catch (e) {
-        console.log("[recargos] Excepcion al ejecutar el proceso de recargos " + e);
-        //enviar un correo al equipo de soporte     
-        correoService.enviarCorreo('joel@magicintelligence.com,joel.rod.roj@hotmail.com',"","Recargos Fail",`<h6>${e}</h6`,1);
-        return [];
-   }
-
-}
 
 function ejecutarEnvioRecordatorioPagoMensualidadPadres() {
     console.log("@ejecutarEnvioRecordatorioPagoMensualidadPadres");
@@ -84,7 +70,7 @@ const ejecutarRecargosMensualidad = async (request,response)=>{
     }
 };
 
-module.exports = {procesoRecargosMensualidad,ejecutarEnvioRecordatorioPagoMensualidadPadres,obtenerPagosVencenSemanaActual,
+module.exports = {ejecutarEnvioRecordatorioPagoMensualidadPadres,obtenerPagosVencenSemanaActual,
                   obtenerMensualidadesRecargoHoy,
                   ejecutarRecargosMensualidad};
 

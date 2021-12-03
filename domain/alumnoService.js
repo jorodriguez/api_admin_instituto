@@ -5,14 +5,15 @@ function getCorreosTokenAlumno(idAlumno) {
     return  alumnoDao.getCorreosTokensAlumno(idAlumno);    
 }
 
-function modificarFechaLimitePagoMensualidad(idAlumno,fecha,genero){
-    return alumnoDao.modificarFechaLimitePagoMensualidadAlumno(idAlumno,fecha,genero);
+
+const getAlumnos = (idSucursal)=>{
+    return alumnoDao.getAlumnos(idSucursal);
 }
 
 
 
-module.exports = { getCorreosTokenAlumno,
-                    modificarFechaLimitePagoMensualidad,
+module.exports = { getAlumnos,
+                    getCorreosTokenAlumno,                    
                     bajaAlumno:alumnoDao.bajaAlumno,
                     activarAlumnoEliminado:alumnoDao.activarAlumnoEliminado
                  };

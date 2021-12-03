@@ -2,14 +2,12 @@
 const { pool } = require('../db/conexion');
 const mensajeria = require('../services/mensajesFirebase');
 const { CARGOS, TEMA_NOTIFICACION } = require('../utils/Constantes');
-//const { variables } = require('../config/ambiente');
 const configEnv = require('../config/configEnv');
 const correoService = require('./CorreoService');
 const { TEMPLATES } = require('./CorreoService');
 const alumnoService = require('../domain/alumnoService');
 const configuracionService = require('../domain/configuracionService');
 const empresaService = require('../domain/empresaService');
-const familiarService = require('../domain/familiarService');
 const { obtenerEstadoCuentaAlumno } = require('../domain/cargoService');
 
 async function notificarCargo(id_alumno, id_cargos) {
@@ -150,13 +148,10 @@ function enviarReciboComplemento(lista_correos, lista_tokens, nombres_padres, id
 			        cargo.cargo,
                     cargo.total,
                     cargo.descuento,
-                    (des.id is not null) as descuento_aplicado,
-			        des.nombre as nombre_descuento,
                     cargo.total_pagado,
                     cat.es_facturable
 		        FROM co_pago_cargo_balance_alumno rel inner join co_cargo_balance_alumno cargo on rel.co_cargo_balance_alumno = cargo.id									
-                                                inner join cat_cargo cat on cat.id = cargo.cat_cargo												
-                                                left join cat_descuento_cargo des on des.id = cargo .cat_descuento_cargo
+                                                inner join cat_cargo cat on cat.id = cargo.cat_cargo												                                                
  		        WHERE rel.co_pago_balance_alumno = $1 and cargo.eliminado = false
             ) select pago.id,
  		            pago.pago,
@@ -300,7 +295,7 @@ const enviarCorreoReciboPago = (para, asunto, params) => {
 
 // no se usa aun
 //const enviarCorreoClaveFamiliar = async (para, asunto, params,idEmpresa) => {
-const enviarCorreoClaveFamiliar = async (idFamiliar,nuevoPassword) => {
+/*const enviarCorreoClaveFamiliar = async (idFamiliar,nuevoPassword) => {
     console.log("@enviarCorreoClaveFamiliar");
     try{
 
@@ -330,7 +325,7 @@ const enviarCorreoClaveFamiliar = async (idFamiliar,nuevoPassword) => {
     }catch(e){
         console.log("Excepción en el envio de correo al familiar: " + e);
     }
-};
+};*/
 
 const enviarEstadoCuenta = async (idAlumno) => {
 
@@ -352,8 +347,7 @@ const enviarEstadoCuenta = async (idAlumno) => {
 
 
 module.exports = {
-    notificarReciboPago,
-    enviarCorreoClaveFamiliar,
+    notificarReciboPago,    
     enviarEstadoCuenta,
     notificarCargo
 };

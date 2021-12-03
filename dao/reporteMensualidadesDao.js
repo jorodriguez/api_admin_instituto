@@ -96,9 +96,7 @@ const getMensualidadesAlumnosSucursal = function (idCargo, idSucursal, anio) {
 			cargo.total_pagado,
 			cargo.cargo,
 			cargo.total,
-			cargo.descuento,
-			(des.id is not null) as descuento_aplicado,
-			des.nombre as nombre_descuento,
+			cargo.descuento,			
 			cargo.fecha as fecha_cargo,
 			cargo.texto_ayuda,
 			(select count(*)
@@ -108,8 +106,7 @@ const getMensualidadesAlumnosSucursal = function (idCargo, idSucursal, anio) {
 		from co_cargo_balance_alumno cargo inner join meses m on m.anio_mes = to_char(cargo.fecha,''YYYYMM'')
 									   inner join co_alumno a on a.co_balance_alumno = cargo.co_balance_alumno
 									   inner join co_sucursal suc on suc.id = a.co_sucursal
-									   left join cat_descuento_cargo des on des.id = cargo.cat_descuento_cargo
-		where  cargo.cat_cargo = ${idCargo}		
+					where  cargo.cat_cargo = ${idCargo}		
 			and a.co_sucursal = ${idSucursal}
 			and cargo.eliminado = false 	
 			and  to_char(cargo.fecha,''YYYY'')::integer = ${anio}

@@ -16,7 +16,7 @@ update co_sucursal set nombre = 'Campus 2', direccion='Guerrero 1011 Altos Col. 
 
 update co_sucursal set nombre = 'Campus 3', direccion='Blvd. Pedro Pérez Ibarra Local 23 #96-A', calcular_recargos = false where id = 3;
 
-
+	SET TIME ZONE 'Mexico/General';
 
 
 CREATE TABLE cat_dia
@@ -262,3 +262,6 @@ alter table co_alumno drop column color;
 alter table co_alumno drop column alergias;
 
 
+alter table co_inscripcion add column co_sucursal integer not null references co_empresa(id);
+
+alter table cat_especialidad add column color text;

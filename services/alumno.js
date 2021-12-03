@@ -6,45 +6,21 @@ const { isEmptyOrNull } = require('../utils/Utils');
 //const Joi = require('@hapi/joi');
 
 const alumnoService = require('../domain/alumnoService');
-const inscripcion = require('./inscripcion');
-const {ExceptionDatosFaltantes} = require('../exception/exeption');
-const formato_complemento = require('./formato_complemento');
 const balance_alumno = require('./balance_alumno');
 
-//GET—/alumnos/:id_sucursal | getAlumnos()
-const getAlumnos = (request, response) => {
+
+const getAlumnos = async (request, response) => {
     console.log("@getAlumnos");
     try {
        
-        //validarToken(request,response);
+            const id_sucursal = parseInt(request.params.id_sucursal);
+             console.log("Consultando alumnos de la suc " + id_sucursal);
 
-        const id_sucursal = parseInt(request.params.id_sucursal);
-        let eliminado = request.params.eliminado;
-
-        console.log("Consultando alumnos de la suc " + id_sucursal+" eliminado "+eliminado);
-
-        eliminado = eliminado ? eliminado  : false;
-        
-        pool.query(
-            "SELECT a.*," +
-            " to_char(a.fecha_baja,'dd-mm-yyyy HH:mm') as fecha_baja_format," +
-            " balance.total_adeudo > 0 As adeuda," +
-            " g.nombre as nombre_grupo," +
-            " g.color as color," +
-            " s.nombre as nombre_sucursal" +
-            " FROM co_alumno a inner join co_grupo g on a.co_grupo = g.id" +
-            "                     inner join co_sucursal s on a.co_sucursal = s.id" +
-            "                       left join co_balance_alumno balance on balance.id = a.co_balance_alumno " +
-            "  WHERE a.co_sucursal = $1 AND a.eliminado=$2 ORDER BY a.nombre ASC",
-            [id_sucursal,eliminado],
-            (error, results) => {
-                if (error) {
-                    handle.callbackError(error, response);
-                    return;
-                }
-                response.status(200).json(results.rows);
-            });
+            const results = await alumnoService.getAlumnos(id_sucursal);
+            response.status(200).json(results);
+            
     } catch (e) {
+        console.log(e);
         handle.callbackErrorNoControlado(e, response);
     }
 };

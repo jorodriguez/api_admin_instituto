@@ -20,28 +20,6 @@ const registrarCargo = async (cargoData) => {
    
 };
 
-const completarRegistroRecargoMensualidad = (idAlumno,idCargoMensualidad,idRecargo,genero)=>{    
-    return new Promise((resolve,reject)=>{
-            cargosDao
-                .completarRegistroRecargoMensualidad(
-                        idCargoMensualidad,
-                        idRecargo,
-                        genero
-                ).then(id=>{
-                    console.log("Registro de recargo relacionado a la mensualidad ");
-                    //actualizar fecha pago proximo mes
-                    alumnoDao
-                        .actualizarProximaFechaLimitePagoMensualidadAlumno(
-                                idAlumno,
-                                genero
-                        ).then(id=>{
-                                console.log("Registro de fecha limite de pago actualizado al proximo mes");
-                            resolve(id);
-                        }).catch(error=>reject(error));
-            }).catch(error=>reject(error));
-    });
-    
-};
 
 
 const getCatalogoCargosPorEmpresa = (idEmpresa) => {
@@ -115,10 +93,9 @@ module.exports = {
     getCargosAlumno,
     getBalanceAlumno,    
     eliminarCargos,
-    obtenerMesesAdeudaMensualidad,
-    completarRegistroRecargoMensualidad,
+    obtenerMesesAdeudaMensualidad,    
     obtenerFiltroAniosCargosSucursal,
     obtenerEstadoCuentaAlumno,
     obtenerPreviewEstadoCuenta,
     getCargoExtraMensualidadEmpresa
-};
+}; 

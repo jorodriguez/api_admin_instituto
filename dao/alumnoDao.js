@@ -1,7 +1,13 @@
-
-const { getQueryInstance } = require('../services/sqlHelper');
-const { Exception, ExceptionBD } = require('../exception/exeption');
-const { isEmptyOrNull } = require('../utils/Utils');
+const {
+    getQueryInstance
+} = require('../services/sqlHelper');
+const {
+    Exception,
+    ExceptionBD
+} = require('../exception/exeption');
+const {
+    isEmptyOrNull
+} = require('../utils/Utils');
 const genericDao = require('./genericDao');
 
 const QUERY_CORREOS_TOKEN_FAMILIARES_ALUMNO =
@@ -16,41 +22,18 @@ const QUERY_CORREOS_TOKEN_FAMILIARES_ALUMNO =
                             inner join co_parentesco parentesco on parentesco.id = rel.co_parentesco
                             inner join co_alumno a on a.id = rel.co_alumno
     WHERE co_alumno = ANY($1::int[]) --and envio_recibos
-            and co_parentesco in (1,2) -- solo papa y mama
+            and co_parentesco in (1,2) -- solos papa y mama
             and fam.eliminado = false 
             and rel.eliminado = false
     group by a.nombre,a.id `;
 
 const getCorreosTokensAlumno = (idAlumno) => {
     console.log("@getCorreosTokensAlumno");
-    return genericDao.findOne(QUERY_CORREOS_TOKEN_FAMILIARES_ALUMNO, [[idAlumno]]);
+    return genericDao.findOne(QUERY_CORREOS_TOKEN_FAMILIARES_ALUMNO, [
+        [idAlumno]
+    ]);
 };
 
-const actualizarProximaFechaLimitePagoMensualidadAlumno = (idAlumno, genero) => {
-    console.log("@actualizarProximaFechaLimitePagoMensualidadAlumno");
-
-    return genericDao.execute(` UPDATE co_alumno 
-                             SET 
-                                fecha_limite_pago_mensualidad = (fecha_limite_pago_mensualidad + INTERVAL '1 month'),
-                                fecha_modifico = (getDate('')+getHora(''))::timestamp,
-                                modifico = $2
-                             WHERE id = $1 RETURNING id;`
-        , [idAlumno, genero]);
-};
-
-const modificarFechaLimitePagoMensualidadAlumno = (idAlumno, fecha, genero) => {
-    console.log("@modificarFechaLimitePagoMensualidadAlumno");
-
-    return genericDao.execute(` 
-                            UPDATE co_alumno 
-                             SET 
-                                fecha_limite_pago_mensualidad = $2::date,                                
-                                numero_dia_limite_pago = to_char($2::date,'dd')::integer,
-                                fecha_modifico = (getDate('')+getHora(''))::timestamp,
-                                modifico = $3
-                             WHERE id = $1 RETURNING id;`
-        , [idAlumno, new Date(fecha), genero]);
-};
 
 
 const modificarFotoPerfil = async (idAlumno, metadaFoto, genero) => {
@@ -70,15 +53,14 @@ const modificarFotoPerfil = async (idAlumno, metadaFoto, genero) => {
         public_id_foto = metadaFoto.public_id;
     }
 
-       return await genericDao.execute(` 
+    return await genericDao.execute(` 
                             UPDATE co_alumno 
                              SET 
                                 foto = $2,                                       
                                 public_id_foto = $3,
                                 fecha_modifico = (getDate('')+getHora(''))::timestamp,
                                 modifico = $4
-                             WHERE id = $1 RETURNING id;`
-        , [idAlumno, foto, public_id_foto, genero]);
+                             WHERE id = $1 RETURNING id;`, [idAlumno, foto, public_id_foto, genero]);
 };
 
 const getAlumnoPorId = (idAlumno) => {
@@ -87,7 +69,7 @@ const getAlumnoPorId = (idAlumno) => {
 };
 
 
-const activarAlumnoEliminado = (idAlumno,  genero) => {
+const activarAlumnoEliminado = (idAlumno, genero) => {
     console.log("@activarAlumnoEliminado");
 
     return genericDao.execute(` 
@@ -97,13 +79,12 @@ const activarAlumnoEliminado = (idAlumno,  genero) => {
                                 fecha_reactivacion = (current_date+current_time),
                                 eliminado = false,
                                 modifico = $2
-                             WHERE id = $1 RETURNING id;`
-        , [idAlumno, genero]);
+                             WHERE id = $1 RETURNING id;`, [idAlumno, genero]);
 };
 
 
-const bajaAlumno = (idAlumno,fechaBaja,observaciones,genero) =>{    
-    
+const bajaAlumno = (idAlumno, fechaBaja, observaciones, genero) => {
+
     return genericDao.execute(` 
                             UPDATE co_alumno 
                              SET 
@@ -112,14 +93,51 @@ const bajaAlumno = (idAlumno,fechaBaja,observaciones,genero) =>{
                                 fecha_modifico = (current_date+current_time),                                
                                 modifico = $4,
                                 eliminado = true
-                             WHERE id = $1 RETURNING id;`
-        , [idAlumno, new Date(fechaBaja),observaciones, genero]);
+                             WHERE id = $1 RETURNING id;`, [idAlumno, new Date(fechaBaja), observaciones, genero]);
+}
+
+
+const getAlumnos = (idSucursal) => {
+    console.log("Consultando alumnos de la suc " + idSucursal);
+    return genericDao.findAll(`
+        SELECT 
+            a.id as id_alumno,
+            i.id as id_inscripcion,
+            a.nombre as alumno,             	
+            a.apellidos,
+            a.nota,
+            a.foto,
+            s.nombre as nombre_sucursal,
+            esp.id as id_especialidad,             	     
+            esp.nombre as especialidad,             	     
+            esp.color,             	     
+            dias.nombre as dias,
+            curso.fecha_inicio_previsto,
+            curso.fecha_fin_previsto,
+            curso.foto,
+            genero.foto as foto_perfil,
+            horario.nombre as horario
+        FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
+                     inner join cat_genero genero on genero.id = a.cat_genero
+                     inner join co_sucursal s on i.co_sucursal = s.id             				
+                     inner join co_curso curso on curso.id = i.co_curso             					             					
+                     inner join cat_especialidad esp on esp.id = curso.cat_especialidad
+                     inner join cat_dia dias on dias.id = curso.cat_dia
+                     inner join cat_horario horario on horario.id = curso.cat_horario
+        WHERE a.co_sucursal = $1 AND a.eliminado=false 
+        ORDER BY i.fecha_genero DESC
+        `, [idSucursal]);
+
+
 }
 
 
 module.exports = {
-    getCorreosTokensAlumno, actualizarProximaFechaLimitePagoMensualidadAlumno,
-    modificarFechaLimitePagoMensualidadAlumno, modificarFotoPerfil, getAlumnoPorId,
-    bajaAlumno,activarAlumnoEliminado
+    getAlumnos,
+    getCorreosTokensAlumno,        
+    modificarFotoPerfil,
+    getAlumnoPorId,
+    bajaAlumno,
+    activarAlumnoEliminado
 
 }
