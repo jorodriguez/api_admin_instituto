@@ -1,6 +1,6 @@
 
 const handle = require('../helpers/handlersErrors');
-const reporteAsistenciaUsuarioService = require('../domain/reporteAsistenciaUsuarioService');
+const reporteAsistenciaUsuarioService = require('../services/reporteAsistenciaUsuarioService');
 
 const getReporteAsistenciaUsuario = async (request, response) => {
     console.log("@getReporteAsistenciaUsuario");

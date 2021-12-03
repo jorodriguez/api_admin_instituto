@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const alumno = require('../services/alumno');
+const alumno = require('../controllers/alumno');
 const checkAuth = require('./check-auth');
 
 //alumno

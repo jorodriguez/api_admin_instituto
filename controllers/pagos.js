@@ -1,5 +1,5 @@
 
-const pagoService = require('../domain/pagoService');
+const pagoService = require('../services/pagoService');
 const handle = require('../helpers/handlersErrors');
 const notificacionService = require('../utils/NotificacionService');
 

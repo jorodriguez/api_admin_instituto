@@ -1,14 +1,14 @@
 
 const { pool } = require('../db/conexion');
-const mensajeria = require('../services/mensajesFirebase');
+const mensajeria = require('../controllers/mensajesFirebase');
 const { CARGOS, TEMA_NOTIFICACION } = require('../utils/Constantes');
 const configEnv = require('../config/configEnv');
 const correoService = require('./CorreoService');
 const { TEMPLATES } = require('./CorreoService');
-const alumnoService = require('../domain/alumnoService');
-const configuracionService = require('../domain/configuracionService');
-const empresaService = require('../domain/empresaService');
-const { obtenerEstadoCuentaAlumno } = require('../domain/cargoService');
+const alumnoService = require('../services/alumnoService');
+const configuracionService = require('../services/configuracionService');
+const empresaService = require('../services/empresaService');
+const { obtenerEstadoCuentaAlumno } = require('../services/cargoService');
 
 async function notificarCargo(id_alumno, id_cargos) {
     console.log("notificarCargo " + id_alumno + "    " + id_cargos);

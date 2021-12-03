@@ -1,5 +1,5 @@
 
-const mensajeria = require('../services/mensajesFirebase');
+//const mensajeria = require('../controllers/mensajesFirebase');
 //const { TEMA_NOTIFICACION } = require('./Constantes');
 const correoService = require('./CorreoService');
 const { TEMPLATES } = require('./CorreoService');
@@ -63,9 +63,9 @@ const enviarAviso = async (idAviso) => {
             console.log("==== Envio de mensajeria=====");
             console.log("Tokens "+listaTokens);
             //const arrayTokens =  Array.from(tokens);
-            const infoEnvioMovil =  await mensajeria.enviarMensajeTokenAsync(tokens,"Aviso ", `${aviso.titulo}`);
-            respuesta.envioMovil = infoEnvioMovil.enviado;
-            respuesta.infoEnvioMovil = infoEnvioMovil;
+         //   const infoEnvioMovil =  await mensajeria.enviarMensajeTokenAsync(tokens,"Aviso ", `${aviso.titulo}`);
+           // respuesta.envioMovil = infoEnvioMovil.enviado;
+            //respuesta.infoEnvioMovil = infoEnvioMovil;
        }else{
             console.log("==== No existen tokens en la lista =====");
             

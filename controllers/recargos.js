@@ -1,4 +1,4 @@
-const recargoService = require('../domain/recargosService');
+const recargoService = require('../services/recargosService');
 const handle = require('../helpers/handlersErrors');
 const correoService = require('../utils/CorreoService');
 

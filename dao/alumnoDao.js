@@ -1,6 +1,6 @@
 const {
     getQueryInstance
-} = require('../services/sqlHelper');
+} = require('../controllers/sqlHelper');
 const {
     Exception,
     ExceptionBD

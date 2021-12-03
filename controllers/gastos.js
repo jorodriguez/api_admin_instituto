@@ -1,7 +1,7 @@
 
 const handle = require('../helpers/handlersErrors');
 
-const gastoService = require('../domain/gastoService');
+const gastoService = require('../services/gastoService');
 
 //registrar gasto
 const registrarGasto = (request, response) => {

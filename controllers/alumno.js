@@ -1,11 +1,10 @@
 
 const { pool } = require('../db/conexion');
 const handle = require('../helpers/handlersErrors');
-const { validarToken } = require('../helpers/helperToken');
 const { isEmptyOrNull } = require('../utils/Utils');
 //const Joi = require('@hapi/joi');
 
-const alumnoService = require('../domain/alumnoService');
+const alumnoService = require('../services/alumnoService');
 const balance_alumno = require('./balance_alumno');
 
 
@@ -14,7 +13,7 @@ const getAlumnos = async (request, response) => {
     try {
        
             const id_sucursal = parseInt(request.params.id_sucursal);
-             console.log("Consultando alumnos de la suc " + id_sucursal);
+            console.log("Consultando alumnos de la suc " + id_sucursal);
 
             const results = await alumnoService.getAlumnos(id_sucursal);
             response.status(200).json(results);

@@ -1,6 +1,6 @@
 
 const handle = require('../helpers/handlersErrors');
-const sucursalService = require('../domain/sucursalService');
+const sucursalService = require('../services/sucursalService');
 
 const getSucursalPorEmpresa = async (request, response) => {
     console.log("@getSucursalPorEmpresa");

@@ -1,5 +1,5 @@
 
-const { getQueryInstance } = require('../services/sqlHelper');
+const { getQueryInstance } = require('../controllers/sqlHelper');
 const { ExceptionBD } = require('../exception/exeption');
 //const { isEmptyOrNull } = require('../utils/Utils');
 const genericDao = require('./genericDao');

@@ -6,7 +6,7 @@ const config = require('../config/configJwt');
 */
 const handle = require('../helpers/handlersErrors');
 
-const authService = require('../domain/authService');
+const authService = require('../services/authService');
 
 const login = (request, response) => {
     console.log("@LOGIN ");

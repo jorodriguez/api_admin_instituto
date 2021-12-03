@@ -1,5 +1,5 @@
 
-const avisoService = require('../domain/avisoService');
+const avisoService = require('../services/avisoService');
 const handle = require('../helpers/handlersErrors');
 //const { enviarEstadoCuenta } = require('../utils/NotificacionService');
 //const {validarToken} = require('../helpers/helperTokenMovil');

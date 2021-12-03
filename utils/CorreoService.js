@@ -6,10 +6,10 @@ var path = require('path');
 //const configEnv = require('../config/configEnv');
 //const { QUERY, getQueryInstance } = require('../services/sqlHelper');
 //const { ID_EMPRESA_DEFAULT } = require('./Constantes');
-const correoTemaService = require('../domain/temaNotificacionService');
-const sucursalService = require('../domain/sucursalService');
-const templateCorreoService = require('../domain/templateCorreoService');
-const configuracionService = require('../domain/configuracionService');
+const correoTemaService = require('../services/temaNotificacionService');
+const sucursalService = require('../services/sucursalService');
+const templateCorreoService = require('../services/templateCorreoService');
+const configuracionService = require('../services/configuracionService');
 
 const { existeValorArray } = require('./Utils');
 

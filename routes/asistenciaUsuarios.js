@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const asistenciaUsuario = require('../services/asistencia_usuario');
-const reporteAsistenciaUsuario = require('../services/reporte_asistencia_usuario');
+const asistenciaUsuario = require('../controllers/asistencia_usuario');
+const reporteAsistenciaUsuario = require('../controllers/reporte_asistencia_usuario');
 const checkAuth = require('./check-auth');
 
 router.get('/por_entrar/:id_sucursal',checkAuth, asistenciaUsuario.getListaUsuarioPorEntrar);

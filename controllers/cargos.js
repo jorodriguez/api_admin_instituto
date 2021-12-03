@@ -1,5 +1,5 @@
 
-const cargoService = require('../domain/cargoService');
+const cargoService = require('../services/cargoService');
 const handle = require('../helpers/handlersErrors');
 const { enviarEstadoCuenta } = require('../utils/NotificacionService');
 const notificacionService = require('../utils/NotificacionService');

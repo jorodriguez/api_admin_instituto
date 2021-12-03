@@ -1,4 +1,4 @@
-const uploadService = require('../domain/uploadService');
+const uploadService = require('../services/uploadService');
 //const handle = require('../helpers/handlersErrors');
 //const CONSTANTES = require('../utils/Constantes');
 /*

@@ -1,5 +1,5 @@
 
-const usuarioService = require('../domain/usuarioService');
+const usuarioService = require('../services/usuarioService');
 const handle = require('../helpers/handlersErrors');
 
 const crearUsuario = (request, response) => {

@@ -1,5 +1,5 @@
 const { CARGOS } = require('../utils/Constantes');
-const { QUERY } = require('../services/sqlHelper');
+const { QUERY } = require('../controllers/sqlHelper');
 const genericDao = require('./genericDao');
 const { ExceptionDatosFaltantes, ExceptionBD } = require('../exception/exeption');
 const { isEmptyOrNull } = require('../utils/Utils');

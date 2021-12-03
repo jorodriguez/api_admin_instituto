@@ -2,7 +2,7 @@
 const { pool } = require('../db/conexion');
 const handle = require('../helpers/handlersErrors');
 const { CARGOS } = require('../utils/Constantes');
-const reporteMensualidadesService = require('../domain/reporteMensualidadService');
+const reporteMensualidadesService = require('../services/reporteMensualidadService');
 
 const getReporteMensualidadesPorSucursalMes = (request, response) => {
     console.log("@getReporteMensualidadesPorSucursalMes");
