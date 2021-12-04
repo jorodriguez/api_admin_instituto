@@ -4,7 +4,7 @@ const correoService = require('./CorreoService');
 const { TEMPLATES } = require('./CorreoService');
 const { SIN_COPIA } = require('./Constantes');
 const { isEmptyOrNull, existeValorArray } = require('../utils/Utils');
-const alumnoService = require('../domain/alumnoService');
+const alumnoService = require('../services/alumnoService');
 
 //Enviar 
 function enviarRecordatorioPagoMesualidad(idAlumno, listaCargosMensualidad, fechaLimitePago) {

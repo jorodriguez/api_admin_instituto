@@ -1,5 +1,5 @@
 const { CARGOS } = require('../utils/Constantes');
-const { QUERY } = require('../services/sqlHelper');
+const { QUERY } = require('../controllers/sqlHelper');
 const genericDao = require('./genericDao');
 const { ExceptionDatosFaltantes, ExceptionBD } = require('../exception/exeption');
 const { isEmptyOrNull } = require('../utils/Utils');
@@ -69,8 +69,6 @@ const registrarCargo = (cargoData) => {
 
 };
 
-//fecha_limite_pago_mensualidad = (fecha_limite_pago_mensualidad + interval '1 month')
-
 
 const completarRegistroRecargoMensualidad = (idCargoMensualidad, idRecargo, genero) => {
 
@@ -116,16 +114,11 @@ const getCargosAlumno = (idAlumno,limite) => {
                b.cargo,
                b.total_pagado,
                b.nota,
-               b.pagado,
-               (des.id is not null) as descuento_aplicado,
-	           des.id as id_descuento,
-               des.nombre as nombre_descuento,   
-               b.descuento, 
+               b.pagado,               	                                         
                false as checked,
                0 as pago 
              FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_balance_alumno = a.co_balance_alumno 
-                                           inner join cat_cargo cargo on b.cat_cargo = cargo.id					
-                                           left join cat_descuento_cargo des on des.id = b.cat_descuento_cargo
+                                           inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
              WHERE a.id = $1 and b.eliminado = false and a.eliminado = false
              ORDER by b.pagado, b.fecha desc
              LIMIT ${limite}`,
@@ -289,7 +282,7 @@ const obtenerEstadoCuenta = async (idAlumno) => {
     const alumno = await genericDao.findOne(`
         SELECT al.nombre as nombre_alumno,
 			al.apellidos as apellidos_alumno,
-			to_char(al.fecha_limite_pago_mensualidad,'dd-Mon') as fecha_limite_pago_mensualidad,
+            al.correo,			
 			al.fecha_inscripcion,
 			bal.total_adeudo,
 			grupo.nombre as grupo,
@@ -337,15 +330,11 @@ const obtenerDetalleEstadoCuenta = async (idAlumno) => {
                b.cargo,
                b.total_pagado,
                b.nota,
-               b.pagado,
-               (des.id is not null) as descuento_aplicado,
-	           des.id as id_descuento,
-               des.nombre as nombre_descuento,   
+               b.pagado,                              
                b.descuento, 
                cargo.id <> ${CARGOS.ID_CARGO_MENSUALIDAD} as mostrar_nota
              FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_balance_alumno = a.co_balance_alumno 
-                                           inner join cat_cargo cargo on b.cat_cargo = cargo.id					
-                                           left join cat_descuento_cargo des on des.id = b.cat_descuento_cargo
+                                           inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
              WHERE a.id = $1                  
 					and b.pagado = false
 			 		and b.eliminado = false
