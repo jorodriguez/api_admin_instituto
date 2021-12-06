@@ -8,9 +8,9 @@ const getCursosActivos = async (request, response) => {
     try {
         
         const { id_sucursal,id_especialidad } = request.params;
-
+        console.log(" id_sucursal,id_especialidad",id_sucursal+"  "+id_especialidad);
         const results = await cursoService.getCursosActivos(id_sucursal,id_especialidad)
-        
+        console.log("==> "+JSON.stringify(results));
         response.status(200).json(results);       
        
     } catch (e) {

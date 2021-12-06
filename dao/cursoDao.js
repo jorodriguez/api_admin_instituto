@@ -166,7 +166,7 @@ const getCursosActivos = async (idSucursal,idEspecialidad) => {
       where curso.co_sucursal = $1 
           and esp.id = $2
 	        and curso.eliminado = false 	
-	        and curso.fecha_fin < current_date	       
+	        --and curso.fecha_fin < current_date	       
       order by curso.fecha_inicio_previsto desc
       `,
     [idSucursal,idEspecialidad]
