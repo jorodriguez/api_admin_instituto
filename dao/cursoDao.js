@@ -5,12 +5,37 @@ const {
 } = require("../exception/exeption");
 const { isEmptyOrNull } = require("../utils/Utils");
 
-/*
+
 const registrarCurso = async (cursoData) => {
   console.log("@dao.registrarCurso");    
   try{
      
-    return 0;
+    const {
+      cat_especialida,
+      cat_dia,cat_horario,
+      co_empresa,
+      co_sucursal,
+      costo_colegiatura_base,
+      costo_inscripcion_base,
+      nota,
+      fecha_inicio_previsto,
+      fecha_fin_previsto,      
+      genero    
+    } = cursoData;
+
+    return await genericDao.execute(`
+          insert into co_curso(cat_especialidad,cat_dia,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,genero)
+          values($1,$2,$3,$4,$5,$6,$7,$8,$9);
+    `,[cat_especialida,
+      cat_dia,cat_horario,
+      co_empresa,
+      co_sucursal,
+      costo_colegiatura_base,
+      costo_inscripcion_base,
+      nota,
+      fecha_inicio_previsto,
+      fecha_fin_previsto,      
+      genero]);      
 
   }catch(e){  
     console.log("Error al insertar el curso "+e);
@@ -19,7 +44,7 @@ const registrarCurso = async (cursoData) => {
 };
 
 
-
+/*
 const registrarEnvio = async (id,infoEnvio,genero) => {
   console.log("@registrarEnvio");
     
@@ -147,8 +172,10 @@ const getCursosActivos = async (idSucursal,idEspecialidad) => {
 	      curso.costo_colegiatura_base,
 	      curso.costo_inscripcion_base,
 	      curso.nota,
-	      curso.fecha_inicio_previsto,
-	      curso.fecha_fin_previsto,
+	      to_char(curso.fecha_inicio_previsto,'DD-MM-YYYY') as fecha_inicio_previsto,
+        to_char(curso.fecha_inicio_previsto,'DD Mon YY') as fecha_inicio_previsto_format,        
+	      to_char(curso.fecha_fin_previsto,'DD-MM-YYYY') as fecha_fin_previsto,
+        to_char(curso.fecha_fin_previsto,'DD Mon YY') as fecha_fin_previsto_format,        
         esp.id as id_especialidad,
         esp.nombre as especialidad,
         dias.id as id_dias,

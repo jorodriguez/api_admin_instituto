@@ -35,6 +35,17 @@ const getCorreosTokensAlumno = (idAlumno) => {
 };
 
 
+const guardarAlumno = async(alumnoData)=>{
+    console.log("@guardarAlumno");
+    const {co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero} = alumnoData;
+
+    return genericDao.execute(`
+            INSERT INTO CO_ALUMNO(co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero)
+            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
+    `[co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero]);
+
+}
+
 
 const modificarFotoPerfil = async (idAlumno, metadaFoto, genero) => {
     console.log("@modificarFotoPerfil");
@@ -132,7 +143,8 @@ const getAlumnos = (idSucursal) => {
 }
 
 
-module.exports = {
+module.exports = {    
+    guardarAlumno,
     getAlumnos,
     getCorreosTokensAlumno,        
     modificarFotoPerfil,

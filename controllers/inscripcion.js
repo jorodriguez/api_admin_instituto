@@ -1,6 +1,23 @@
 
 const inscripcionService = require('../services/inscripcionService');
 
+const guardarInscripcion = async (request, response) => {
+    console.log("@guardarInscripcion");
+    try {
+       
+            const inscripcionData = 
+                            {co_empresa,co_sucursal,co_curso,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,costo_colegiatura,costo_inscripcion,genero}
+                             = request.body;
+
+            const results = await inscripcionService.guardarInscripcion(inscripcionData);
+            
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
 
 const getInscripciones = async (request, response) => {
     console.log("@getInscripciones");
@@ -18,5 +35,6 @@ const getInscripciones = async (request, response) => {
 };
 
 module.exports = {
-          getInscripciones 
+        guardarInscripcion,
+        getInscripciones 
 };
