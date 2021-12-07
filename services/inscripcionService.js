@@ -7,13 +7,11 @@ const guardarInscripcion = async(inscripcionData)=>{
     const inscripcion= { co_curso,co_empresa,co_sucursal,costo_colegiatura,costo_inscripcion,nota,genero} = inscripcionData;
     //co_empresa,co_sucursal,co_curso,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,costo_colegiatura,costo_inscripcion,genero
     
-    const idAlumno = await alumnoDao.guardarAlumno(alumnoData);
+    const uidAlumno = await alumnoDao.guardarAlumno(alumnoData);
     const idInscripcion = await inscripcionDao.guardarInscripcion(idAlumno,inscripcion);
 
     //Enviar un correo
-
-    return idInscripcion;
-
+    return uidAlumno;
 }
 
 

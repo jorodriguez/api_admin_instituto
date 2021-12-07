@@ -14,7 +14,7 @@ const guardarInscripcion = async(idAlumno,inscripcionData)=>{
   return genericDao.execute(`
           INSERT INTO CO_INSCRIPCION(co_curso,co_empresa,co_sucursal,co_alumno,costo_colegiatura,costo_inscripcion,nota,genero)
           VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING ID;
-  `[co_curso,co_empresa,co_sucursal,idAlumno,costo_colegiatura,costo_inscripcion,nota,genero]);
+  `,[co_curso,co_empresa,co_sucursal,idAlumno,costo_colegiatura,costo_inscripcion,nota,genero]);
 }
 
 const getInscripciones = async (idSucursal) => {

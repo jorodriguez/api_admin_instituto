@@ -24,59 +24,21 @@ const getAlumnos = async (request, response) => {
     }
 };
 
-const createAlumno = async (request, response) => {
-
-    console.log("@create alumno");
+const getAlumnoUId = async (request, response) => {
+    console.log("@getAlumnoUId");
     try {
+       
+            const uid = parseInt(request.params.uid);           
 
-        const p = getParams(request.body);
-
-        const results = await pool.query(`
-                INSERT INTO CO_ALUMNO(
-                    co_sucursal,co_grupo,nombre,
-                    apellidos,fecha_nacimiento,direccion,
-                    nota,hora_entrada,hora_salida,
-                    costo_inscripcion,costo_colegiatura,minutos_gracia,
-                    foto,fecha_inscripcion,fecha_reinscripcion,                                      
-                    cat_genero,genero,
-                    fecha_limite_pago_mensualidad,
-                    numero_dia_limite_pago,co_empresa) 
-                 VALUES(
-                    $1,$2,$3,
-                    $4,$5,$6,
-                    $7,$8,$9,
-                    $10,$11,$12,
-                    $13,$14,($14::date + interval '1 year')
-                    ,$15,$16
-                    ,$17
-                    ,to_char($17::date,'dd')::integer
-                    ,$18             
-                ) RETURNING id;`
-                , [
-                    p.co_sucursal, p.co_grupo, p.nombre, //3
-                    p.apellidos, p.fecha_nacimiento,p.direccion,//6 
-                    p.nota, p.hora_entrada, p.hora_salida, //9
-                    p.costo_inscripcion, p.costo_colegiatura, (p.minutos_gracia || 0), //12
-                    p.foto, p.fecha_inscripcion,//14
-                    p.cat_genero, p.genero, //16
-                    p.fecha_limite_pago, //17
-                    p.co_empresa
-                ]);
-        
-        console.log(JSON.stringify(results));
-
-        const id_alumno = results.rows[0].id;
-        
-        await balance_alumno.registrarBalanceAlumno(id_alumno, p.genero);
-
-        response.status(200).json(results.rows[0].id);              
-
-    } catch (e) {        
+            const result = await alumnoService.getAlumnoPorUId(uid);
+            response.status(200).json(result);
+            
+    } catch (e) {
+        console.log(e);
         handle.callbackErrorNoControlado(e, response);
     }
 };
 
-// PUT—/alumno/:id | updateAlumno()
 const updateAlumno = async (request, response) => {
     console.log("@updateAlumnos");
     try {       
@@ -181,95 +143,10 @@ const activarAlumnoEliminado = async (request, response) => {
     }
 };
 
-
-/*
-const schemaValidacionAlumno = Joi.object().keys({
-    nombre: Joi.string().required().label('Nombre requerido'),
-    co_sucursal: Joi.required(),
-    co_grupo: Joi.required(),
-    apellidos: Joi.string(),
-    fecha_nacimiento: Joi.date().required().label('Fecha de nacimiento requerida'),
-    alergias: Joi.string(),
-    nota: Joi.string(),
-    hora_entrada: Joi.date().timestamp().required().label('Hora de entrada requerida'),
-    hora_salida: Joi.date().timestamp().required(),
-    costo_inscripcion: Joi.number().positive().min(1).required(),
-    costo_colegiatura: Joi.number().positive().required(),
-    minutos_gracia: Joi.number(),
-    fecha_inscripcion: Joi.date(),
-    genero: Joi.required()
-});*/
-
-const getParams = (body) => {
-
-    const parametros = {
-        co_sucursal, co_grupo,
-        nombre, apellidos, nombre_carino, fecha_nacimiento, cat_genero,
-        direccion, nota, hora_entrada,
-        hora_salida, costo_inscripcion, costo_colegiatura,
-        minutos_gracia, foto, fecha_inscripcion,
-        genero,fecha_limite_pago,co_empresa
-    } = body;
-
-    return parametros;
-};
-
-
-//GET—/alumnos | getById()
-const getAlumnoById = (request, response) => {
-    console.log(" @getAlumnoById");
-    try {
-
-        //validarToken(request,response);
-
-        const id = parseInt(request.params.id);
-
-        console.log(" Alumno por id = " + id);
-//WHERE a.id = $1 AND a.eliminado=false ORDER BY a.nombre ASC
-        pool.query(
-            `
-            SELECT a.*,
-                g.nombre as nombre_grupo,
-                s.nombre as nombre_sucursal,
-                to_json(f.*) as formato_inscripcion,
-                coalesce(to_json(datos_facturacion.*),'{}'::json) as datos_facturacion
-            FROM co_alumno a inner join co_grupo g on a.co_grupo = g.id
-                     inner join co_sucursal s on a.co_sucursal = s.id
-                       left join co_formato_inscripcion f on a.co_formato_inscripcion = f.id
-                       left join co_datos_facturacion datos_facturacion on a.co_datos_facturacion = datos_facturacion.id
-            WHERE a.id = $1  ORDER BY a.nombre ASC
-        `,[id],
-            (error, results) => {
-                if (error) {
-                    console.log("Error en getAlumnoid " + error);
-                    response.status(400).json({});
-                    return;
-                }
-                if (results.rowCount > 0) {
-
-                    let alumno = results.rows[0];
-
-                    //                    console.log(" Alumno encontrado " + JSON.stringify(alumno));
-
-                    response.status(200).json(alumno);
-
-                } else {
-                    response.status(400).json({ alumno: null, formato: null });
-                }
-            });
-
-    } catch (e) {
-        handle.callbackErrorNoControlado(e, response);
-    }
-};
-
-
-
 module.exports = {
-    getAlumnos,
-    createAlumno,
+    getAlumnos,    
+    getAlumnoUId,
     updateAlumno,
-    bajaAlumno,
-    getAlumnoById,  
+    bajaAlumno,    
     activarAlumnoEliminado
 };

@@ -36,13 +36,13 @@ const getCorreosTokensAlumno = (idAlumno) => {
 
 
 const guardarAlumno = async(alumnoData)=>{
-    console.log("@guardarAlumno");
+    console.log("@guardarAlumno "+JSON.stringify(alumnoData));
     const {co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero} = alumnoData;
 
-    return genericDao.execute(`
+    return await genericDao.execute(`
             INSERT INTO CO_ALUMNO(co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero)
-            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
-    `[co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero]);
+            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING UID;
+    `,[co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero]);
 
 }
 
@@ -74,9 +74,9 @@ const modificarFotoPerfil = async (idAlumno, metadaFoto, genero) => {
                              WHERE id = $1 RETURNING id;`, [idAlumno, foto, public_id_foto, genero]);
 };
 
-const getAlumnoPorId = (idAlumno) => {
-    console.log("@destroyFoto");
-    return genericDao.findOne(`select * from co_alumno where id = $1;`, [idAlumno]);
+const getAlumnoPorUId = (uidAlumno) => {
+    console.log("@getAlumnoPorUId");
+    return genericDao.findOne(`select * from co_alumno where uid = $1;`, [uidAlumno]);
 };
 
 
@@ -125,9 +125,10 @@ const getAlumnos = (idSucursal) => {
             dias.nombre as dias,
             curso.fecha_inicio_previsto,
             curso.fecha_fin_previsto,
-            curso.foto,
+            curso.foto as foto_curso,
             genero.foto as foto_perfil,
-            horario.nombre as horario
+            horario.nombre as horario,
+            alumno.uid
         FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
                      inner join cat_genero genero on genero.id = a.cat_genero
                      inner join co_sucursal s on i.co_sucursal = s.id             				
@@ -148,7 +149,7 @@ module.exports = {
     getAlumnos,
     getCorreosTokensAlumno,        
     modificarFotoPerfil,
-    getAlumnoPorId,
+    getAlumnoPorUId,
     bajaAlumno,
     activarAlumnoEliminado
 

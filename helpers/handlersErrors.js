@@ -9,7 +9,15 @@ const callbackError = (mensaje, response) => {
     response.status(400).json({ status:false,respuesta:false, mensajeRetorno: mensaje });
 };
 
+
+const sendValidationError = (mensaje, response) => {
+    console.log(mensaje);
+    response.status(200).json({ status:false,respuesta:false, mensajeRetorno: mensaje });
+};
+
+
 module.exports = {
     callbackErrorNoControlado,
-    callbackError
+    callbackError,
+    sendValidationError
 };

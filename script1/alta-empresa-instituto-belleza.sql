@@ -16,6 +16,7 @@ values('Diseñadora de imagen profesional','#BF4B7A',3,1),
 alter table co_alumno add column direccion text;
 alter table co_alumno add column telefono text;
 alter table co_alumno add column correo text;  
+alter table co_alumno add column uid uuid DEFAULT uuid_generate_v4 ()
 
 update cat_cargo set nombre = 'Colegiatura' where id =1
 
