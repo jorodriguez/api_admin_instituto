@@ -141,17 +141,7 @@ create table cat_escolaridad(
 	eliminado boolean default false	
 );
 
-create table cat_horario(
-	id serial not null primary key,
-	nombre text not null,
-	hora_entrada time, 
-	hora_salida time, 
-	genero integer not null references usuario(id),
-	fecha_genero timestamp default current_timestamp,
-	modifico integer references usuario(id),
-	fecha_modifico timestamp,
-	eliminado boolean default false	
-);
+
 
 
 alter table co_alumno add column originario text;
@@ -160,9 +150,6 @@ alter table co_alumno add column ocupacion text;
 alter table co_alumno add column cat_horario integer REFERENCES cat_horario(id);
 
 
+
 insert into cat_escolaridad(nombre,genero)
 values('Ninguna',1),('Licenciatura',1),('Preparatoria',1),('Secundaria',1);
-
-
-insert into cat_horario(nombre, genero)
-values('Matutino',1),('Vespertino',1);

@@ -36,12 +36,17 @@ const inscripcionRoute = require('./routes/inscripcion');
 const especialidadRoute = require('./routes/especialidad');
 const asistenciaUsuariosRoute = require('./routes/asistenciaUsuarios');
 const usuarioRhRoute = require('./routes/usuariosRh');
+const catDiaRoute = require('./routes/catDia');
+const catHorario = require('./routes/catHorario');
+
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
 app.use('/curso',cursoRoute);
 app.use('/inscripcion',inscripcionRoute);
 app.use('/especialidad',especialidadRoute);
+app.use('/dias',catDiaRoute);
+app.use('/horarios',catHorario);
 
 //Cambio de sucursal
 app.get('/sucursal_usuario/:id', authController.obtenerSucursalesUsuario);

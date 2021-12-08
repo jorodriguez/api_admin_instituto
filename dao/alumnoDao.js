@@ -39,13 +39,34 @@ const guardarAlumno = async(alumnoData)=>{
     console.log("@guardarAlumno "+JSON.stringify(alumnoData));
     const {co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero} = alumnoData;
 
-    return await genericDao.execute(`
+    return await genericDao.execute(`        
             INSERT INTO CO_ALUMNO(co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero)
-            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING UID;
+            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
     `,[co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero]);
 
 }
 
+const modificarAlumno = async(id,alumnoData)=>{
+    console.log("@modificarAlumno "+JSON.stringify(alumnoData));
+    const {cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,genero} = alumnoData;
+
+    return await genericDao.execute(`
+            UPDATE CO_ALUMNO
+                    SET CAT_GENERO = $2,
+                        NOMBRE = $3,
+                        APELLIDOS = $4,
+                        DIRECCION = $5,
+                        TELEFONO = $6,
+                        FECHA_NACIMIENTO = $7,        
+                        NOTA=$8,
+                        FOTO = $9,
+                        MODIFICO = $10,
+                        FECHA_MODIFICO=(getDate('')+getHora(''))
+            WHERE ID = $1
+            RETURNING ID;
+    `,[id,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,genero]);
+
+}
 
 const modificarFotoPerfil = async (idAlumno, metadaFoto, genero) => {
     console.log("@modificarFotoPerfil");
@@ -76,9 +97,13 @@ const modificarFotoPerfil = async (idAlumno, metadaFoto, genero) => {
 
 const getAlumnoPorUId = (uidAlumno) => {
     console.log("@getAlumnoPorUId");
-    return genericDao.findOne(`select * from co_alumno where uid = $1;`, [uidAlumno]);
+    return genericDao.findOne(`select * from co_alumno where uid = $1 and eliminado = false;`, [uidAlumno]);
 };
 
+const getAlumnoPorId = (uidAlumno) => {
+    console.log("@getAlumnoPorId");
+    return genericDao.findOne(`select * from co_alumno where id = $1 and eliminado = false;`, [uidAlumno]);
+};
 
 const activarAlumnoEliminado = (idAlumno, genero) => {
     console.log("@activarAlumnoEliminado");
@@ -150,7 +175,8 @@ module.exports = {
     getCorreosTokensAlumno,        
     modificarFotoPerfil,
     getAlumnoPorUId,
+    getAlumnoPorId,
     bajaAlumno,
-    activarAlumnoEliminado
-
+    activarAlumnoEliminado,
+    modificarAlumno
 }

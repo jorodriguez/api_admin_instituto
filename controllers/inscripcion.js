@@ -52,7 +52,25 @@ const getInscripciones = async (request, response) => {
     }
 };
 
+const getInscripcionesAlumno = async (request, response) => {
+    console.log("@getInscripcionesAlumno");
+    try {
+
+        const uid_alumno = request.params.uid;
+
+        const results = await inscripcionService.getInscripcionesAlumno(uid_alumno);
+        response.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+
 module.exports = {
     guardarInscripcion,
-    getInscripciones
+    getInscripciones,
+    getInscripcionesAlumno
 };

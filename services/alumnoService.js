@@ -9,9 +9,13 @@ const getAlumnos = (idSucursal)=>{
     return alumnoDao.getAlumnos(idSucursal);
 }
 
-module.exports = { getAlumnos,
+
+module.exports = { 
+                    getAlumnos,
+                    modificarAlumno:alumnoDao.modificarAlumno,
                     getCorreosTokenAlumno,                    
                     bajaAlumno:alumnoDao.bajaAlumno,
                     activarAlumnoEliminado:alumnoDao.activarAlumnoEliminado,
-                    getAlumnoPorUId:alumnoDao.getAlumnoPorUId
+                    getAlumnoPorUId:alumnoDao.getAlumnoPorUId,
+                    
                  };
