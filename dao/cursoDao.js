@@ -9,7 +9,7 @@ const { isEmptyOrNull } = require("../utils/Utils");
 const createCurso = async (cursoData) => {
   console.log("@dao.createCurso");    
   try{
-     
+    
     const {
       cat_especialidad,      
       dias,
@@ -24,19 +24,21 @@ const createCurso = async (cursoData) => {
       genero    
     } = cursoData;
 
+    console.log(JSON.stringify(cursoData));
+
     return await genericDao.execute(`
-          insert into co_curso(cat_especialidad,dias,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,genero)
-          values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
+          insert into co_curso(cat_especialidad,dias_array,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,genero)
+          values($1,ARRAY[$2::int[]],$3,$4,$5,$6,$7,$8::date,$9::date,$10,$11) RETURNING ID;
     `,[cat_especialidad,
       dias,
       cat_horario,
-      co_empresa,
-      co_sucursal,
+      co_empresa,      
       costo_colegiatura_base,
       costo_inscripcion_base,
       nota,
-      fecha_inicio_previsto,
-      fecha_fin_previsto,      
+      new Date(fecha_inicio_previsto),
+      new Date(fecha_fin_previsto),      
+      co_sucursal,
       genero]);      
 
   }catch(e){  
