@@ -64,9 +64,57 @@ const createCurso = async (request, response) => {
     }
 };
 
+const deleteCurso = async (request, response) => {
+    console.log("@deleteCurso");
+    try {
+        
+        const id =  parseInt(request.params.id);
+        const cursoData = {  motivo,genero } = request.body;
+        
+        const results = await cursoService.eliminarCurso(id,cursoData);
+       
+        response.status(200).json(results);       
+       
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+
+const updateCurso = async (request, response) => {
+    console.log("@updateCurso");
+    try {
+        
+        const id =  parseInt(request.params.id);
+        const cursoData = {  
+            cat_especialidad,
+            dias,
+            cat_horario,
+            co_empresa,
+            co_sucursal,
+            costo_colegiatura_base,
+            costo_inscripcion_base,
+            nota,
+            fecha_inicio_previsto,            
+            genero } = request.body;
+        
+        const results = await cursoService.updateCurso(id,cursoData);
+       
+        response.status(200).json(results);       
+       
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
 
 module.exports = {
     createCurso,
+    updateCurso,
+    deleteCurso,
     getCursosActivos,
     getCursosActivosSucursal
 };
