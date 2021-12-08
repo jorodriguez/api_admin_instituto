@@ -41,7 +41,7 @@ const createCurso = async (request, response) => {
         
         const cursoData = {  
             cat_especialidad,
-            cat_dia,
+            dias,
             cat_horario,
             co_empresa,
             co_sucursal,

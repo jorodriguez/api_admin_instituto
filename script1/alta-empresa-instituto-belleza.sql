@@ -17,7 +17,7 @@ alter table co_alumno add column direccion text;
 alter table co_alumno add column telefono text;
 alter table co_alumno add column correo text;  
 alter table co_alumno add column uid uuid DEFAULT uuid_generate_v4 ()
-alter table co_alumno add column uid uuid DEFAULT uuid_generate_v4 ()
+alter table co_curso add column dias_array integer[];
 
 update cat_cargo set nombre = 'Colegiatura' where id =1
 

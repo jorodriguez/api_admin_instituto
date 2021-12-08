@@ -11,8 +11,9 @@ const createCurso = async (cursoData) => {
   try{
      
     const {
-      cat_especialidad,
-      cat_dia,cat_horario,
+      cat_especialidad,      
+      dias,
+      cat_horario,
       co_empresa,
       co_sucursal,
       costo_colegiatura_base,
@@ -24,10 +25,11 @@ const createCurso = async (cursoData) => {
     } = cursoData;
 
     return await genericDao.execute(`
-          insert into co_curso(cat_especialidad,cat_dia,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,genero)
+          insert into co_curso(cat_especialidad,dias,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,genero)
           values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
     `,[cat_especialidad,
-      cat_dia,cat_horario,
+      dias,
+      cat_horario,
       co_empresa,
       co_sucursal,
       costo_colegiatura_base,
@@ -183,7 +185,7 @@ to_char(curso.fecha_inicio_previsto,'DD-MM-YYYY') as fecha_inicio_previsto,
 to_char(curso.fecha_inicio_previsto,'DD Mon YY') as fecha_inicio_previsto_format,        
 to_char(curso.fecha_fin_previsto,'DD-MM-YYYY') as fecha_fin_previsto,
 to_char(curso.fecha_fin_previsto,'DD Mon YY') as fecha_fin_previsto_format,        
-
+(select string_agg(nombre,'-') from cat_dia where id = ANY(curso.dias_array::int[])) as dias, 
 to_char(curso.fecha_inicio,'DD-MM-YYYY') as fecha_inicio,
 to_char(curso.fecha_inicio,'DD Mon YY') as fecha_inicio_format,        
 to_char(curso.fecha_fin,'DD-MM-YYYY') as fecha_fin,
@@ -191,8 +193,7 @@ to_char(curso.fecha_fin,'DD Mon YY') as fecha_fin_format,
 
 esp.id as id_especialidad,
 esp.nombre as especialidad,
-dias.id as id_dias,
-dias.nombre as dias, 
+(select string_agg(nombre,'-') from cat_dia where id = ANY(curso.dias_array::int[])) as dias, 
 horario.id as id_horario,	 
 horario.nombre as horario,
 suc.id as id_sucursal,
@@ -200,8 +201,7 @@ suc.nombre as sucursal,
 curso.activo,
 curso.foto as foto_curso,
 (select count(*) from co_inscripcion where co_curso = curso.id and eliminado = false) as inscripciones
-from co_curso curso inner join cat_especialidad esp on esp.id = curso.cat_especialidad
-  inner join cat_dia dias on dias.id = curso.cat_dia				
+from co_curso curso inner join cat_especialidad esp on esp.id = curso.cat_especialidad  
   inner join cat_horario horario on horario.id = curso.cat_horario
   inner join co_sucursal suc on suc.id = curso.co_sucursal
 where 

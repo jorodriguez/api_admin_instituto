@@ -13,7 +13,7 @@ const getDias = async (idEmpresa) => {
       select *
       from cat_dia
       where co_empresa = $1 and eliminado = false
-      order by nombre       
+      order by numero_dia       
       `,
     [idEmpresa]
   );
