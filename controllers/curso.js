@@ -9,8 +9,7 @@ const getCursosActivos = async (request, response) => {
         
         const { id_sucursal,id_especialidad } = request.params;
         console.log(" id_sucursal,id_especialidad",id_sucursal+"  "+id_especialidad);
-        const results = await cursoService.getCursosActivos(id_sucursal,id_especialidad)
-        console.log("==> "+JSON.stringify(results));
+        const results = await cursoService.getCursosActivos(id_sucursal,id_especialidad)        
         response.status(200).json(results);       
        
     } catch (e) {
@@ -25,8 +24,7 @@ const getCursosActivosSucursal = async (request, response) => {
         
         const { id } = request.params;
         console.log(" id_sucursal",id);
-        const results = await cursoService.getCursosActivoSucursal(id);
-        console.log("==> "+JSON.stringify(results));
+        const results = await cursoService.getCursosActivoSucursal(id);        
         response.status(200).json(results);       
        
     } catch (e) {
@@ -41,7 +39,7 @@ const createCurso = async (request, response) => {
         
         const cursoData = {  
             cat_especialidad,
-            dias,
+            dias_array,
             cat_horario,
             co_empresa,
             co_sucursal,
@@ -90,7 +88,7 @@ const updateCurso = async (request, response) => {
         const id =  parseInt(request.params.id);
         const cursoData = {  
             cat_especialidad,
-            dias,
+            dias_array,
             cat_horario,
             co_empresa,
             co_sucursal,

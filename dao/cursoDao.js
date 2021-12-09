@@ -12,7 +12,7 @@ const createCurso = async (cursoData) => {
     
     const {
       cat_especialidad,      
-      dias,
+      dias_array,
       cat_horario,
       co_empresa,
       co_sucursal,
@@ -30,9 +30,9 @@ const createCurso = async (cursoData) => {
 
     return await genericDao.execute(`
           insert into co_curso(cat_especialidad,dias_array,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,genero)
-          values($1,ARRAY[$2::int[]],$3,$4,$5,$6,$7,$8::date,($8::date + interval '${especialidad.duracion} weeks'),$9,$10) RETURNING ID;
+          values($1,$2::int[],$3,$4,$5,$6,$7,$8::date,($8::date + interval '${especialidad.duracion} weeks'),$9,$10) RETURNING ID;
     `,[cat_especialidad,
-      dias,
+      dias_array,
       cat_horario,
       co_empresa,      
       costo_colegiatura_base,
@@ -54,7 +54,7 @@ const updateCurso = async (id,cursoData) => {
   
   const { 
     cat_especialidad,
-    dias,
+    dias_array,
     cat_horario,        
     costo_colegiatura_base,
     costo_inscripcion_base,
@@ -68,7 +68,7 @@ const updateCurso = async (id,cursoData) => {
     `
                                     UPDATE CO_CURSO
                                     SET cat_especialidad = $2,
-                                        dias = ARRAY[$3::int[]]
+                                        dias_array = $3::int[],
                                         cat_horario = $4,
                                         costo_colegiatura_base = $5,
                                         costo_inscripcion_base = $6,
@@ -80,8 +80,9 @@ const updateCurso = async (id,cursoData) => {
                                     WHERE id = $1
                                     RETURNING ID;
                                     `,
-    [cat_especialidad,
-      dias,
+    [id,
+      cat_especialidad,
+      dias_array,
       cat_horario,        
       costo_colegiatura_base,
       costo_inscripcion_base,

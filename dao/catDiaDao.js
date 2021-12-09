@@ -10,7 +10,7 @@ const getDias = async (idEmpresa) => {
 
   return await genericDao.findAll(
       `              
-      select *
+      select *,false as checked
       from cat_dia
       where co_empresa = $1 and eliminado = false
       order by numero_dia       
