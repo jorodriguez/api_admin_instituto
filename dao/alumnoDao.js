@@ -48,8 +48,9 @@ const guardarAlumno = async(alumnoData)=>{
 
 const modificarAlumno = async(id,alumnoData)=>{
     console.log("@modificarAlumno "+JSON.stringify(alumnoData));
-    const {cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,genero} = alumnoData;
+    const {cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,cat_escolaridad,ocupacion,originario,tutor,telefono_tutor,genero} = alumnoData;
 
+    
     return await genericDao.execute(`
             UPDATE CO_ALUMNO
                     SET CAT_GENERO = $2,
@@ -60,11 +61,16 @@ const modificarAlumno = async(id,alumnoData)=>{
                         FECHA_NACIMIENTO = $7,        
                         NOTA=$8,
                         FOTO = $9,
-                        MODIFICO = $10,
+                        cat_escolaridad=$10,
+                        ocupacion=$11,
+                        originario=$12,
+                        tutor=$13,
+                        telefono_tutor=$14,
+                        MODIFICO = $15,
                         FECHA_MODIFICO=(getDate('')+getHora(''))
             WHERE ID = $1
             RETURNING ID;
-    `,[id,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,genero]);
+    `,[id,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,cat_escolaridad,ocupacion,originario,tutor,telefono_tutor,genero]);
 
 }
 
@@ -153,7 +159,13 @@ const getAlumnos = (idSucursal) => {
             curso.foto as foto_curso,
             genero.foto as foto_perfil,
             horario.nombre as horario,
+            a.ocupacion,
+            a.originario,
             alumno.uid
+            alumno.cat_escolaridad,
+            (select nombre from cat_escolaridad where id = alumno.cat_escolaridad) as escolaridad,
+            a.tutor,
+            a.telefono_tutor
         FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
                      inner join cat_genero genero on genero.id = a.cat_genero
                      inner join co_sucursal s on i.co_sucursal = s.id             				

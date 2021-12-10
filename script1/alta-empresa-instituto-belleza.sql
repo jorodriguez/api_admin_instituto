@@ -19,6 +19,29 @@ alter table co_alumno add column correo text;
 alter table co_alumno add column uid uuid DEFAULT uuid_generate_v4 ()
 alter table co_curso add column dias_array integer[];
 alter table co_curso add column motivo_baja text;
+alter table co_alumno add column originario text;
+alter table co_alumno add column ocupacion text;
+alter table co_alumno add column tutor text;
+alter table co_alumno add column telefono_tutor text;
+
+create table cat_escolaridad(
+	id serial not null primary key,
+	nombre text not null,
+	genero integer not null references usuario(id),
+	fecha_genero timestamp default current_timestamp,
+	modifico integer references usuario(id),
+	fecha_modifico timestamp,
+	eliminado boolean default false	
+);
+
+
+insert into cat_escolaridad(nombre,genero)
+values('Ninguna',1),('Licenciatura',1),('Preparatoria',1),('Secundaria',1);
+
+
+alter table co_alumno add column cat_escolaridad integer REFERENCES cat_escolaridad(id);
+
+
 
 update cat_horario set nombre = 'Vespertino 2-7' where id = 2
 
