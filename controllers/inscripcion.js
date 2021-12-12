@@ -14,11 +14,19 @@ const guardarInscripcion = async (request, response) => {
                 co_curso,
                 cat_genero,
                 nombre,
-                apellidos, direccion, telefono,
+                apellidos, 
+                direccion,
+                 telefono,
                 fecha_nacimiento,
                 nota,
                 foto,
-                costo_colegiatura, costo_inscripcion,
+                cat_escolaridad,
+                ocupacion,
+                originario,
+                tutor,
+                telefono_tutor,
+                costo_colegiatura, 
+                costo_inscripcion,
                 genero
             }
             = request.body;

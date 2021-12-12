@@ -27,7 +27,12 @@ const schemaInscripcion =
     direccion:Joi.string().allow('').optional(),
     telefono:Joi.string().required(),
     foto:Joi.string().allow('').optional(),
-    fecha_nacimiento:Joi.date().required(),    
+    /*cat_escolaridad: Joi.number().allow(null).optional(),
+    ocupacion: Joi.string().allow('').optional(),
+    originario:Joi.string().allow('').optional(),
+    tutor: Joi.string().allow('').optional(),
+    telefono_tutor: Joi.string().allow('').optional(),*/
+    fecha_nacimiento:Joi.date().required(),        
     nota:Joi.string().optional().allow('').allow(null),
     costo_colegiatura:Joi.number().positive().required(),
     costo_inscripcion:Joi.number().positive().required(),
