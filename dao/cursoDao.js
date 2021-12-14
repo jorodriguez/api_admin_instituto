@@ -145,6 +145,7 @@ horario.nombre as horario,
 suc.id as co_sucursal,
 suc.nombre as sucursal,
 curso.activo,
+curso.uid,
 curso.foto as foto_curso,
 (select count(*) from co_inscripcion where co_curso = curso.id and eliminado = false) as inscripciones
 from co_curso curso inner join cat_especialidad esp on esp.id = curso.cat_especialidad  

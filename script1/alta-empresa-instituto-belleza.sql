@@ -23,6 +23,7 @@ alter table co_alumno add column originario text;
 alter table co_alumno add column ocupacion text;
 alter table co_alumno add column tutor text;
 alter table co_alumno add column telefono_tutor text;
+alter table co_curso add column uid uuid DEFAULT uuid_generate_v4 ()
 
 create table cat_escolaridad(
 	id serial not null primary key,

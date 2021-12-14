@@ -11,5 +11,6 @@ router.get('/inscripciones/:uid',checkAuth, alumno.getAlumnoUId);
 router.put('/:id',checkAuth, alumno.modificarAlumno);
 router.put('/baja/:id',checkAuth, alumno.bajaAlumno);
 router.put('/activar/:id',checkAuth, alumno.activarAlumnoEliminado);
+router.get('/curso/:uidCurso',checkAuth, alumno.getAlumnosCurso);
 
 module.exports = router;

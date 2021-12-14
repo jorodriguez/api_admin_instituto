@@ -24,6 +24,24 @@ const getAlumnos = async (request, response) => {
     }
 };
 
+
+
+const getAlumnosCurso = async (request, response) => {
+    console.log("@getAlumnosCurso");
+    try {
+       
+            const uidCurso = request.params.uidCurso;
+            console.log("Consultando alumnos del curso " + uidCurso);
+
+            const results = await alumnoService.getAlumnosCurso(uidCurso);
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
 const getAlumnoUId = async (request, response) => {
     console.log("@getAlumnoUId");
     try {
@@ -105,7 +123,8 @@ const activarAlumnoEliminado = async (request, response) => {
 };
 
 module.exports = {
-    getAlumnos,    
+    getAlumnos,  
+    getAlumnosCurso,  
     getAlumnoUId,
     modificarAlumno,
     bajaAlumno,    

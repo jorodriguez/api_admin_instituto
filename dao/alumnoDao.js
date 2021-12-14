@@ -35,22 +35,22 @@ const getCorreosTokensAlumno = (idAlumno) => {
 };
 
 
-const guardarAlumno = async(alumnoData)=>{
-    console.log("@guardarAlumno "+JSON.stringify(alumnoData));
-    const {co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero} = alumnoData;
+const guardarAlumno = async (alumnoData) => {
+    console.log("@guardarAlumno " + JSON.stringify(alumnoData));
+    const { co_sucursal, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, co_empresa, genero } = alumnoData;
 
     return await genericDao.execute(`        
             INSERT INTO CO_ALUMNO(co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero)
             VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
-    `,[co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero]);
+    `, [co_sucursal, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, co_empresa, genero]);
 
 }
 
-const modificarAlumno = async(id,alumnoData)=>{
-    console.log("@modificarAlumno "+JSON.stringify(alumnoData));
-    const {cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,cat_escolaridad,ocupacion,originario,tutor,telefono_tutor,genero} = alumnoData;
+const modificarAlumno = async (id, alumnoData) => {
+    console.log("@modificarAlumno " + JSON.stringify(alumnoData));
+    const { cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, cat_escolaridad, ocupacion, originario, tutor, telefono_tutor, genero } = alumnoData;
 
-    
+
     return await genericDao.execute(`
             UPDATE CO_ALUMNO
                     SET CAT_GENERO = $2,
@@ -70,7 +70,7 @@ const modificarAlumno = async(id,alumnoData)=>{
                         FECHA_MODIFICO=(getDate('')+getHora(''))
             WHERE ID = $1
             RETURNING ID;
-    `,[id,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,cat_escolaridad,ocupacion,originario,tutor,telefono_tutor,genero]);
+    `, [id, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, cat_escolaridad, ocupacion, originario, tutor, telefono_tutor, genero]);
 
 }
 
@@ -141,50 +141,59 @@ const bajaAlumno = (idAlumno, fechaBaja, observaciones, genero) => {
 
 const getAlumnos = (idSucursal) => {
     console.log("Consultando alumnos de la suc " + idSucursal);
-    return genericDao.findAll(`
-        SELECT 
-            a.id as id_alumno,
-            i.id as id_inscripcion,
-            a.nombre as alumno,             	
-            a.apellidos,
-            a.nota,
-            a.foto,
-            s.nombre as nombre_sucursal,
-            esp.id as id_especialidad,             	     
-            esp.nombre as especialidad,             	     
-            esp.color,             	     
-            dias.nombre as dias,
-            curso.fecha_inicio_previsto,
-            curso.fecha_fin_previsto,
-            curso.foto as foto_curso,
-            genero.foto as foto_perfil,
-            horario.nombre as horario,
-            a.ocupacion,
-            a.originario,
-            alumno.uid
-            alumno.cat_escolaridad,
-            (select nombre from cat_escolaridad where id = alumno.cat_escolaridad) as escolaridad,
-            a.tutor,
-            a.telefono_tutor
-        FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
-                     inner join cat_genero genero on genero.id = a.cat_genero
-                     inner join co_sucursal s on i.co_sucursal = s.id             				
-                     inner join co_curso curso on curso.id = i.co_curso             					             					
-                     inner join cat_especialidad esp on esp.id = curso.cat_especialidad
-                     inner join cat_dia dias on dias.id = curso.cat_dia
-                     inner join cat_horario horario on horario.id = curso.cat_horario
-        WHERE a.co_sucursal = $1 AND a.eliminado=false 
-        ORDER BY i.fecha_genero DESC
-        `, [idSucursal]);
+    return genericDao.findAll(getQueryAlumno(" a.co_sucursal = $1 "), [idSucursal]);
+}
 
+const getAlumnosCurso = (uidCurso) => {
+    console.log("Consultando alumnos del curso " + uidCurso);
+    return genericDao.findAll(getQueryAlumno(" curso.uid = $1 "), [uidCurso]);
 
 }
 
 
-module.exports = {    
-    guardarAlumno,
+const getQueryAlumno = (criterio) => `
+SELECT 
+    a.id as id_alumno,
+    i.id as id_inscripcion,
+    a.nombre as alumno,             	
+    a.apellidos,
+    a.nota,
+    a.foto,
+    s.nombre as nombre_sucursal,
+    esp.id as id_especialidad,             	     
+    esp.nombre as especialidad,             	     
+    esp.color,             	     
+    (select string_agg(nombre,'-') from cat_dia where id = ANY(curso.dias_array::int[])) as dias, 
+    curso.uid as uid_curso,
+    curso.fecha_inicio_previsto,
+    curso.fecha_fin_previsto,
+    curso.foto as foto_curso,
+    genero.foto as foto_perfil,
+    horario.nombre as horario,
+    a.ocupacion,
+    a.originario,
+    a.uid,
+    a.cat_escolaridad,
+    (select nombre from cat_escolaridad where id = a.cat_escolaridad) as escolaridad,
+    a.tutor,    
+    a.telefono_tutor
+FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
+             inner join cat_genero genero on genero.id = a.cat_genero
+             inner join co_sucursal s on i.co_sucursal = s.id             				
+             inner join co_curso curso on curso.id = i.co_curso             					             					
+             inner join cat_especialidad esp on esp.id = curso.cat_especialidad             
+             inner join cat_horario horario on horario.id = curso.cat_horario
+    WHERE i.eliminado = false 
+          ${criterio ? ' AND '+criterio : ''}        
+    ORDER BY i.fecha_genero DESC
+`;
+
+
+module.exports = {
+    guardarAlumno,    
     getAlumnos,
-    getCorreosTokensAlumno,        
+    getAlumnosCurso,
+    getCorreosTokensAlumno,
     modificarFotoPerfil,
     getAlumnoPorUId,
     getAlumnoPorId,
