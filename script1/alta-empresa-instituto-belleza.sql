@@ -35,6 +35,12 @@ create table cat_escolaridad(
 	eliminado boolean default false	
 );
 
+alter table co_alumno add column confirmado boolean;
+
+alter table co_alumno add column fecha_confirmado timestamp;
+
+alter table co_alumno add column usuario_confirmo integer references usuario(id);
+
 
 insert into cat_escolaridad(nombre,genero)
 values('Ninguna',1),('Licenciatura',1),('Preparatoria',1),('Secundaria',1);

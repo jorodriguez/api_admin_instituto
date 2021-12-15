@@ -76,9 +76,26 @@ const getInscripcionesAlumno = async (request, response) => {
 };
 
 
+const confirmarInscripcion = async (request, response) => {
+    console.log("@confirmarInscripcion");
+    try {
+
+        const id_alumno = request.params.id_alumno;
+        const data = {confirmacion,nota,genero} = request.body;
+        const results = await inscripcionService.confirmarInscripcion(id_alumno,data);
+        response.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
 
 module.exports = {
     guardarInscripcion,
+    confirmarInscripcion,
     getInscripciones,
     getInscripcionesAlumno
 };

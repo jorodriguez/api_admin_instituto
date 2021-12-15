@@ -16,9 +16,21 @@ const guardarInscripcion = async(inscripcionData)=>{
     return alumno;
 }
 
+const confirmarInscripcion = async (idAlumno,inscripcionData)=>{    
+    
+    //const data = {confirmacion,nota,genero}=inscripcionData;
+
+    const id = await inscripcionDao.confirmarInscripcion(idAlumno,inscripcionData);
+    //Aqui agregar los cargos de inicio
+
+    return id;
+}
+
+
 
 module.exports = {      
     guardarInscripcion,
+    confirmarInscripcion,
     getInscripciones: inscripcionDao.getInscripciones,
     getInscripcionesAlumno:inscripcionDao.getInscripcionesAlumno
 };

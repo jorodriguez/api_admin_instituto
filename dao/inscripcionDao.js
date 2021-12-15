@@ -16,6 +16,23 @@ const guardarInscripcion = async(idAlumno,inscripcionData)=>{
   `,[co_curso,co_empresa,co_sucursal,idAlumno,costo_colegiatura,costo_inscripcion,nota,genero]);
 }
 
+const confirmarInscripcion = async(idAlumno,inscripcionData)=>{
+  console.log("@confirmarInscripcion");
+  const {confirmacion,nota,genero} = inscripcionData;
+
+  return genericDao.execute(`
+          UPDATE CO_ALUMNO 
+            SET CONFIRMADO = $2,
+                FECHA_CONFIRMADO = (getDate('')+getHora(''))::timestamp,
+                FECHA_MODIFICO = (getDate('')+getHora(''))::timestamp,
+                NOTA = $3,
+                USUARIO_CONFIRMO = $4,                
+                MODIFICO = $4
+          WHERE id = $1 RETURNING ID;              
+  `,[idAlumno,confirmacion,nota,genero]);
+}
+
+
 const getInscripcionesAlumno = async(uidAlumno)=>{
   console.log("@guardarInscripcionesA1lumno"); 
   return await genericDao.findAll(getQueryBase(' a.uid = $1 '),[uidAlumno]);
@@ -73,6 +90,7 @@ order by i.fecha_genero desc
 
 module.exports = {
   getInscripciones,
+  confirmarInscripcion,
   guardarInscripcion,
   getInscripcionesAlumno
 };

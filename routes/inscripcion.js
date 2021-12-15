@@ -7,6 +7,7 @@ const checkAuth = require('./check-auth');
 
 //inscripcion
 router.post('/',checkAuth, inscripcion.guardarInscripcion);
+router.put('/confirmar/:id_alumno',checkAuth, inscripcion.confirmarInscripcion);
 router.get('/:id_sucursal',checkAuth, inscripcion.getInscripciones);
 router.get('/alumno/:uid',checkAuth, inscripcion.getInscripcionesAlumno);
 /*router.get('/:id_sucursal/eliminados/:eliminado?',checkAuth, alumno.getAlumnos);
