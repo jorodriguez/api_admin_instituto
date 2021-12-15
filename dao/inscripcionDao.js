@@ -76,6 +76,9 @@ const getQueryBase = (criterio) => `
     a.apellidos,
     a.foto,
     a.uid,
+    a.confirmado,
+    to_char(a.fecha_confirmado,'DD-MM-YYYY HH:MM') as fecha_confirmado,
+    (select nombre from usuario where id = a.usuario_confirmo) as usuario_confirmo,
     curso.foto as foto_curso	  
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
