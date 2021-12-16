@@ -8,8 +8,7 @@ const authController = require('./auth/AuthController');
 const pagos = require('./controllers/pagos');
 const cargos = require('./controllers/cargos');
 const mensajeria = require('./controllers/mensajesFirebase');
-const tareasProgramadas = require('./controllers/tareas_programadas');
-const schedule = require('node-schedule');
+
 const { configuracion } = require('./config/ambiente');
 const reporteDeudas = require('./controllers/reporteDeudas');
 const reporte_mensualidades = require('./controllers/reporte_mensualidades');
@@ -29,6 +28,7 @@ const uploadCloudinary = require('./controllers/uploadCloudinary');
 const avisos = require('./controllers/avisos');
 
 const checkAuth = require('./routes/check-auth');
+const schedulerJob = require('./routes/schedulerJob');
 const loginRoutes = require('./routes/login');
 const alumnoRoute = require('./routes/alumno');
 const cursoRoute = require('./routes/curso');
@@ -49,6 +49,7 @@ app.use('/especialidad',especialidadRoute);
 app.use('/dias',catDiaRoute);
 app.use('/horarios',catHorario);
 app.use('/escolaridad',catEscolaridad);
+//app.use('/escolaridad',catEscolaridad);
 
 //Cambio de sucursal
 app.get('/sucursal_usuario/:id', authController.obtenerSucursalesUsuario);
@@ -190,95 +191,5 @@ app.post('/foto_perfil',checkAuth, fileUpload.single('image'), (req,res)=>{
 		uploadCloudinary.uploadImagenPerfil(req,res);		
 	}
 });
-//--- TAREAS PROGRAMADAS ------
-schedule.scheduleJob('0 */33 * * * 1-5', function () {
-	console.log('PROCESO DE REVISION DE SALIDA DE ALUMNOS ' + new Date());
-	try {
-		//tareas_programadas.ejecutarProcesoNotificacionProximaSalidaAlumno();
-	} catch (e) {
-		console.log("Error al ejecutar el proceso de revision de salida " + e);
-	}
-});
 
-
-
-schedule.scheduleJob('0 */35 * * * 1-5', function () {
-	//schedule.scheduleJob('0 */2 * * * 1-5', function () {	
-	console.log('PROCESO DE REVISION DE EXPIRACION DE TIEMPO DE ALUMNOS ' + new Date());
-	//FIXME : para pruebas
-	try {
-		//		tareas_programadas.ejecutarProcesoNotificacionExpiracionTiempoAlumno();
-	} catch (e) {
-		console.log("Error al ejecutar el proceso de revision de expiración " + e);
-	}
-});
-
-
-// Sec,Min,Hor,D,M,Y
-// correr a las 00:01 am cada 1 de cada mes
-schedule.scheduleJob('0 1 0 1 * *', function () {
-	console.log('Agregar cargo de mensualidad automatico' + new Date());
-	//tareasProgramadas.ejecutarRegistroMensualidadAutomatica();
-});
-
-// correr a las 7 am cada 1 de cada mes
-schedule.scheduleJob('0 0 7 1 * *', function () {
-	console.log('Agregar cargo de mensualidad ' + new Date());
-	//tareasProgramadas.ejecutarRegistroMensualidadAutomatica();
-});
-
-//correr a las 7:30 am cada 1 de cada mes
-schedule.scheduleJob('0 30 7 1 * *', function () {
-	console.log('Agregar cargo de mensualidad ' + new Date());
-	//tareasProgramadas.ejecutarRegistroMensualidadAutomatica();
-});
-
-//correr a las 8:01 am cada 1 de cada mes
-schedule.scheduleJob('0 1 8 1 * *', function () {
-	console.log('Agregar cargo de mensualidad ' + new Date());
-	//tareas.generarBalanceAlumnos();
-});
-
-/********* Calcular Recargos de mensualidades *********/
-schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
-	console.log('Agregar recargos de mensualidad ' + new Date());
-	try {
-		//recargoService.procesoRecargosMensualidad();
-	} catch (error) {
-		console.error("[index] Error al ejecutar el proceso de recargos " + error);
-
-	}
-});
-
-schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
-	console.log("TESTING HOUR "+new Date());
-});
-/********* Calcular Recargos de mensualidades *********/
-
-///Enviar reportes de recargos
-schedule.scheduleJob({ hour: 8, minute: 0, second: 0 }, function () {
-	console.log('Enviando reporte y recordatorios  de recargos de mensualidad ' + new Date());
-	try {
-		//recargoService.ejecutarEnvioRecordatorioPagoMensualidadPadres();
-
-	} catch (error) {
-		console.error("[index] Error al ejecutar el proceso de recargos " + error);
-	}
-
-});
-
-/*
-var rule = new schedule.RecurrenceRule();
-rule.dayOfWeek = [0, new schedule.Range(1, 5)];
-rule.hour = 20;
-rule.minute = 0;*/
-schedule.scheduleJob({ hour: 20, minute: 0 }, function () {
-	console.log('PROCESO DE SALIDA ALUMNOS ' + new Date());
-	try {
-		//asistencia.ejecutarProcesoSalidaAutomatica();
-	} catch (e) {
-		console.log("Error al ejecutar el proceso de revision de salida " + e);
-	}
-});
-
-console.log("Fin");
+console.log("---------registro de todos los endpoints finalizados -----------------");
