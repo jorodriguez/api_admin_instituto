@@ -147,7 +147,12 @@ const getAlumnos = (idSucursal) => {
 const getAlumnosCurso = (uidCurso) => {
     console.log("Consultando alumnos del curso " + uidCurso);
     return genericDao.findAll(getQueryAlumno(" curso.uid = $1 "), [uidCurso]);
+}
 
+const getAlumnosIniciarCursoHoy =(idSucursal)=>{
+    console.log("@getAlumnosIniciarCursoHoy");
+    
+    return genericDao.findAll(getQueryAlumno("  a.confirmado and curso.fecha_inicio::date <= getDate('') "),[idSucursal]);
 }
 
 
@@ -199,6 +204,7 @@ module.exports = {
     guardarAlumno,    
     getAlumnos,
     getAlumnosCurso,
+    getAlumnosIniciarCursoHoy,
     getCorreosTokensAlumno,
     modificarFotoPerfil,
     getAlumnoPorUId,

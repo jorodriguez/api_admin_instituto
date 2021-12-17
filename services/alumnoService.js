@@ -13,6 +13,7 @@ const getAlumnos = (idSucursal)=>{
 module.exports = { 
                     getAlumnos,
                     getAlumnosCurso:alumnoDao.getAlumnosCurso,
+                    getAlumnosIniciarCursoHoy:alumnoDao.getAlumnosIniciarCursoHoy,
                     modificarAlumno:alumnoDao.modificarAlumno,
                     getCorreosTokenAlumno,                    
                     bajaAlumno:alumnoDao.bajaAlumno,
