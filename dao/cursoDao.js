@@ -124,7 +124,7 @@ const getCursosActivos = async (idSucursal,idEspecialidad) => {
 
 const getCursosInicianHoy = async () => {
   console.log("@getCursosInicianHoy");
-  return await genericDao.findAll(getQueryBase(` curso.fecha_inicio::date <= getDate('') and curso.activo = false and curso.semana_actual = 0  `),[idSucursal,idEspecialidad]);
+  return await genericDao.findAll(getQueryBase(` curso.fecha_inicio_previsto::date <= getDate('') and curso.activo = false and curso.semana_actual = 0  `),[]);
 };
 
 const getCursoById = async (id) => {

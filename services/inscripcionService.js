@@ -30,20 +30,20 @@ const confirmarInscripcion = async (idAlumno,inscripcionData)=>{
 
 
 const generarInscripcionesAutomaticamente = async ()=>{    
-
+    console.log("@generarInscripcionesAutomaticamente");
     try{
-
-        const CARGO_INSCRIPCION=2;
+        
         const SUPER_USUAURIO=1;
         let arrayResponse = [];
 
         const cursosInicianHoy = await cursoDao.getCursosInicianHoy();
         
-        if(cursosInicianHoy && cursosInicianHoys.lenght > 0){
+        if(cursosInicianHoy || cursosInicianHoy.lenght == 0){
             console.log("############ no inicia nungun curso hoy ##########");
             return;
         }
 
+        console.log("Iniciando el proceso de generacion de inscripciones ");
         for (const curso of cursosInicianHoy) {        
 
         console.log("-- iniciando las inscripciones del curso "+curso.especialidad);   
@@ -60,7 +60,7 @@ const generarInscripcionesAutomaticamente = async ()=>{
             console.log("No existieron inscripciones confirmadas")
         }
     }
-
+    console.log("=========== TERMINO EL PROCESO DE INSCRIPCIONES ?¿============");
     return arrayResponse;
 
     }catch(e){

@@ -13,7 +13,7 @@ const inscripcionService = require('../services/inscripcionService');
 // Sec,Min,Hor,D,M,Y
 // Crear los cargos de las semanas de los alumnos corre todos los días a las 8 am
 //schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
-schedule.scheduleJob({ hour: 18 , minute:24, second: 0 }, function () {
+schedule.scheduleJob({ hour: 21 , minute:31, second: 0 }, function () {
 	console.log('AGREGAR INSCRIPCIONES AUTOMATICAS' + new Date());
 	try {
 		//
