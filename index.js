@@ -39,6 +39,7 @@ const usuarioRhRoute = require('./routes/usuariosRh');
 const catDiaRoute = require('./routes/catDia');
 const catHorario = require('./routes/catHorario');
 const catEscolaridad = require('./routes/catEscolaridad');
+const utils = require('./routes/utils');
 
 
 app.use('/auth',loginRoutes);
@@ -49,6 +50,7 @@ app.use('/especialidad',especialidadRoute);
 app.use('/dias',catDiaRoute);
 app.use('/horarios',catHorario);
 app.use('/escolaridad',catEscolaridad);
+app.use('/utils',utils);
 //app.use('/escolaridad',catEscolaridad);
 
 //Cambio de sucursal

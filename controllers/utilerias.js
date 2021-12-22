@@ -3,6 +3,7 @@ const { pool } = require('../db/conexion');
 const { getCatalogo,getResultQuery } = require('./sqlHelper');
 const { ID_EMPRESA_MAGIC } = require('../utils/Constantes');
 const handle = require('../helpers/handlersErrors');
+const utilService = require('../services/utilService');
 
 const getMesesActivos = (request, response) => {
     console.log("@getMeses");
@@ -96,9 +97,31 @@ const getListaDiasTrabajadosRangoFecha = (request,response) =>{
 };
 
 
+const getSeriesPeriodosCurso = async (request,response) =>{
+
+    console.log("@getSeriesPeriodosCurso");  
+    
+    try {
+
+        const { uid } = request.params;
+
+        const results =  await utilService.getSeriesPeriodosCurso(uid);
+
+        response.status(200).json(results);
+
+    } catch (e) {
+        handle.callbackErrorNoControlado(e, response);
+    } 
+};
+
+
+
+
+
 
 module.exports = {
     getMesesActivos,
     findCorreoPadre,    
-    getListaDiasTrabajadosRangoFecha
+    getListaDiasTrabajadosRangoFecha,
+    getSeriesPeriodosCurso
 };

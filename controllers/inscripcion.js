@@ -80,9 +80,25 @@ const confirmarInscripcion = async (request, response) => {
     console.log("@confirmarInscripcion");
     try {
 
-        const id_alumno = request.params.id_alumno;
+        const id_inscripcion = request.params.id_inscripcion;
         const data = {confirmacion,nota,genero} = request.body;
-        const results = await inscripcionService.confirmarInscripcion(id_alumno,data);
+        const results = await inscripcionService.confirmarInscripcion(id_inscripcion,data);
+        response.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+const getInscripcionesCurso = async (request, response) => {
+    console.log("@getInscripcionesCurso");
+    try {
+
+        const uid = request.params.uid;
+
+        const results = await inscripcionService.getInscripcionesCurso(uid);
+        
         response.status(200).json(results);
 
     } catch (e) {
@@ -92,10 +108,10 @@ const confirmarInscripcion = async (request, response) => {
 };
 
 
-
 module.exports = {
     guardarInscripcion,
     confirmarInscripcion,
     getInscripciones,
-    getInscripcionesAlumno
+    getInscripcionesAlumno,
+    getInscripcionesCurso
 };

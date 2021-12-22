@@ -16,7 +16,7 @@ const guardarInscripcion = async(idAlumno,inscripcionData)=>{
   `,[co_curso,co_empresa,co_sucursal,idAlumno,costo_colegiatura,costo_inscripcion,nota,genero]);
 }
 
-const confirmarInscripcion = async(idAlumno,inscripcionData)=>{
+const confirmarInscripcion = async(idInscripcion,inscripcionData)=>{
   console.log("@confirmarInscripcion");
   const {confirmacion,nota,genero} = inscripcionData;
 
@@ -29,7 +29,7 @@ const confirmarInscripcion = async(idAlumno,inscripcionData)=>{
                 USUARIO_CONFIRMO = $4,                
                 MODIFICO = $4
           WHERE id = $1 RETURNING ID;              
-  `,[idAlumno,confirmacion,nota,genero]);
+  `,[idInscripcion,confirmacion,nota,genero]);
 }
 
 
@@ -74,6 +74,11 @@ const actualizarTotalAdeudaInscripcion = async (idAlumno,idCurso,genero) => {
         ,[idAlumno,idCurso,genero]);
 };
 
+const getInscripcionesCurso = async (uidCurso)=>{
+  console.log("@getIncripcionesCurso");
+  
+  return await genericDao.findAll(getQueryBase(" curso.uid = $1 "),[uidCurso]);
+}
 
 const getIncripcionesCursoIniciaHoy = async (idCurso)=>{
   console.log("@getIncripcionesIniciarCursoHoy");
@@ -90,8 +95,9 @@ const getIncripcionesIniciarCursoHoyPorSucursal =(idSucursal)=>{
 
 
 const getQueryBase = (criterio) => `               
-  select i.id as id,
+  select i.id as id_inscripcion,
     curso.id as id_curso,
+    curso.uid as uid_curso,
     curso.semana_actual,	  
     esp.duracion as duracion_curso,
     curso.fecha_inicio_previsto,  
@@ -146,5 +152,6 @@ module.exports = {
   getIncripcionesCursoIniciaHoy,
   confirmarInscripcion,
   guardarInscripcion,
-  getInscripcionesAlumno
+  getInscripcionesAlumno,
+  getInscripcionesCurso
 };

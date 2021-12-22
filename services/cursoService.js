@@ -4,5 +4,7 @@ module.exports = {
         updateCurso: cursoDao.updateCurso,
         eliminarCurso: cursoDao.eliminarCurso,
         getCursosActivos: cursoDao.getCursosActivos,
-        getCursosActivoSucursal: cursoDao.getCursosActivoSucursal
+        getCursosActivoSucursal: cursoDao.getCursosActivoSucursal,
+        getCursosInicianProximosDias:cursoDao.getCursosInicianProximosDias,
+        getCursoByUid:cursoDao.getCursoByUid
 };
