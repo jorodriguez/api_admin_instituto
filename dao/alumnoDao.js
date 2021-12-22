@@ -149,13 +149,6 @@ const getAlumnosCurso = (uidCurso) => {
     return genericDao.findAll(getQueryAlumno(" curso.uid = $1 "), [uidCurso]);
 }
 
-const getAlumnosIniciarCursoHoy =(idSucursal)=>{
-    console.log("@getAlumnosIniciarCursoHoy");
-    
-    return genericDao.findAll(getQueryAlumno("  a.confirmado and curso.fecha_inicio::date <= getDate('') "),[idSucursal]);
-}
-
-
 const getQueryAlumno = (criterio) => `
 SELECT 
     a.id as id_alumno,
@@ -164,9 +157,7 @@ SELECT
     a.apellidos,
     a.nota,
     a.foto,
-    a.telefono,
-    a.confirmado,
-    to_char(a.fecha_confirmado,'DD-MM-YYYY HH:MM') as fecha_confirmado,
+    a.telefono,  
     (select nombre from usuario where id = a.usuario_confirmo) as usuario_confirmo,
     s.nombre as nombre_sucursal,
     esp.id as id_especialidad,             	     
@@ -203,8 +194,7 @@ FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
 module.exports = {
     guardarAlumno,    
     getAlumnos,
-    getAlumnosCurso,
-    getAlumnosIniciarCursoHoy,
+    getAlumnosCurso,        
     getCorreosTokensAlumno,
     modificarFotoPerfil,
     getAlumnoPorUId,

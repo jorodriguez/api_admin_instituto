@@ -35,12 +35,19 @@ create table cat_escolaridad(
 	eliminado boolean default false	
 );
 
-alter table co_alumno add column confirmado boolean;
+alter table co_inscripcion add column confirmado boolean;
 
-alter table co_alumno add column fecha_confirmado timestamp;
+alter table co_inscripcion add column fecha_confirmado timestamp;
 
-alter table co_alumno add column usuario_confirmo integer references usuario(id);
+alter table co_inscripcion add column usuario_confirmo integer references usuario(id);
 
+alter table co_inscripcion add column co_cargo_inscripcion int references co_cargo_balance_alumno(id);
+alter table co_cargo_balance_alumno add column co_curso int references co_curso(id);
+alter table co_alumno add column total_adeuda numeric default 0;
+
+update cat_cargo set nombre ='Colegiatura' where id  = 1;
+
+alter table co_inscripcion add column co_cargo_inscripcion int references co_cargo_balance_alumno(id);
 
 insert into cat_escolaridad(nombre,genero)
 values('Ninguna',1),('Licenciatura',1),('Preparatoria',1),('Secundaria',1);

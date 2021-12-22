@@ -1,7 +1,10 @@
 const router = require('express').Router();
 const schedule = require('node-schedule');
 
-const alumno = require('../controllers/alumno');
+//const inscripcionService = require('../services/inscripcionService');
+
+const inscripcionService = require('../services/inscripcionService');
+
 
 //---------------------------
 // Tareas automatizadas 
@@ -9,10 +12,12 @@ const alumno = require('../controllers/alumno');
 
 // Sec,Min,Hor,D,M,Y
 // Crear los cargos de las semanas de los alumnos corre todos los días a las 8 am
-schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
-	console.log('AGREGAR CARGOS AUTOMATICOS' + new Date());
+//schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
+schedule.scheduleJob({ hour: 18 , minute:24, second: 0 }, function () {
+	console.log('AGREGAR INSCRIPCIONES AUTOMATICAS' + new Date());
 	try {
 		//
+		inscripcionService.generarInscripcionesAutomaticamente();
 	} catch (error) {
 		console.error("ERROR EN EL PROCESO AUTOMATICO DE GENERACION DE CARGOS  " + error);
 

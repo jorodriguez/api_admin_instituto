@@ -69,6 +69,23 @@ const registrarCargo = (cargoData) => {
 
 };
 
+const registrarCargoGeneral =async  (cargoData) => {
+
+    console.log("@registrarCargoGeneral");
+        const { id_alumno,co_curso, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero } = cargoData;
+
+        return await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(CO_ALUMNO,co_curso,Cat_Cargo,FECHA,CANTIDAD,CARGO,
+                            TOTAL,NOTA,MONTO_MODIFICADO,MONTO_ORIGINAL,TEXTO_AYUDA,GENERO)
+                            VALUES($1,$2,getDate(''),$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;`
+                            ,[id_alumno,co_curso,cat_cargo,cantidad,cargo,total,nota,monto_modificado,monto_original,texto_ayuda,genero]);
+       
+};
+
+const getCatCargo = async (id) => {
+    console.log("@getCatCargo");
+    return await genericDao.findOne("SELECT * from cat_cargo WHERE id = $1 and eliminado = false ", [id]);
+};
+
 
 const completarRegistroRecargoMensualidad = (idCargoMensualidad, idRecargo, genero) => {
 
@@ -354,8 +371,17 @@ const getCargoExtraMensualidadEmpresa = (idEmpresa) => {
                                 LIMIT  1`, [idEmpresa]);
 };
 
+
+
+const getCargoPorAlumno = (idAlumno,idCargo) => {
+    console.log("@existeCargoPorAlumno");
+    return genericDao.findOne(`select * from co_cargo_balance_alumno where co_alumno = $1 and cat_cargo = $2 and eliminado = false limit 1`, [idAlumno,idCargo]);
+};
+
+
 module.exports = {
     registrarCargo,
+    registrarCargoGeneral,
     getCatalogoCargosPorEmpresa,
     getCargosAlumno,
     getBalanceAlumno,
@@ -364,5 +390,6 @@ module.exports = {
     completarRegistroRecargoMensualidad,
     obtenerFiltroAniosCargosSucursal,
     obtenerEstadoCuenta,
-    getCargoExtraMensualidadEmpresa
+    getCargoExtraMensualidadEmpresa,
+    getCargoPorAlumno
 };

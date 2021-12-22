@@ -1,5 +1,7 @@
 const inscripcionDao = require('../dao/inscripcionDao');
-const alumnoDao = require('../dao/alumnoDao');
+//const alumnoDao = require('../dao/alumnoDao');
+const cargoService = require('../services/cargoService');
+const cursoDao = require('../dao/cursoDao');
 
 const guardarInscripcion = async(inscripcionData)=>{
 
@@ -27,10 +29,54 @@ const confirmarInscripcion = async (idAlumno,inscripcionData)=>{
 }
 
 
+const generarInscripcionesAutomaticamente = async ()=>{    
+
+    try{
+
+        const CARGO_INSCRIPCION=2;
+        const SUPER_USUAURIO=1;
+        let arrayResponse = [];
+
+        const cursosInicianHoy = await cursoDao.getCursosInicianHoy();
+        
+        if(cursosInicianHoy && cursosInicianHoys.lenght > 0){
+            console.log("############ no inicia nungun curso hoy ##########");
+            return;
+        }
+
+        for (const curso of cursosInicianHoy) {        
+
+        console.log("-- iniciando las inscripciones del curso "+curso.especialidad);   
+
+        const inscripcionesAutomaticas = await inscripcionDao.getIncripcionesCursoIniciaHoy(curso.id);
+
+        if(inscripcionesAutomaticas && inscripcionesAutomaticas.lenght > 0){
+
+            for (const element of inscripcionesAutomaticas) {           
+                               
+                await cargoService.registrarInscripcion(curso.id,element.id_alumno,SUPER_USUAURIO);                
+            }
+        }else{
+            console.log("No existieron inscripciones confirmadas")
+        }
+    }
+
+    return arrayResponse;
+
+    }catch(e){
+        console.log("Error al generar los cargos de inscripcion "+e);
+        return [];
+    }
+}
+
+
+
+
 
 module.exports = {      
     guardarInscripcion,
     confirmarInscripcion,
+    generarInscripcionesAutomaticamente,
     getInscripciones: inscripcionDao.getInscripciones,
     getInscripcionesAlumno:inscripcionDao.getInscripcionesAlumno
 };

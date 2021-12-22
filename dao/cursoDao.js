@@ -122,6 +122,15 @@ const getCursosActivos = async (idSucursal,idEspecialidad) => {
   return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 and esp.id = $2 '),[idSucursal,idEspecialidad]);
 };
 
+const getCursosInicianHoy = async () => {
+  console.log("@getCursosInicianHoy");
+  return await genericDao.findAll(getQueryBase(` curso.fecha_inicio::date <= getDate('') and curso.activo = false and curso.semana_actual = 0  `),[idSucursal,idEspecialidad]);
+};
+
+const getCursoById = async (id) => {
+  console.log("@getCursoById");
+  return await genericDao.findOne(`select * from co_curso where id = $1 and eliminado = false`,[id]);
+};
 
 const getQueryBase = (criterio)=>` select curso.id,
 curso.costo_colegiatura_base,
@@ -162,8 +171,10 @@ order by curso.fecha_inicio_previsto desc`;
 
 module.exports = {
   createCurso,
+  getCursoById,
   updateCurso,
   eliminarCurso,
+  getCursosInicianHoy,
   getCursosActivos,
   getCursosActivoSucursal,
 
