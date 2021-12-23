@@ -141,6 +141,25 @@ const updateCurso = async (request, response) => {
 };
 
 
+const getSeriesPeriodosCurso = async (request,response) =>{
+
+    console.log("@getSeriesPeriodosCurso");  
+    
+    try {
+
+        const { uid } = request.params;
+
+        const results =  await cursoService.getSeriesPeriodosCurso(uid);
+
+        response.status(200).json(results);
+
+    } catch (e) {
+        handle.callbackErrorNoControlado(e, response);
+    } 
+};
+
+
+
 module.exports = {
     createCurso,
     updateCurso,
@@ -148,5 +167,6 @@ module.exports = {
     getCursosActivos,
     getCursosActivosSucursal,
     getCursosProximosIniciar,
-    getCursosByUid
+    getCursosByUid,
+    getSeriesPeriodosCurso
 };

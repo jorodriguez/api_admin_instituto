@@ -97,23 +97,6 @@ const getListaDiasTrabajadosRangoFecha = (request,response) =>{
 };
 
 
-const getSeriesPeriodosCurso = async (request,response) =>{
-
-    console.log("@getSeriesPeriodosCurso");  
-    
-    try {
-
-        const { uid } = request.params;
-
-        const results =  await utilService.getSeriesPeriodosCurso(uid);
-
-        response.status(200).json(results);
-
-    } catch (e) {
-        handle.callbackErrorNoControlado(e, response);
-    } 
-};
-
 
 
 
@@ -122,6 +105,6 @@ const getSeriesPeriodosCurso = async (request,response) =>{
 module.exports = {
     getMesesActivos,
     findCorreoPadre,    
-    getListaDiasTrabajadosRangoFecha,
-    getSeriesPeriodosCurso
+    getListaDiasTrabajadosRangoFecha
+    
 };

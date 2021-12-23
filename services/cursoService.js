@@ -6,5 +6,6 @@ module.exports = {
         getCursosActivos: cursoDao.getCursosActivos,
         getCursosActivoSucursal: cursoDao.getCursosActivoSucursal,
         getCursosInicianProximosDias:cursoDao.getCursosInicianProximosDias,
-        getCursoByUid:cursoDao.getCursoByUid
+        getCursoByUid:cursoDao.getCursoByUid,
+        getSeriesPeriodosCurso:cursoDao.getSeriesPeriodosCurso
 };

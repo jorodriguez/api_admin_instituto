@@ -11,5 +11,4 @@ router.get('/uid/:uid',checkAuth, curso.getCursosByUid);
 router.get('/:id_sucursal/:id_especialidad',checkAuth, curso.getCursosActivos);
 
 
-
 module.exports = router;
