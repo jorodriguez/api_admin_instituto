@@ -149,6 +149,8 @@ const getSeriesPeriodosCurso = async (request,response) =>{
 
         const { uid } = request.params;
 
+        console.log("uid "+uid);
+
         const results =  await cursoService.getSeriesPeriodosCurso(uid);
 
         response.status(200).json(results);

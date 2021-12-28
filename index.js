@@ -40,6 +40,7 @@ const catDiaRoute = require('./routes/catDia');
 const catHorario = require('./routes/catHorario');
 const catEscolaridad = require('./routes/catEscolaridad');
 const perdiodosCurso = require('./routes/periodosCurso');
+const catMateria = require('./routes/catMateria');
 
 
 app.use('/auth',loginRoutes);
@@ -51,6 +52,7 @@ app.use('/dias',catDiaRoute);
 app.use('/horarios',catHorario);
 app.use('/escolaridad',catEscolaridad);
 app.use('/periodos-curso/',perdiodosCurso);
+app.use('/materias/',catMateria);
 //app.use('/escolaridad',catEscolaridad);
 
 //Cambio de sucursal
