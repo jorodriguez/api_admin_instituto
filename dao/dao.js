@@ -14,19 +14,19 @@ class DaoBase{
         return this.tableName;
     }
 
-    findAll(){
-        return genericDao.findAll(`SELECT * FROM  ${this.tableName} WHERE ELIMINADO = FALSE `,[]); 
+    async findAll(){
+        return await genericDao.findAll(`SELECT * FROM  ${this.tableName} WHERE ELIMINADO = FALSE `,[]); 
     }
 
-    findId(id){
+    async findId(id){
         if(isEmptyOrNull(id)){
             console.log("El id a buscar es null o empty");
         }
-        return genericDao.findOne(`SELECT * FROM  ${this.tableName} WHERE ID = $1 ELIMINADO = FALSE `,[id]); 
+        return await genericDao.findOne(`SELECT * FROM  ${this.tableName} WHERE ID = $1 ELIMINADO = FALSE `,[id]); 
     }
 
-    execute(sql,params){        
-        return genericDao.execute(sql,params); 
+    async execute(sql,params){        
+        return await genericDao.execute(sql,params); 
     }
 
 

@@ -152,13 +152,104 @@ CREATE TABLE co_materia_modulo_especialidad
 );
 
 
---carrera de diseñadora - 1er cuatrimestre
+
+
+-- CUATRIMESTRE 1
 insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
 VALUES(1,1,1,'INTRODUCCION A LA BELLEZA',1,1),
-	(1,1,1,'PEDICURE SPA',2,1),
-	(1,1,1,'MANICURA SPA',2,1),
-	(1,1,1,'DISEÑO DE UÑAS ACRILICAS',8,1),
-	(1,1,1,'TRABAJO FINAL',1,1);
+	(1,1,1,'PEDICURE SPA (1)',1,1),
+	(1,1,1,'PEDICURE SPA (2)',1,1),
+	(1,1,1,'MANICURA SPA (1)',1,1),
+	(1,1,1,'MANICURA SPA (2)',1,1),
+	(1,1,1,'DISEÑO DE UÑAS ACRILICAS (1)',1,1),
+	(1,1,1,'DISEÑO DE UÑAS ACRILICAS (2)',1,1),
+	(1,1,1,'DISEÑO DE UÑAS ACRILICAS (3)',1,1),
+	(1,1,1,'DISEÑO DE UÑAS ACRILICAS (4)',1,1),
+	(1,1,1,'DISEÑO DE UÑAS ACRILICAS (5)',1,1),
+	(1,1,1,'DISEÑO DE UÑAS ACRILICAS (6)',1,1),
+	(1,1,1,'DISEÑO DE UÑAS ACRILICAS (7)',1,1),
+	(1,1,1,'DISEÑO DE UÑAS ACRILICAS (8)',1,1),	
+	(1,1,1,'TRABAJO FINAL 1ER CUATRIMESTRE',1,1);
+
+	
+-- CUATRIMESTRE 2
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(2,1,1,'TRENZADO (1)',1,1),
+	(2,1,1,'TRENZADO (2)',1,1),
+	(2,1,1,'PEINADO BASICO (1)',1,1),
+	(2,1,1,'PEINADO BASICO (2)',1,1),
+	(2,1,1,'PEINADO BASICO (3)',1,1),
+	(2,1,1,'PEINADO BASICO (4)',1,1),
+	(2,1,1,'PEINADO PROFESIONAL (1)',1,1),	
+	(2,1,1,'PEINADO PROFESIONAL (2)',1,1),	
+	(2,1,1,'PEINADO PROFESIONAL (3)',1,1),	
+	(2,1,1,'PEINADO PROFESIONAL (4)',1,1),	
+	(2,1,1,'PESTAÑAS ARTIFICIALES (1)',1,1),	
+	(2,1,1,'PESTAÑAS ARTIFICIALES (2)',1,1),	
+	(2,1,1,'DEPILACIÓN FACIAL (1)',1,1),	
+	(2,1,1,'DEPILACIÓN FACIAL (2)',1,1),	
+	(2,1,1,'TRABAJO FINAL 2DO CUATRIMESTRE',1,1);
+
+	
+-- CUATRIMESTRE 3
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(3,1,1,'MAQUILLAJE PROFESIONAL (1)',1,1),
+	 (3,1,1,'MAQUILLAJE PROFESIONAL (2)',1,1),
+	 (3,1,1,'MAQUILLAJE PROFESIONAL (3)',1,1),
+	 (3,1,1,'MAQUILLAJE PROFESIONAL (4)',1,1),
+	 (3,1,1,'MAQUILLAJE PROFESIONAL (5)',1,1),
+	 (3,1,1,'MAQUILLAJE PROFESIONAL (6)',1,1),	 
+	 (3,1,1,'FACIALES (1)',1,1),	 
+	 (3,1,1,'FACIALES (2)',1,1),	 
+	 (3,1,1,'EXTENSIONES DE CABELLO (1)',1,1),	 
+	 (3,1,1,'EXTENSIONES DE CABELLO (2)',1,1),	 
+	 (3,1,1,'EXTENSIONES DE CABELLO (3)',1,1),	 
+	 (3,1,1,'EXTENSIONES DE CABELLO (4)',1,1),	 
+	 (3,1,1,'EXTENSIONES DE CABELLO (5)',1,1),	 
+	 (3,1,1,'EXTENSIONES DE CABELLO (6)',1,1),	 	 	 
+	 (3,1,1,'TRABAJO FINAL 3ER CUATRIMESTRE',1,1);
+
+
+-- CUATRIMESTRE 4
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(4,1,1,'PERMACOLOGIA (1)',1,1),
+	 (4,1,1,'PERMACOLOGIA (2)',1,1),
+	 (4,1,1,'PERMACOLOGIA (3)',1,1),
+	 (4,1,1,'PERMACOLOGIA (4)',1,1),
+	 (4,1,1,'ALIACIADO PERMANENTE (1)',1,1),
+	 (4,1,1,'ALIACIADO PERMANENTE (2)',1,1),
+	 (4,1,1,'CORTE DE CABELLO (1)',1,1),
+	 (4,1,1,'CORTE DE CABELLO (2)',1,1),
+	 (4,1,1,'CORTE DE CABELLO (3)',1,1),
+	 (4,1,1,'CORTE DE CABELLO (4)',1,1),
+	 (4,1,1,'CORTE DE CABELLO (5)',1,1),
+	 (4,1,1,'CORTE DE CABELLO (6)',1,1),
+	 (4,1,1,'CORTE DE CABELLO (7)',1,1),
+	 (4,1,1,'CORTE DE CABELLO (8)',1,1),
+	 (4,1,1,'TRABAJO FINAL 4TO CUATRIMESTRE',1,1);
+
+
+
+-- CUATRIMESTRE 5
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(5,1,1,'CAPILARES (1)',1,1),
+	 (5,1,1,'CAPILARES (2)',1,1),
+	 (5,1,1,'CAPILARES (3)',1,1),
+	 (5,1,1,'COLORIMETRIA (1)',1,1),
+	 (5,1,1,'COLORIMETRIA (2)',1,1),
+	 (5,1,1,'COLORIMETRIA (3)',1,1),
+	 (5,1,1,'COLORIMETRIA (4)',1,1),
+	 (5,1,1,'COLORIMETRIA (5)',1,1),
+	 (5,1,1,'COLORIMETRIA (6)',1,1),
+	 (5,1,1,'COLORIMETRIA (7)',1,1),
+	 (5,1,1,'COLORIMETRIA (8)',1,1),	 
+	 (5,1,1,'TRABAJO FINAL 5TO CUATRIMESTRE',1,1);
+
+	 
+-- EXAMENES FINALES
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(6,1,1,'EXAMEN ESCRITO FINAL',1,1),
+	 (6,1,1,'EXAMEN PRACTICO FINAL',1,1);
 
 
 

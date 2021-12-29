@@ -188,6 +188,29 @@ const getSeriesPeriodosCurso = (uidCurso) => {
 }
 
 const getQueryBaseSeries = ()=>`
+with periodo as(     
+  select e.id as cat_especialidad,fecha_inicio_previsto::date,fecha_fin_previsto::date,e.duracion,d.equivalencia,d.nombre as periodo
+  from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad
+               inner join cat_duracion d on d.id = e.cat_duracion
+  where c.uid = $1 and c.eliminado = false      
+), materias as(
+SELECT 
+ROW_NUMBER () OVER (ORDER BY m.id) as numero_periodo,
+esp.nombre as modulo,
+m.nombre as clase,
+p.fecha_inicio_previsto,
+p.fecha_fin_previsto,	
+to_char((p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval)::date,'DD-MM-YYYY') as fecha_semana_clase_format, 	
+(p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval) as fecha_semana_clase, 	
+p.equivalencia     
+FROM co_materia_modulo_especialidad m inner join co_modulo_especialidad esp on esp.id = m.co_modulo_especialidad
+               inner join periodo p on p.cat_especialidad = esp.cat_especialidad
+) select m.*,
+    extract(week from m.fecha_semana_clase::date)::int as numero_semana_anio,
+    extract(year from m.fecha_semana_clase::date)::int as numero_anio 	 	
+from materias m`;
+
+/*const getQueryBaseSeries = ()=>`
   with curso as(	
       select fecha_inicio_previsto::date,fecha_fin_previsto::date,e.duracion,d.equivalencia,d.nombre as periodo
       from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad
@@ -199,7 +222,7 @@ const getQueryBaseSeries = ()=>`
           to_char((generate_series + interval '1 week')::date,'DD-MM-YYYY') as fin_semana
       FROM curso,generate_series(curso.fecha_inicio_previsto,curso.fecha_fin_previsto, '1 week')
   LIMIT (select e.duracion from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad where c.uid = $1 )
-`;
+`;*/
 
 
 
