@@ -92,6 +92,26 @@ const updateCurso = async (id,cursoData) => {
   );
 };
 
+
+const marcarCursoComoIniciado = async (uid,genero) => {
+  console.log("@marcarCursoComoIniciado");
+        
+   return await genericDao.execute(
+    `
+                                    UPDATE CO_CURSO
+                                    SET 
+                                        fecha_inicio = getDate(''),
+                                        semana_actual=1,
+                                        activo=true                                        
+                                        fecha_modifico = (getDate('')+getHora('')),
+                                        modifico = $2
+                                    WHERE uid = $1
+                                    RETURNING ID;
+                                    `,
+    [id,genero]
+  );
+};
+
 const eliminarCurso = async (id,cursoData) => {
   console.log("@eliminarCurso");
   
@@ -236,5 +256,6 @@ module.exports = {
   getCursosActivos,
   getCursosActivoSucursal,
   getCursoByUid,
-  getSeriesPeriodosCurso
+  getSeriesPeriodosCurso,
+  marcarCursoComoIniciado
 };

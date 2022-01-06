@@ -4,6 +4,7 @@ const checkAuth = require('./check-auth');
 
 //curso
 router.post('/',checkAuth, curso.createCurso);
+router.post('/iniciar',checkAuth, curso.iniciarCurso);
 router.put('/eliminar/:id',checkAuth, curso.deleteCurso);
 router.put('/:id',checkAuth, curso.updateCurso);
 router.get('/sucursal/:id',checkAuth, curso.getCursosActivosSucursal);

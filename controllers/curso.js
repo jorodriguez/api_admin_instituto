@@ -161,6 +161,26 @@ const getSeriesPeriodosCurso = async (request,response) =>{
 };
 
 
+const iniciarCurso = async (request,response) =>{
+
+    console.log("@iniciarCurso");  
+    
+    try {
+
+        const { uid,genero } = request.body;
+
+        console.log("uid "+uid);
+
+        const results =  await cursoService.iniciarCurso(uid,genero);
+
+        response.status(200).json(results);
+
+    } catch (e) {
+        handle.callbackErrorNoControlado(e, response);
+    } 
+};
+
+
 
 module.exports = {
     createCurso,
@@ -170,5 +190,6 @@ module.exports = {
     getCursosActivosSucursal,
     getCursosProximosIniciar,
     getCursosByUid,
-    getSeriesPeriodosCurso
+    getSeriesPeriodosCurso,
+    iniciarCurso
 };

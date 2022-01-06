@@ -51,10 +51,12 @@ const getInscripcionAlumnoCurso = async (idAlumno,idCurso) => {
 };
 
 const actualizarCampoInscripcion = async (idInscripcion,idCargoInscripcion,genero) => {
-  console.log("@actualizarCampoInscripcion");  
+  console.log("@actualizarCampoInscripcion"); 
+  console.log("actualizer co_cargo_inscripcion de co_inscripcion idCArgo="+idCargoInscripcion); 
   return genericDao.execute(` UPDATE CO_INSCRIPCION 
                               SET co_cargo_inscripcion = $2,
-                                   fecha_modifico = (getDate('')+getHora(''))::timestamp,modifico = $3
+                                   fecha_modifico = (getDate('')+getHora(''))::timestamp,
+                                   modifico = $3
                               WHERE 
                                 id=$1
                               returning id;`
@@ -80,9 +82,14 @@ const getInscripcionesCurso = async (uidCurso)=>{
   return await genericDao.findAll(getQueryBase(" curso.uid = $1 "),[uidCurso]);
 }
 
-const getIncripcionesCursoIniciaHoy = async (idCurso)=>{
-  console.log("@getIncripcionesIniciarCursoHoy");
+const getInscripcionesConfirmadasCurso = async (uidCurso)=>{
+  console.log("@getInscripcionesConfirmadasCurso");
   
+  return await genericDao.findAll(getQueryBase(" curso.uid = $1 AND  i.confirmado "),[uidCurso]);
+}
+
+const getIncripcionesCursoIniciaHoy = async (idCurso)=>{
+  console.log("@getIncripcionesIniciarCursoHoy id="+idCurso);  
   return await genericDao.findAll(getQueryBase(" curso.id = $1 and i.confirmado and curso.fecha_inicio::date <= getDate('') and curso.semana_actual = 0 and curso.activo = false "),[idCurso]);
 }
 
@@ -153,5 +160,6 @@ module.exports = {
   confirmarInscripcion,
   guardarInscripcion,
   getInscripcionesAlumno,
-  getInscripcionesCurso
+  getInscripcionesCurso,
+  getInscripcionesConfirmadasCurso
 };

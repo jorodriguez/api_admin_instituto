@@ -27,19 +27,20 @@ const registrarCargo = async (cargoData) => {
 const registrarInscripcion = async (idCurso,idAlumno,genero) => {
     console.log("@registrarInscripcion");
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
+    console.log(`idCurso ${idCurso} idAlumno ${idAlumno} genero ${genero}`);
 
     const ID_CARGO_INSCRIPCION = 2;
 
-    const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idCurso,idAlumno);
+    const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idAlumno,idCurso);
 
-    if(inscripcionAlumno && inscripcionAlumno.cargo_inscripcion_agregado){
+    if(inscripcionAlumno != null && inscripcionAlumno.cargo_inscripcion_agregado == true){
         
         console.log(" Ya tiene inscripcion agregada ");
 
     }else{
-          console.log(" procediendo a agregar la  inscripcion  ");                
+          console.log(" procediendo a agregar la  inscripcion  "+inscripcionAlumno);                
 
-    let idCargoInscripcion = await cargosDao.registrarCargo({
+    let idCargoInscripcion = await cargosDao.registrarCargoGeneral({
              id_alumno:idAlumno,  
              cat_cargo:ID_CARGO_INSCRIPCION, 
              cantidad:1,
@@ -47,7 +48,7 @@ const registrarInscripcion = async (idCurso,idAlumno,genero) => {
              total:inscripcionAlumno.costo_inscripcion,
              nota:"CARGO GENERADO AUTOMÁTICAMENTE.",
              monto:inscripcionAlumno.costo_inscripcion,
-             monto_modificado:inscripcionAlumno.costo_inscripcion,
+             monto_modificado:false,
              monto_original:inscripcionAlumno.costo_inscripcion,
              co_curso:inscripcionAlumno.id_curso,             
              genero:genero

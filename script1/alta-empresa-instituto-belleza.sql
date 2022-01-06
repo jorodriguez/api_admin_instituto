@@ -40,6 +40,7 @@ alter table co_inscripcion add column confirmado boolean;
 alter table co_inscripcion add column fecha_confirmado timestamp;
 
 alter table co_inscripcion add column usuario_confirmo integer references usuario(id);
+alter table co_inscripcion add column total_adeuda numeric not null default 0;
 
 alter table co_inscripcion add column co_cargo_inscripcion int references co_cargo_balance_alumno(id);
 alter table co_cargo_balance_alumno add column co_curso int references co_curso(id);
@@ -77,3 +78,5 @@ insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empr
 
   insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empresa,genero)
   values('kit de curso','',1,true,true,3,1);
+
+  alter table co_cargo_balance_alumno drop column co_balance_alumno;

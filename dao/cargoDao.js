@@ -72,12 +72,29 @@ const registrarCargo = (cargoData) => {
 const registrarCargoGeneral =async  (cargoData) => {
 
     console.log("@registrarCargoGeneral");
+
         const { id_alumno,co_curso, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero } = cargoData;
 
-        return await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(CO_ALUMNO,co_curso,Cat_Cargo,FECHA,CANTIDAD,CARGO,
+        console.log('idalumno '+id_alumno);
+        console.log('co_curso '+co_curso);
+        console.log('cat_cargo '+cat_cargo);
+        console.log('cantiddad '+cantidad);
+        console.log('cargo '+cargo);
+        console.log('total '+total);
+        console.log('nota '+nota);
+        console.log('monto '+monto);
+        console.log('monto_modificado '+monto_modificado);
+        console.log('monto_modificado '+monto_modificado);
+        console.log('texto_ayuda '+texto_ayuda);
+        console.log('genero '+genero);
+
+        const id =  await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(CO_ALUMNO,co_curso,FECHA,Cat_Cargo,CANTIDAD,CARGO,
                             TOTAL,NOTA,MONTO_MODIFICADO,MONTO_ORIGINAL,TEXTO_AYUDA,GENERO)
                             VALUES($1,$2,getDate(''),$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;`
                             ,[id_alumno,co_curso,cat_cargo,cantidad,cargo,total,nota,monto_modificado,monto_original,texto_ayuda,genero]);
+        console.log("ID DE CARGO GENERADO "+id);
+
+        return id;
        
 };
 
@@ -117,7 +134,7 @@ const getCargosAlumno = (idAlumno,limite) => {
 //    let offset = (limite * pagina);
 
     return genericDao.findAll(
-        ` SELECT a.co_balance_alumno,
+        ` SELECT
                b.id as id_cargo_balance_alumno,
                b.fecha,
                to_char(b.fecha,'dd-mm-yyyy HH24:MI') as fecha_format,
@@ -134,7 +151,7 @@ const getCargosAlumno = (idAlumno,limite) => {
                b.pagado,               	                                         
                false as checked,
                0 as pago 
-             FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_balance_alumno = a.co_balance_alumno 
+             FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
                                            inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
              WHERE a.id = $1 and b.eliminado = false and a.eliminado = false
              ORDER by b.pagado, b.fecha desc
@@ -331,6 +348,7 @@ const obtenerEstadoCuenta = async (idAlumno) => {
 };
 
 const obtenerDetalleEstadoCuenta = async (idAlumno) => {
+    console.log("obtenerDetalleEstadoCuenta")
 
     return await genericDao.findAll(` SELECT a.co_balance_alumno,
                b.id as id_cargo_balance_alumno,
