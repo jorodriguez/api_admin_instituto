@@ -28,7 +28,7 @@ const iniciarCurso = async (uidCurso,genero) => {
 
                         //Inciar curso
                         console.log("MARCANDO CURSO COMO INICIADO");
-                        await cursoDao.marcarCursoComoIniciado(uidCurso,);
+                        await cursoDao.marcarCursoComoIniciado(uidCurso,genero);
 
                 } else {
                         console.log("No existieron inscripciones confirmadas")

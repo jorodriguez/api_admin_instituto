@@ -108,7 +108,7 @@ const marcarCursoComoIniciado = async (uid,genero) => {
                                     WHERE uid = $1
                                     RETURNING ID;
                                     `,
-    [id,genero]
+    [uid,genero]
   );
 };
 

@@ -70,13 +70,13 @@ const registrarColegiatura = async (idCurso,idAlumno,genero) => {
     
     const ID_CARGO_COLEGIATURA = 1;    
 
-    const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idCurso,idAlumno);
+    const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idAlumno,idCurso);
 
     if(inscripcionAlumno){               
           
           console.log(" procediendo a agregar la  inscripcion  ");               
 
-          let idCargoColegiatura = await cargosDao.registrarCargo({
+          let idCargoColegiatura = await cargosDao.registrarCargoGeneral({
              id_alumno:idAlumno,  
              cat_cargo:ID_CARGO_COLEGIATURA, 
              cantidad:1,
@@ -93,6 +93,8 @@ const registrarColegiatura = async (idCurso,idAlumno,genero) => {
 
          //actualizar totales adeuda
          await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno,inscripcionAlumno.id_curso,genero);
+    }else{
+        console.log("xx NO SE ENCONTRO LA INSCRIPCION DEL ALUMNO");
     }
     
 }

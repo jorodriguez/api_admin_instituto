@@ -85,7 +85,6 @@ function getMensualidadesParaRecargoPorSucursal(criterio,idSucursal) {
 }
 
 
-
 module.exports = {
     getMensualidadesParaRecargoTodasSucursales,
     getMensualidadesParaRecargoPorSucursal,
