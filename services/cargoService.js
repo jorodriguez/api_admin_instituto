@@ -14,8 +14,14 @@ const { getSemanaActual } = require('./cursoSemanasService');
 //registrar pagos
 const registrarCargo = async (cargoData) => {
     console.log("@registrarCargo");
-    try{
+    try{        
+
+     const {uid_alumno} = cargoData;
+     
+     const alumno = await alumnoDao.getAlumnoPorUId(uid_alumno);
+
      const respuesta = await cargosDao.registrarCargo(cargoData);
+     
      console.log("Enviar correo de cargo"); 
                                                                    
      return respuesta;

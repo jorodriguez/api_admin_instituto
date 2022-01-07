@@ -1,16 +1,17 @@
 
 const pagoService = require('../services/pagoService');
+const alumnoService = require('../services/alumnoService');
 const handle = require('../helpers/handlersErrors');
 const notificacionService = require('../utils/NotificacionService');
 
-const registrarPago = (request, response) => {
+const registrarPago = async (request, response) => {
     console.log("@registrarPago");
     try {
         //const pagoData = { id_alumno, pago, nota, ids_cargos, cargos_desglosados, cat_forma_pago, identificador_factura, genero } = request.body;
         //const pagoData = { id_alumno, pago, nota, ids_cargos, cargos_desglosados, cat_forma_pago, identificador_factura, genero } = request.body;
         const pagoData =
             {
-                id_alumno,
+                uid_alumno,
                 pago,
                 nota,
                 ids_cargos,
@@ -22,19 +23,27 @@ const registrarPago = (request, response) => {
                 identificador_pago,
                 genero
             } = request.body;
+            
+        const alumno = await alumnoService.getAlumnoPorUId(uid_alumno);
 
-        pagoService
+        console.log("ALUMNO "+JSON.stringify(alumno));
+
+        const result = await pagoService.registrarPago({id_alumno:alumno.id,...pagoData});
+        
+        response.status(200).json(result);
+/*        pagoService
             .registrarPago(pagoData)
             .then(results => {
-                notificacionService.notificarReciboPago(id_alumno, results.agregar_pago_alumno,false);
-                //notificacionService.notificarReciboPago(id_alumno, retorno.agregar_pago_alumno);
+                //notificacionService.notificarReciboPago(id_alumno, results.agregar_pago_alumno,false);                
                 response.status(200).json(results);
             }).catch(error => {
                 console.log("No se guardo el pago " + error);
                 handle.callbackError(error, response);
             });
+            */
 
     } catch (e) {
+        console.log(e);
         handle.callbackErrorNoControlado(e, response);
     }
 };

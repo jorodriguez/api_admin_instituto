@@ -123,8 +123,8 @@ p.equivalencia
 FROM co_materia_modulo_especialidad m inner join co_modulo_especialidad esp on esp.id = m.co_modulo_especialidad
                inner join periodo p on p.cat_especialidad = esp.cat_especialidad
 ) select m.*,
-    extract(week from m.fecha_semana_clase::date)::int as numero_semana_anio,
-    extract(year from m.fecha_semana_clase::date)::int as numero_anio 	 	
+    extract(week from m.fecha_clase::date)::int as numero_semana_anio,
+    extract(year from m.fecha_clase::date)::int as numero_anio 	 	
 from materias m`;
 
 

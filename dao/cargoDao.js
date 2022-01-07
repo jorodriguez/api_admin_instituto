@@ -151,11 +151,11 @@ const getCatalogoCargosPorEmpresa = (idEmpresa) => {
     return genericDao.findAll("SELECT * from cat_cargo WHERe sistema = true or co_empresa = $1 and eliminado = false  ORDER BY id", [idEmpresa]);
 };
 
-const getCargosAlumno = (idAlumno,limite) => {
+const getCargosAlumno = (uidAlumno,limite) => {
     console.log("@getCargosAlumno");
 
     //pagina = (pagina-1);
-    console.log("request.params.id_alumno " + idAlumno);
+    console.log("request.params.id_alumno " + uidAlumno);
     console.log("limite " + limite);
     //console.log("pagin " + pagina);
     
@@ -181,10 +181,10 @@ const getCargosAlumno = (idAlumno,limite) => {
                0 as pago 
              FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
                                            inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
-             WHERE a.id = $1 and b.eliminado = false and a.eliminado = false
+             WHERE a.uid = $1 and b.eliminado = false and a.eliminado = false
              ORDER by b.pagado, b.fecha desc
              LIMIT ${limite}`,
-        [idAlumno]);
+        [uidAlumno]);
 //LIMIT ${limite} OFFSET ${offset}
 };
 
