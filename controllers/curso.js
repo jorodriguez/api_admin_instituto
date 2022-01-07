@@ -2,6 +2,7 @@
 const handle = require('../helpers/handlersErrors');
 
 const cursoService = require('../services/cursoService');
+const cursoSemanasService = require('../services/cursoSemanasService');
 
 const getCursosActivos = async (request, response) => {
     console.log("@getCursosActivos");
@@ -151,7 +152,15 @@ const getSeriesPeriodosCurso = async (request,response) =>{
 
         console.log("uid "+uid);
 
-        const results =  await cursoService.getSeriesPeriodosCurso(uid);
+        const curso = await cursoService.getCursoByUid(uid);
+        let results = [];
+        if(curso && curso.activo){       
+
+            results = await cursoSemanasService.getSemanasCurso(uid);
+            
+        } else{
+            results =  await cursoSemanasService.getSeriesPeriodosCurso(uid);        
+        }               
 
         response.status(200).json(results);
 

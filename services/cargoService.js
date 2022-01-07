@@ -8,6 +8,8 @@ const inscripcionDao = require('../dao/inscripcionDao');
 
 //const notificacionService = require('../utils/NotificacionService');
 const { getHtmlPreviewTemplate,TEMPLATES } = require('../utils/CorreoService');
+const cursoSemanasService = require('./cursoSemanasService');
+const { getSemanaActual } = require('./cursoSemanasService');
 
 //registrar pagos
 const registrarCargo = async (cargoData) => {
@@ -29,24 +31,28 @@ const registrarInscripcion = async (idCurso,idAlumno,genero) => {
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
     console.log(`idCurso ${idCurso} idAlumno ${idAlumno} genero ${genero}`);
 
-    const ID_CARGO_INSCRIPCION = 2;
+    const ID_CARGO_INSCRIPCION = 2;      
 
-    const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idAlumno,idCurso);
-
-    if(inscripcionAlumno != null && inscripcionAlumno.cargo_inscripcion_agregado == true){
+    const cargoInscripcion = await cargosDao.buscarCargoInscripcion(idCurso,idAlumno);
         
-        console.log(" Ya tiene inscripcion agregada ");
+    if(cargoInscripcion != null ){
+        console.log("                                          ");
+        console.log("   YA TIENE INSCRIPCION AGREGADA ");
+        console.log("                                          ");
 
-    }else{
-          console.log(" procediendo a agregar la  inscripcion  "+inscripcionAlumno);                
+    }else{       
+        
+        const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idAlumno,idCurso);    
 
-    let idCargoInscripcion = await cargosDao.registrarCargoGeneral({
+        console.log(" procediendo a agregar la  inscripcion  "+inscripcionAlumno);                
+
+        let idCargoInscripcion = await cargosDao.registrarCargoGeneral({
              id_alumno:idAlumno,  
              cat_cargo:ID_CARGO_INSCRIPCION, 
              cantidad:1,
              cargo:inscripcionAlumno.costo_inscripcion,
              total:inscripcionAlumno.costo_inscripcion,
-             nota:"CARGO GENERADO AUTOMÁTICAMENTE.",
+             nota:"CARGO DE INSCRIPCIÓN GENERADO AUTOMÁTICAMENTE.",
              monto:inscripcionAlumno.costo_inscripcion,
              monto_modificado:false,
              monto_original:inscripcionAlumno.costo_inscripcion,
@@ -55,7 +61,7 @@ const registrarInscripcion = async (idCurso,idAlumno,genero) => {
         });
 
         // modificar la inscripcion
-        await inscripcionDao.actualizarCampoInscripcion(inscripcionAlumno.id,idCargoInscripcion,genero);
+        //await inscripcionDao.actualizarCampoInscripcion(inscripcionAlumno.id_inscripcion,idCargoInscripcion,genero);
 
         //actualizar totales adeuda
         await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno,inscripcionAlumno.id_curso,genero);
@@ -64,39 +70,71 @@ const registrarInscripcion = async (idCurso,idAlumno,genero) => {
 
 }
 
-const registrarColegiatura = async (idCurso,idAlumno,genero) => {
+const registrarColegiaturaAlumnoSemanaActual = async (idCurso,idAlumno,genero) => {
+    
+    console.log("@registrarColegiaturaAlumnoSemanaActual");
+    
+    //obtener Semana ocurriendo
+    const cursoSemanaActual = await cursoSemanasService.getSemanaActualCurso(idCurso);    
+
+    console.log(JSON.stringify(cursoSemanaActual));
+
+    //verificar existencia del registro
+    const cargoColegiatura = await cargosDao.buscarCargoColegiatura(idCurso,cursoSemanaActual.id,idAlumno);
+
+    console.log("      Colegiatura "+JSON.stringify(cargoColegiatura));
+    
+    if(cargoColegiatura != null){
+            console.log("                                          ");
+            console.log(">> YA EXISTE LA COLEGIATURA DE LA SEMANA ");
+            console.log("                                          ");
+    }else{    
+        const idColegiatura = await  registrarColegiatura(idCurso,idAlumno,cursoSemanaActual.id,'',cursoSemanaActual.numero_semana_curso, genero);
+        console.log("cargo registrado "+idColegiatura);
+    }   
+
+}
+
+const registrarColegiatura = async (idCurso,idAlumno,coCursoSemana,folio,numeroSemana,genero) => {
     console.log("@registrarColegiatura");
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
     
     const ID_CARGO_COLEGIATURA = 1;    
-
+   
+    let idRet=null;
     const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idAlumno,idCurso);
 
     if(inscripcionAlumno){               
           
-          console.log(" procediendo a agregar la  inscripcion  ");               
+          console.log(" procediendo a agregar la  colegiatura  ");               
 
-          let idCargoColegiatura = await cargosDao.registrarCargoGeneral({
+          idRet = await cargosDao.registrarCargoGeneral({
              id_alumno:idAlumno,  
              cat_cargo:ID_CARGO_COLEGIATURA, 
              cantidad:1,
+             folio:folio,            
              cargo:inscripcionAlumno.costo_colegiatura,
+             co_curso_semanas:coCursoSemana,
              total:inscripcionAlumno.costo_colegiatura,
              nota:"CARGO GENERADO AUTOMÁTICAMENTE.",
              monto:inscripcionAlumno.costo_colegiatura,
-             monto_modificado:inscripcionAlumno.costo_colegiatura,
+             monto_modificado:false,
              monto_original:inscripcionAlumno.costo_colegiatura,
              co_curso:inscripcionAlumno.id_curso,    
-             texto_ayuda:"semana No. ",
+             texto_ayuda:`Semana ${numeroSemana || ''}`,
              genero:genero
         });      
 
          //actualizar totales adeuda
          await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno,inscripcionAlumno.id_curso,genero);
+
+        
     }else{
         console.log("xx NO SE ENCONTRO LA INSCRIPCION DEL ALUMNO");
+
     }
     
+    return idRet;
 }
 
 
@@ -178,5 +216,6 @@ module.exports = {
     obtenerFiltroAniosCargosSucursal,
     obtenerEstadoCuentaAlumno,
     obtenerPreviewEstadoCuenta,
-    getCargoExtraMensualidadEmpresa
+    getCargoExtraMensualidadEmpresa,
+    registrarColegiaturaAlumnoSemanaActual
 }; 

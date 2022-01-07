@@ -102,7 +102,7 @@ const marcarCursoComoIniciado = async (uid,genero) => {
                                     SET 
                                         fecha_inicio = getDate(''),
                                         semana_actual=1,
-                                        activo=true                                        
+                                        activo=true,
                                         fecha_modifico = (getDate('')+getHora('')),
                                         modifico = $2
                                     WHERE uid = $1
@@ -131,7 +131,9 @@ const eliminarCurso = async (id,cursoData) => {
   );
 };
 
- const getCursosActivoSucursal = async (idSucursal) => {
+
+
+const getCursosActivoSucursal = async (idSucursal) => {
     console.log("@getCursosActivoSucursal");
     return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 '),[idSucursal]);
   };
@@ -168,6 +170,8 @@ const getCursoById = async (id) => {
   return await genericDao.findOne(`select * from co_curso where id = $1 and eliminado = false`,[id]);
 };
 
+
+
 const getQueryBase = (criterio)=>` select curso.id,
 curso.costo_colegiatura_base,
 curso.costo_inscripcion_base,
@@ -203,48 +207,6 @@ where
   --and curso.fecha_fin < current_date	       
 order by curso.fecha_inicio_previsto desc`;
 
-const getSeriesPeriodosCurso = (uidCurso) => {    
-  return genericDao.findAll(getQueryBaseSeries(), [uidCurso]);
-}
-
-const getQueryBaseSeries = ()=>`
-with periodo as(     
-  select e.id as cat_especialidad,fecha_inicio_previsto::date,fecha_fin_previsto::date,e.duracion,d.equivalencia,d.nombre as periodo
-  from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad
-               inner join cat_duracion d on d.id = e.cat_duracion
-  where c.uid = $1 and c.eliminado = false      
-), materias as(
-SELECT 
-ROW_NUMBER () OVER (ORDER BY m.id) as numero_periodo,
-esp.nombre as modulo,
-m.nombre as clase,
-p.fecha_inicio_previsto,
-p.fecha_fin_previsto,	
-to_char((p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval)::date,'DD-MM-YYYY') as fecha_semana_clase_format, 	
-(p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval) as fecha_semana_clase, 	
-p.equivalencia     
-FROM co_materia_modulo_especialidad m inner join co_modulo_especialidad esp on esp.id = m.co_modulo_especialidad
-               inner join periodo p on p.cat_especialidad = esp.cat_especialidad
-) select m.*,
-    extract(week from m.fecha_semana_clase::date)::int as numero_semana_anio,
-    extract(year from m.fecha_semana_clase::date)::int as numero_anio 	 	
-from materias m`;
-
-/*const getQueryBaseSeries = ()=>`
-  with curso as(	
-      select fecha_inicio_previsto::date,fecha_fin_previsto::date,e.duracion,d.equivalencia,d.nombre as periodo
-      from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad
-                   inner join cat_duracion d on d.id = e.cat_duracion
-      where c.uid = $1 and c.eliminado = false
-  )select ROW_NUMBER () OVER (ORDER BY generate_series) as numero_periodo,
-          curso.periodo,
-          to_char(generate_series::date,'DD-MM-YYYY') as inicio_semana,	         
-          to_char((generate_series + interval '1 week')::date,'DD-MM-YYYY') as fin_semana
-      FROM curso,generate_series(curso.fecha_inicio_previsto,curso.fecha_fin_previsto, '1 week')
-  LIMIT (select e.duracion from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad where c.uid = $1 )
-`;*/
-
-
 
 module.exports = {
   createCurso,
@@ -255,7 +217,6 @@ module.exports = {
   getCursosInicianHoy,
   getCursosActivos,
   getCursosActivoSucursal,
-  getCursoByUid,
-  getSeriesPeriodosCurso,
+  getCursoByUid,  
   marcarCursoComoIniciado
 };

@@ -1,6 +1,7 @@
 const cursoDao = require('../dao/cursoDao');
 const inscripcionDao = require('../dao/inscripcionDao');
 const cargoService = require('../services/cargoService');
+const cursoSemanasService = require('../services/cursoSemanasService');
 const CONSTANTES = require('../utils/Constantes');
 
 
@@ -13,6 +14,9 @@ const iniciarCurso = async (uidCurso,genero) => {
                 console.log(`=>generar ${inscripcionesConfirmadas.length} inscripciones`);
 
                 if (inscripcionesConfirmadas && inscripcionesConfirmadas.length > 0) {
+                        
+                        //guardar las semanas del curso
+                        await cursoSemanasService.guardarSemanasCurso(uidCurso,genero);
 
                         //for (const element of inscripcionesConfirmadas) {
                         for(let i =0; i < inscripcionesConfirmadas.length; i++){
@@ -22,7 +26,8 @@ const iniciarCurso = async (uidCurso,genero) => {
                                 console.log("Finalizando generacion de cargo para "+element.alumno);
                                 
                                 console.log("==Iniciando Generacion de COLEGIATURA "+element.alumno);
-                                await cargoService.registrarColegiatura(element.id_curso,element.id_alumno, genero);
+                                //await cargoService.registrarColegiatura(element.id_curso,element.id_alumno, genero);
+                                await cargoService.registrarColegiaturaAlumnoSemanaActual(element.id_curso,element.id_alumno, genero);
 
                         }
 
@@ -49,6 +54,5 @@ module.exports = {
         getCursosActivos: cursoDao.getCursosActivos,
         getCursosActivoSucursal: cursoDao.getCursosActivoSucursal,
         getCursosInicianProximosDias: cursoDao.getCursosInicianProximosDias,
-        getCursoByUid: cursoDao.getCursoByUid,
-        getSeriesPeriodosCurso: cursoDao.getSeriesPeriodosCurso
+        getCursoByUid: cursoDao.getCursoByUid        
 };

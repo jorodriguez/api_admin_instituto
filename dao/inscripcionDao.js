@@ -136,9 +136,9 @@ const getQueryBase = (criterio) => `
     i.confirmado,
     to_char(i.fecha_confirmado,'DD-MM-YYYY HH:MM') as fecha_confirmado,
     (select nombre from usuario where id = i.usuario_confirmo) as usuario_confirmo,
-    curso.foto as foto_curso,
-    i.co_cargo_inscripcion,
-    (i.co_cargo_inscripcion is not null) as cargo_inscripcion_agregado
+    curso.foto as foto_curso
+    --i.co_cargo_inscripcion,
+    --(i.co_cargo_inscripcion is not null) as cargo_inscripcion_agregado
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
     inner join cat_horario horario on horario.id = curso.cat_horario

@@ -80,3 +80,36 @@ insert into cat_cargo(nombre,descripcion,precio,notificar,escribir_monto,co_empr
   values('kit de curso','',1,true,true,3,1);
 
   alter table co_cargo_balance_alumno drop column co_balance_alumno;
+
+  --Semanas curso
+create table co_curso_semanas(
+	id serial not null primary key,	
+	co_curso integer not null references co_curso(id),
+	co_materia_modulo_especialidad integer not null references co_materia_modulo_especialidad(id),
+	co_modulo_especialidad integer not null references co_modulo_especialidad(id),
+	numero_semana_curso integer not null,
+	numero_semana_anio integer not null,
+	fecha_inicio_semana date not null,
+	fecha_fin_semana date not null,
+	fecha_clase date not null,		
+	anio integer not null,
+	genero integer not null references usuario(id),
+	fecha_genero timestamp default current_timestamp,
+	modifico integer references usuario(id),
+	fecha_modifico timestamp,
+	eliminado boolean default false	
+);
+
+alter table co_cargo_balance_alumno add column folio text;
+
+alter table co_cargo_balance_alumno add column co_curso_semanas integer references co_curso_semanas(id);
+
+alter table cat_especialidad add column folio text not null default '' ;
+
+alter table co_sucursal add column folio text not null default '' ;
+
+alter table co_empresa add column folio text not null default '' ;
+
+alter table co_curso add column folio text not null default '' ;
+
+alter table co_inscripcion drop column co_cargo_inscripcion;

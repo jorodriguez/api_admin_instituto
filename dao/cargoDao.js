@@ -73,10 +73,12 @@ const registrarCargoGeneral =async  (cargoData) => {
 
     console.log("@registrarCargoGeneral");
 
-        const { id_alumno,co_curso, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero } = cargoData;
+        const { id_alumno,co_curso,folio,co_curso_semanas, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero } = cargoData;
 
         console.log('idalumno '+id_alumno);
         console.log('co_curso '+co_curso);
+        console.log('folio '+folio);
+        console.log('co_curso_semana '+co_curso_semanas);
         console.log('cat_cargo '+cat_cargo);
         console.log('cantiddad '+cantidad);
         console.log('cargo '+cargo);
@@ -84,14 +86,17 @@ const registrarCargoGeneral =async  (cargoData) => {
         console.log('nota '+nota);
         console.log('monto '+monto);
         console.log('monto_modificado '+monto_modificado);
-        console.log('monto_modificado '+monto_modificado);
+        console.log('monto_original '+monto_original);
         console.log('texto_ayuda '+texto_ayuda);
         console.log('genero '+genero);
 
-        const id =  await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(CO_ALUMNO,co_curso,FECHA,Cat_Cargo,CANTIDAD,CARGO,
+        //Aqui ir por el cat_cargo y ver el precio para saber si se modifico el precio y poner la bandeja de monto_modificado
+
+        const id =  await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(
+                            CO_ALUMNO,CO_CURSO,FOLIO,CO_CURSO_SEMANAS,FECHA,Cat_Cargo,CANTIDAD,CARGO,
                             TOTAL,NOTA,MONTO_MODIFICADO,MONTO_ORIGINAL,TEXTO_AYUDA,GENERO)
-                            VALUES($1,$2,getDate(''),$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;`
-                            ,[id_alumno,co_curso,cat_cargo,cantidad,cargo,total,nota,monto_modificado,monto_original,texto_ayuda,genero]);
+                            VALUES($1,$2,$3,$4,getDate(''),$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ID;`
+                            ,[id_alumno,co_curso,folio || '',co_curso_semanas, cat_cargo,cantidad,cargo,total,nota,monto_modificado,monto_original,texto_ayuda,genero]);
         console.log("ID DE CARGO GENERADO "+id);
 
         return id;
@@ -102,6 +107,29 @@ const getCatCargo = async (id) => {
     console.log("@getCatCargo");
     return await genericDao.findOne("SELECT * from cat_cargo WHERE id = $1 and eliminado = false ", [id]);
 };
+
+const buscarCargoColegiatura = async (idCurso,idCoCursoSemana,idAlumno)=>{
+    return await genericDao.findOne(
+        `select * 
+         from co_cargo_balance_alumno
+            where cat_cargo = 1            
+            and co_curso = $1 
+            and co_curso_semanas = $2
+            and co_alumno = $3
+        and eliminado = false
+     `, [idCurso,idCoCursoSemana,idAlumno]);
+}
+
+const buscarCargoInscripcion = async (idCurso,idAlumno)=>{
+    return await genericDao.findOne(
+        `select * 
+         from co_cargo_balance_alumno
+            where cat_cargo = 2
+            and co_curso = $1 
+            and co_alumno = $2
+        and eliminado = false
+     `, [idCurso,idAlumno]);
+}
 
 
 const completarRegistroRecargoMensualidad = (idCargoMensualidad, idRecargo, genero) => {
@@ -409,5 +437,7 @@ module.exports = {
     obtenerFiltroAniosCargosSucursal,
     obtenerEstadoCuenta,
     getCargoExtraMensualidadEmpresa,
-    getCargoPorAlumno
+    getCargoPorAlumno,
+    buscarCargoColegiatura,
+    buscarCargoInscripcion
 };
