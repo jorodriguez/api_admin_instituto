@@ -52,4 +52,5 @@ module.exports = {
         getSeriesPeriodosCurso: cursoSemanasDao.getSeriesPeriodosCurso,
         getSemanaActualCurso: cursoSemanasDao.getSemanaActualCurso,
         getSemanasCurso: cursoSemanasDao.getSemanasCurso,
+        getSemanaCursoById: cursoSemanasDao.getSemanaCursoById,
 };

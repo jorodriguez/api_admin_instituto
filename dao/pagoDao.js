@@ -9,21 +9,26 @@ const registrarPago = (pagoData) => {
     console.log("=====>> " + JSON.stringify(pagoData));
     return new Promise((resolve, reject) => {
         const { id_alumno, pago, nota, ids_cargos, cargos_desglosados,ids_cargos_descuento,id_descuentos_desglose, cat_forma_pago, identificador_factura,identificador_pago, genero } = pagoData;
+        
         console.log("identificador_pagoidentificador_pagoidentificador_pago "+identificador_pago);
+
+        const SQL = `SELECT agregar_pago_alumno(
+            '${ids_cargos}',
+            '${cargos_desglosados}',
+            '${ids_cargos_descuento}',
+            '${id_descuentos_desglose}',                        
+            ${id_alumno},
+            ${pago},
+            '${nota}',
+            ${cat_forma_pago},
+            '${identificador_factura}',
+            '${identificador_pago}',
+            ${genero});`;
+
+        console.log(SQL);
+        
         genericDao
-            .executeProcedure(
-                `SELECT agregar_pago_alumno(
-                        '${ids_cargos}',
-                        '${cargos_desglosados}',
-                        '${ids_cargos_descuento}',
-                        '${id_descuentos_desglose}',                        
-                        ${id_alumno},
-                        ${pago},
-                        '${nota}',
-                        ${cat_forma_pago},
-                        '${identificador_factura}',
-                        '${identificador_pago}',
-                        ${genero});`)
+            .executeProcedure(SQL)
             .then(results => {
                 if (results.rowCount > 0) {
                     var retorno = results.rows[0];

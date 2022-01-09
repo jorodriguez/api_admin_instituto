@@ -28,6 +28,25 @@ const registrarCargo = async (request, response) => {
 };
 
 
+/*const registrarColegiatura = async (request, response) => {
+    console.log("@registrarColegiatura");
+    
+    try {
+        const params = { id_curso,id_alumno,id_curso_semana, genero } = request.body;
+        
+        const respuesta = await cargoService.registrarColegiatura(params);
+        
+        //notificacionService.notificarCargo(params.id_alumno,respuesta.id_cargo);
+                
+        response.status(200).json(respuesta);
+        
+    } catch (e) {
+        handle.callbackErrorNoControlado(e, response);
+    }
+};*/
+
+
+
 const getCatalogoCargosPorEmpresa = (request, response) => {
     console.log("@getCatalogoCargosPorEmpresa");
 
@@ -205,6 +224,7 @@ module.exports = {
     obtenerFiltroAniosCargosSucursal,
     obtenerEstadoCuentaAlumno,
     enviarEstadoCuentaAlumno,
-    obtenerHtmlPreviewEstadoCuenta
+    obtenerHtmlPreviewEstadoCuenta,
+    
     
 };

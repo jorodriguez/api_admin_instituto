@@ -5,7 +5,7 @@ const { ExceptionDatosFaltantes, ExceptionBD } = require('../exception/exeption'
 const { isEmptyOrNull } = require('../utils/Utils');
 
 //registrar pagos
-const registrarCargo = (cargoData) => {
+/*const registrarCargo = (cargoData) => {
     console.log("@registrarCargo");
 
     return new Promise((resolve, reject) => {
@@ -67,7 +67,7 @@ const registrarCargo = (cargoData) => {
 
     });
 
-};
+};*/
 
 const registrarCargoGeneral =async  (cargoData) => {
 
@@ -425,8 +425,7 @@ const getCargoPorAlumno = (idAlumno,idCargo) => {
 };
 
 
-module.exports = {
-    registrarCargo,
+module.exports = {    
     registrarCargoGeneral,
     getCatalogoCargosPorEmpresa,
     getCargosAlumno,
@@ -439,5 +438,6 @@ module.exports = {
     getCargoExtraMensualidadEmpresa,
     getCargoPorAlumno,
     buscarCargoColegiatura,
-    buscarCargoInscripcion
+    buscarCargoInscripcion,
+    getCatCargo
 };

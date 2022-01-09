@@ -38,6 +38,11 @@ const getInscripcionesAlumno = async(uidAlumno)=>{
   return await genericDao.findAll(getQueryBase(' a.uid = $1 '),[uidAlumno]);
 }
 
+const getInscripcionesActivasAlumno = async(uidAlumno)=>{
+  console.log("@getInscripcionesActivasAlumno"); 
+  return await genericDao.findAll(getQueryBase(' a.uid = $1 AND curso.activo = true'),[uidAlumno]);
+}
+
 const getInscripciones = async (idSucursal) => {
   console.log("@getInscripciones");
   return await genericDao.findAll(getQueryBase(' suc.id = $1 '),[idSucursal]
@@ -67,7 +72,7 @@ const actualizarTotalAdeudaInscripcion = async (idAlumno,idCurso,genero) => {
   console.log("@actualizarTotalAdeudaInscripcion");  
 
   return genericDao.execute(` UPDATE CO_INSCRIPCION SET 
-                                  total_adeuda = (select case when sum(total) is null then 0 else sum(total) end from co_cargo_balance_alumno where co_alumno = $1 and co_curso = $2 and eliminado = false),
+                                  total_adeudo = (select case when sum(total) is null then 0 else sum(total) end from co_cargo_balance_alumno where co_alumno = $1 and co_curso = $2 and eliminado = false),
                                   fecha_modifico = (getDate('')+getHora(''))::timestamp,
                                   modifico = $3
                             WHERE 
@@ -75,6 +80,10 @@ const actualizarTotalAdeudaInscripcion = async (idAlumno,idCurso,genero) => {
                               returning id`
         ,[idAlumno,idCurso,genero]);
 };
+
+
+
+
 
 const getInscripcionesCurso = async (uidCurso)=>{
   console.log("@getIncripcionesCurso");
@@ -136,9 +145,8 @@ const getQueryBase = (criterio) => `
     i.confirmado,
     to_char(i.fecha_confirmado,'DD-MM-YYYY HH:MM') as fecha_confirmado,
     (select nombre from usuario where id = i.usuario_confirmo) as usuario_confirmo,
-    curso.foto as foto_curso
-    --i.co_cargo_inscripcion,
-    --(i.co_cargo_inscripcion is not null) as cargo_inscripcion_agregado
+    curso.foto as foto_curso,
+    curso.activo
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
     inner join cat_horario horario on horario.id = curso.cat_horario
@@ -161,5 +169,6 @@ module.exports = {
   guardarInscripcion,
   getInscripcionesAlumno,
   getInscripcionesCurso,
-  getInscripcionesConfirmadasCurso
+  getInscripcionesConfirmadasCurso,
+  getInscripcionesActivasAlumno
 };

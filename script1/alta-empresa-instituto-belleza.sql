@@ -113,3 +113,9 @@ alter table co_empresa add column folio text not null default '' ;
 alter table co_curso add column folio text not null default '' ;
 
 alter table co_inscripcion drop column co_cargo_inscripcion;
+
+
+alter table co_pago_balance_alumno add column co_alumno integer not null references co_alumno(id)
+
+alter table co_pago_balance_alumno drop column co_balance_alumno;
+

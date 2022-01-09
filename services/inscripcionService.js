@@ -76,5 +76,6 @@ module.exports = {
     generarInscripcionesAutomaticamente,
     getInscripciones: inscripcionDao.getInscripciones,
     getInscripcionesAlumno:inscripcionDao.getInscripcionesAlumno,
+    getInscripcionesActivasAlumno:inscripcionDao.getInscripcionesActivasAlumno,
     getInscripcionesCurso:inscripcionDao.getInscripcionesCurso
 };

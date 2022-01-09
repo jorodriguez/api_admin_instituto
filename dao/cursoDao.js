@@ -171,6 +171,20 @@ const getCursoById = async (id) => {
 };
 
 
+const actualizarTotalAdeudaAlumno = async (idAlumno,genero) => {
+  console.log("@actualizarTotalAdeudaAlumno");  
+
+  return genericDao.execute(` UPDATE CO_ALUMNO SET 
+                                  total_adeudo = (select case when sum(total) is null then 0 else sum(total) end from co_cargo_balance_alumno where co_alumno = $1 and eliminado = false),
+                                  fecha_modifico = (getDate('')+getHora(''))::timestamp,
+                                  modifico = $3
+                            WHERE 
+                                  co_alumno=$1
+                              returning id`
+        ,[idAlumno,genero]);
+};
+
+
 
 const getQueryBase = (criterio)=>` select curso.id,
 curso.costo_colegiatura_base,
@@ -218,5 +232,6 @@ module.exports = {
   getCursosActivos,
   getCursosActivoSucursal,
   getCursoByUid,  
-  marcarCursoComoIniciado
+  marcarCursoComoIniciado,
+  actualizarTotalAdeudaAlumno
 };

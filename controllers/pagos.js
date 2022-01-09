@@ -23,7 +23,8 @@ const registrarPago = async (request, response) => {
                 identificador_pago,
                 genero
             } = request.body;
-            
+
+                    
         const alumno = await alumnoService.getAlumnoPorUId(uid_alumno);
 
         console.log("ALUMNO "+JSON.stringify(alumno));

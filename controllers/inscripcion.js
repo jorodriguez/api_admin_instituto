@@ -75,6 +75,22 @@ const getInscripcionesAlumno = async (request, response) => {
     }
 };
 
+const getInscripcionesCursoActivoAlumno = async (request, response) => {
+    console.log("@getInscripcionesCursoActivoAlumno");
+    try {
+
+        const uid_alumno = request.params.uid_alumno;
+
+        const results = await inscripcionService.getInscripcionesActivasAlumno(uid_alumno);
+        response.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
 
 const confirmarInscripcion = async (request, response) => {
     console.log("@confirmarInscripcion");
@@ -113,5 +129,7 @@ module.exports = {
     confirmarInscripcion,
     getInscripciones,
     getInscripcionesAlumno,
-    getInscripcionesCurso
+    getInscripcionesCurso,
+    getInscripcionesCursoActivoAlumno
+
 };

@@ -102,13 +102,13 @@ const modificarFotoPerfil = async (idAlumno, metadaFoto, genero) => {
 };
 
 const getAlumnoPorUId = (uidAlumno) => {
-    console.log("@getAlumnoPorUId");
+    console.log("@getAlumnoPorUId "+uidAlumno);
     return genericDao.findOne(`select * from co_alumno where uid = $1 and eliminado = false;`, [uidAlumno]);
 };
 
-const getAlumnoPorId = (uidAlumno) => {
-    console.log("@getAlumnoPorId");
-    return genericDao.findOne(`select * from co_alumno where id = $1 and eliminado = false;`, [uidAlumno]);
+const getAlumnoPorId = (idAlumno) => {
+    console.log("@getAlumnoPorId "+idAlumno);
+    return genericDao.findOne(`select * from co_alumno where id = $1 and eliminado = false;`, [idAlumno]);
 };
 
 const activarAlumnoEliminado = (idAlumno, genero) => {

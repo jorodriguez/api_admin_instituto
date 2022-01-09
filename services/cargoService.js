@@ -5,25 +5,39 @@ const alumnoDao = require('../dao/alumnoDao');
 const catCargoDao = require('../dao/catCargoDao');
 const cursoDao = require('../dao/cursoDao');
 const inscripcionDao = require('../dao/inscripcionDao');
+const CONSTANTES = require('../utils/Constantes');
 
 //const notificacionService = require('../utils/NotificacionService');
 const { getHtmlPreviewTemplate,TEMPLATES } = require('../utils/CorreoService');
 const cursoSemanasService = require('./cursoSemanasService');
 const { getSemanaActual } = require('./cursoSemanasService');
 
-//registrar pagos
+//registrar cargos
 const registrarCargo = async (cargoData) => {
     console.log("@registrarCargo");
     try{        
 
-     const {uid_alumno} = cargoData;
-     
-     const alumno = await alumnoDao.getAlumnoPorUId(uid_alumno);
+     const {id_curso,cat_cargo,id_alumno,id_curso_semana,cantidad, monto, nota,genero} = cargoData;
 
-     const respuesta = await cargosDao.registrarCargo(cargoData);
-     
-     console.log("Enviar correo de cargo"); 
-                                                                   
+     let respuesta = null;
+
+     if(cat_cargo == CONSTANTES.ID_CARGO_COLEGIATURA){
+         console.log("Es colegiatura");
+         respuesta = await registrarColegiatura(id_curso,id_alumno,id_curso_semana,genero);
+     }
+
+     if(cat_cargo == CONSTANTES.ID_CARGO_INSCRIPCION){
+        console.log("Es inscripcion");
+        respuesta = await registrarInscripcion(id_curso,id_alumno,genero);
+     }
+
+     if(cat_cargo != CONSTANTES.ID_CARGO_INSCRIPCION && cat_cargo != CONSTANTES.ID_CARGO_COLEGIATURA){
+        console.log("Es un cargo especial");
+        respuesta = await guardarCargoGenerico(id_alumno,cat_cargo,cantidad,monto,"",nota);
+     }
+       
+     //enviar correo de recibo
+                                                                        
      return respuesta;
     }catch(error){
         console.log(" X X X X X "+error);
@@ -66,11 +80,10 @@ const registrarInscripcion = async (idCurso,idAlumno,genero) => {
              genero:genero
         });
 
-        // modificar la inscripcion
-        //await inscripcionDao.actualizarCampoInscripcion(inscripcionAlumno.id_inscripcion,idCargoInscripcion,genero);
-
+      
         //actualizar totales adeuda
         await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno,inscripcionAlumno.id_curso,genero);
+        await alumnoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
        
     }
 
@@ -95,14 +108,40 @@ const registrarColegiaturaAlumnoSemanaActual = async (idCurso,idAlumno,genero) =
             console.log(">> YA EXISTE LA COLEGIATURA DE LA SEMANA ");
             console.log("                                          ");
     }else{    
-        const idColegiatura = await  registrarColegiatura(idCurso,idAlumno,cursoSemanaActual.id,'',cursoSemanaActual.numero_semana_curso, genero);
+        const idColegiatura = await  guardarColegiatura(idCurso,idAlumno,cursoSemanaActual.id,'',cursoSemanaActual.numero_semana_curso, genero);
         console.log("cargo registrado "+idColegiatura);
     }   
 
 }
 
-const registrarColegiatura = async (idCurso,idAlumno,coCursoSemana,folio,numeroSemana,genero) => {
+
+const registrarColegiatura = async (idCurso,idAlumno,idCursoSemana,genero) => {
+    
     console.log("@registrarColegiatura");
+
+    let retId = null;
+
+    const cursoSemana = await cursoSemanasService.getSemanaCursoById(idCursoSemana);
+        
+    const cargoColegiatura = await cargosDao.buscarCargoColegiatura(idCurso,idCursoSemana,idAlumno);
+
+    console.log("      Colegiatura "+JSON.stringify(cargoColegiatura));
+    
+    if(cargoColegiatura != null){
+            console.log("                                          ");
+            console.log(">> YA EXISTE LA COLEGIATURA DE LA SEMANA ");
+            console.log("                                          ");
+    }else{    
+        retId = await  guardarColegiatura(idCurso,idAlumno,idCursoSemana,'',cursoSemana.numero_semana_curso, genero);
+        console.log("cargo registrado "+idColegiatura);
+    }   
+
+    return retId;
+
+}
+
+const guardarColegiatura = async (idCurso,idAlumno,coCursoSemana,folio,numeroSemana,genero) => {
+    console.log("@guardarColegiatura");
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
     
     const ID_CARGO_COLEGIATURA = 1;    
@@ -133,12 +172,58 @@ const registrarColegiatura = async (idCurso,idAlumno,coCursoSemana,folio,numeroS
 
          //actualizar totales adeuda
          await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno,inscripcionAlumno.id_curso,genero);
+         await alumnoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
 
         
     }else{
         console.log("xx NO SE ENCONTRO LA INSCRIPCION DEL ALUMNO");
 
     }
+    
+    return idRet;
+}
+
+
+const guardarCargoGenerico = async (idAlumno,cat_cargo,cantidad,monto,folio,nota, genero) => {
+    console.log("@guardarCargoGenerico");     
+       
+          let idRet=null;
+
+          const cargoCatalogo = await cargosDao.getCatCargo(cat_cargo);
+          
+          let montoModificado = false;
+          
+          let cargoAplicar = cargoCatalogo.precio;
+
+          if(cargoCatalogo.escribir_monto){
+              //se toma el monto que viene como parametro
+              cargoAplicar = monto;
+              montoModificado = (cargoCatalogo.precio != monto);
+          }          
+
+          const montoTotal = (cargoAplicar * cantidad);
+          
+          
+          idRet = await cargosDao.registrarCargoGeneral({
+             id_alumno:idAlumno,  
+             cat_cargo:cat_cargo, 
+             cantidad:1,
+             folio:folio,            
+             cargo: cargoAplicar,
+             co_curso_semanas:null,
+             total:montoTotal,
+             nota: (nota || ''),
+             monto: monto,
+             monto_modificado:montoModificado,
+             monto_original: cargoCatalogo.precio,
+             co_curso:null,    
+             texto_ayuda:``,
+             genero:genero
+        });      
+
+         //actualizar totales adeuda en alumno
+         await alumnoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
+     
     
     return idRet;
 }

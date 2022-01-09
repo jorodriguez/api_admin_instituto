@@ -63,6 +63,16 @@ const getSemanasCurso = (uidCurso) => {
   return genericDao.findAll(getQueryBaseSemanasCurso(" curso.uid = $1 "), [uidCurso]);
 }
 
+const getSemanaCursoById = (idSemanaCurso)=>{
+  return genericDao.findOne(`
+      select * 
+      from co_curso_semanas
+      where id = $1
+          and eliminado = false
+  `,[idSemanaCurso]);
+}
+
+
 const getSemanaActualCurso = (idCurso)=>{
   return genericDao.findOne(`
       select * 
@@ -133,5 +143,6 @@ module.exports = {
   guardarCursoSemana,
   getSeriesPeriodosCurso,
   getSemanaActualCurso,
-  getSemanasCurso
+  getSemanasCurso,
+  getSemanaCursoById
 };
