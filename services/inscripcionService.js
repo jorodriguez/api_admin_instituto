@@ -75,6 +75,7 @@ module.exports = {
     confirmarInscripcion,
     generarInscripcionesAutomaticamente,
     getInscripciones: inscripcionDao.getInscripciones,
+    getInscripcionesSucursalCurso: inscripcionDao.getInscripcionesSucursalCurso,
     getInscripcionesAlumno:inscripcionDao.getInscripcionesAlumno,
     getInscripcionesActivasAlumno:inscripcionDao.getInscripcionesActivasAlumno,
     getInscripcionesCurso:inscripcionDao.getInscripcionesCurso

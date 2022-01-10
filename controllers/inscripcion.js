@@ -46,12 +46,32 @@ const guardarInscripcion = async (request, response) => {
 };
 
 const getInscripciones = async (request, response) => {
+    
     console.log("@getInscripciones");
+    
     try {
 
         const id_sucursal = parseInt(request.params.id_sucursal);
 
         const results = await inscripcionService.getInscripciones(id_sucursal);
+        
+        response.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+const getInscripcionesSucursalCurso = async (request, response) => {
+    console.log("@getInscripcionesSucursalCurso");
+    try {
+
+        const id_sucursal = parseInt(request.params.id_sucursal);
+        const id_curso = parseInt(request.params.id_curso);
+        
+        const results = await inscripcionService.getInscripcionesSucursalCurso(id_sucursal,id_curso);
         response.status(200).json(results);
 
     } catch (e) {
@@ -130,6 +150,6 @@ module.exports = {
     getInscripciones,
     getInscripcionesAlumno,
     getInscripcionesCurso,
-    getInscripcionesCursoActivoAlumno
-
+    getInscripcionesCursoActivoAlumno,
+    getInscripcionesSucursalCurso
 };

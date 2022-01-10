@@ -133,12 +133,16 @@ const eliminarCurso = async (id,cursoData) => {
 
 
 
-const getCursosActivoSucursal = async (idSucursal) => {
-    console.log("@getCursosActivoSucursal");
-    return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 '),[idSucursal]);
-  };
-  
+const getCursosSucursal = async (idSucursal) => {
+    console.log("@getCursosSucursal");
+    return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 '),[idSucursal]);  
+};
 
+const getCursosActivoSucursal = async (idSucursal,activo) => {
+  console.log("@getCursosActivoSucursal");  
+  return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 AND curso.activo = $2 '),[idSucursal,activo]);
+};
+  
 const getCursosActivos = async (idSucursal,idEspecialidad) => {
   console.log("@getcursosActivos");
   return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 and esp.id = $2 '),[idSucursal,idEspecialidad]);
@@ -177,9 +181,8 @@ const actualizarTotalAdeudaAlumno = async (idAlumno,genero) => {
   return genericDao.execute(` UPDATE CO_ALUMNO SET 
                                   total_adeudo = (select case when sum(total) is null then 0 else sum(total) end from co_cargo_balance_alumno where co_alumno = $1 and eliminado = false),
                                   fecha_modifico = (getDate('')+getHora(''))::timestamp,
-                                  modifico = $3
-                            WHERE 
-                                  co_alumno=$1
+                                  modifico = $2
+                            WHERE  id=$1
                               returning id`
         ,[idAlumno,genero]);
 };
@@ -230,8 +233,9 @@ module.exports = {
   eliminarCurso,
   getCursosInicianHoy,
   getCursosActivos,
-  getCursosActivoSucursal,
+  getCursosSucursal,
   getCursoByUid,  
   marcarCursoComoIniciado,
-  actualizarTotalAdeudaAlumno
+  actualizarTotalAdeudaAlumno,
+  getCursosActivoSucursal
 };

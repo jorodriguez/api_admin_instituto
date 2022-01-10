@@ -19,13 +19,13 @@ const getCursosActivos = async (request, response) => {
     }
 };
 
-const getCursosActivosSucursal = async (request, response) => {
+const getCursosSucursal = async (request, response) => {
     console.log("@getCursosActivosSucursal");
     try {
         
         const { id } = request.params;
         console.log(" id_sucursal",id);
-        const results = await cursoService.getCursosActivoSucursal(id);        
+        const results = await cursoService.getCursosSucursal(id);        
         response.status(200).json(results);       
        
     } catch (e) {
@@ -33,6 +33,23 @@ const getCursosActivosSucursal = async (request, response) => {
         handle.callbackErrorNoControlado(e, response);
     }
 };
+
+const getCursosSucursalActivados = async (request, response) => {
+    console.log("@getCursosSucursalActivados");
+    try {
+        
+        const { id_sucursal } = request.params;
+        const { activo } = request.params;
+        
+        const results = await cursoService.getCursosActivoSucursal(id_sucursal,activo);
+        response.status(200).json(results);       
+       
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
 
 const getCursosByUid = async (request, response) => {
     console.log("@getCursosByuUid");
@@ -196,9 +213,10 @@ module.exports = {
     updateCurso,
     deleteCurso,
     getCursosActivos,
-    getCursosActivosSucursal,
+    getCursosSucursal,
     getCursosProximosIniciar,
     getCursosByUid,
     getSeriesPeriodosCurso,
-    iniciarCurso
+    iniciarCurso,
+    getCursosSucursalActivados
 };

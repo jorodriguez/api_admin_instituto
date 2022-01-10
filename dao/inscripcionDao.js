@@ -49,6 +49,13 @@ const getInscripciones = async (idSucursal) => {
   );
 };
 
+const getInscripcionesSucursalCurso = async (idSucursal,idCurso) => {
+  console.log("@getInscripcionesSucursalCurso");
+  return await genericDao.findAll(getQueryBase(' suc.id = $1 AND curso.id = $2 '),[idSucursal,idCurso]
+  );
+};
+
+
 const getInscripcionAlumnoCurso = async (idAlumno,idCurso) => {
   console.log("@getInscripciones");
   //return await genericDao.findOne(` select * from co_inscripcion where co_curso = and co_alumno = and eliminado = false; `,[idSucursal]);
@@ -170,5 +177,6 @@ module.exports = {
   getInscripcionesAlumno,
   getInscripcionesCurso,
   getInscripcionesConfirmadasCurso,
-  getInscripcionesActivasAlumno
+  getInscripcionesActivasAlumno,
+  getInscripcionesSucursalCurso
 };

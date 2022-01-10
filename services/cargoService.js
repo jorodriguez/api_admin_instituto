@@ -11,29 +11,32 @@ const CONSTANTES = require('../utils/Constantes');
 const { getHtmlPreviewTemplate,TEMPLATES } = require('../utils/CorreoService');
 const cursoSemanasService = require('./cursoSemanasService');
 const { getSemanaActual } = require('./cursoSemanasService');
+const alumnoService = require('./alumnoService');
 
 //registrar cargos
 const registrarCargo = async (cargoData) => {
     console.log("@registrarCargo");
     try{        
 
-     const {id_curso,cat_cargo,id_alumno,id_curso_semana,cantidad, monto, nota,genero} = cargoData;
+     const {id_curso,cat_cargo,uid_alumno,id_curso_semana,cantidad, monto, nota,genero} = cargoData;
+
+     const alumno = await alumnoService.getAlumnoPorUId(uid_alumno);
 
      let respuesta = null;
 
-     if(cat_cargo == CONSTANTES.ID_CARGO_COLEGIATURA){
+     if(cat_cargo.id == CONSTANTES.ID_CARGO_COLEGIATURA){
          console.log("Es colegiatura");
-         respuesta = await registrarColegiatura(id_curso,id_alumno,id_curso_semana,genero);
+         respuesta = await registrarColegiatura(id_curso,alumno.id,id_curso_semana,genero);
      }
 
-     if(cat_cargo == CONSTANTES.ID_CARGO_INSCRIPCION){
+     if(cat_cargo.id == CONSTANTES.ID_CARGO_INSCRIPCION){
         console.log("Es inscripcion");
-        respuesta = await registrarInscripcion(id_curso,id_alumno,genero);
+        respuesta = await registrarInscripcion(id_curso,alumno.id,genero);
      }
 
-     if(cat_cargo != CONSTANTES.ID_CARGO_INSCRIPCION && cat_cargo != CONSTANTES.ID_CARGO_COLEGIATURA){
+     if(cat_cargo.id != CONSTANTES.ID_CARGO_INSCRIPCION && cat_cargo != CONSTANTES.ID_CARGO_COLEGIATURA){
         console.log("Es un cargo especial");
-        respuesta = await guardarCargoGenerico(id_alumno,cat_cargo,cantidad,monto,"",nota);
+        respuesta = await guardarCargoGenerico(alumno.id,cat_cargo.id,cantidad,monto,"",nota,genero);
      }
        
      //enviar correo de recibo
@@ -222,7 +225,8 @@ const guardarCargoGenerico = async (idAlumno,cat_cargo,cantidad,monto,folio,nota
         });      
 
          //actualizar totales adeuda en alumno
-         await alumnoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
+         //await alumnoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
+         await cursoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
      
     
     return idRet;

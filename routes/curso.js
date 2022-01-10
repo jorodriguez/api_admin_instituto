@@ -7,7 +7,8 @@ router.post('/',checkAuth, curso.createCurso);
 router.post('/iniciar',checkAuth, curso.iniciarCurso);
 router.put('/eliminar/:id',checkAuth, curso.deleteCurso);
 router.put('/:id',checkAuth, curso.updateCurso);
-router.get('/sucursal/:id',checkAuth, curso.getCursosActivosSucursal);
+router.get('/sucursal/:id',checkAuth, curso.getCursosSucursal);
+router.get('/sucursal/:id_sucursal/activo/:activo',checkAuth, curso.getCursosSucursalActivados);
 router.get('/uid/:uid',checkAuth, curso.getCursosByUid);
 router.get('/:id_sucursal/:id_especialidad',checkAuth, curso.getCursosActivos);
 
