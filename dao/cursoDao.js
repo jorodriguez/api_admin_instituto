@@ -29,8 +29,8 @@ const createCurso = async (cursoData) => {
     const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1",[cat_especialidad]);
 
     return await genericDao.execute(`
-          insert into co_curso(cat_especialidad,dias_array,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,genero)
-          values($1,$2::int[],$3,$4,$5,$6,$7,$8::date,($8::date + interval '${especialidad.duracion} weeks'),$9,$10) RETURNING ID;
+          insert into co_curso(cat_especialidad,dias_array,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,foto,genero)
+          values($1,$2::int[],$3,$4,$5,$6,$7,$8::date,($8::date + interval '${especialidad.duracion} weeks'),$9,$10,$11) RETURNING ID;
     `,[cat_especialidad,
       dias_array,
       cat_horario,
@@ -38,9 +38,9 @@ const createCurso = async (cursoData) => {
       costo_colegiatura_base,
       costo_inscripcion_base,
       nota,
-      new Date(fecha_inicio_previsto),
-            
+      new Date(fecha_inicio_previsto),            
       co_sucursal,
+      especialidad.foto,
       genero]);      
 
   }catch(e){  
