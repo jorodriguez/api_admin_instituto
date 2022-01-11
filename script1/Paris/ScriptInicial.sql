@@ -359,3 +359,104 @@ alter table cat_especialidad add column color text;
 
 alter table co_alumno add column direccion text;
 alter table co_alumno add column telefono text;
+
+
+
+
+--BARBERIA
+insert into co_modulo_especialidad(cat_especialidad,co_empresa, nombre,genero)
+values(2,1,'Barnería',1) returning id;
+
+
+-- barberia
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(7,1,1,'SEMANA 1',1,1),
+	 (7,1,1,'SEMANA 2',1,1),
+	 (7,1,1,'SEMANA 3',1,1),
+	 (7,1,1,'SEMANA 4',1,1),
+	 (7,1,1,'SEMANA 5',1,1),
+	 (7,1,1,'SEMANA 6',1,1),
+	 (7,1,1,'SEMANA 7',1,1),
+	 (7,1,1,'SEMANA 8',1,1),
+	 (7,1,1,'SEMANA 9',1,1),
+	 (7,1,1,'SEMANA 11',1,1),
+	 (7,1,1,'SEMANA 12',1,1) ;
+
+
+	 
+-- uñas
+insert into co_modulo_especialidad(cat_especialidad,co_empresa, nombre,genero)
+values(3,1,'Diplomando de Uñas',1) returning id;
+
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(8,1,1,'SEMANA 1',1,1),
+	 (8,1,1,'SEMANA 2',1,1),
+	 (8,1,1,'SEMANA 3',1,1),
+	 (8,1,1,'SEMANA 4',1,1),
+	 (8,1,1,'SEMANA 5',1,1),
+	 (8,1,1,'SEMANA 6',1,1),
+	 (8,1,1,'SEMANA 7',1,1),
+	 (8,1,1,'SEMANA 8',1,1),
+	 (8,1,1,'SEMANA 9',1,1),
+	 (8,1,1,'SEMANA 11',1,1),
+	 (8,1,1,'SEMANA 12',1,1) ;
+
+
+	 
+	 
+-- maquillaje
+insert into co_modulo_especialidad(cat_especialidad,co_empresa, nombre,genero)
+values(4,1,'Diplomando de Maquillaje',1) returning id;
+
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(9,1,1,'SEMANA 1',1,1),
+	 (9,1,1,'SEMANA 2',1,1),
+	 (9,1,1,'SEMANA 3',1,1),
+	 (9,1,1,'SEMANA 4',1,1),
+	 (9,1,1,'SEMANA 5',1,1),
+	 (9,1,1,'SEMANA 6',1,1),
+	 (9,1,1,'SEMANA 7',1,1),
+	 (9,1,1,'SEMANA 8',1,1),
+	 (9,1,1,'SEMANA 9',1,1),
+	 (9,1,1,'SEMANA 11',1,1),
+	 (9,1,1,'SEMANA 12',1,1) ;
+
+
+ 
+-- Diplomado de Cosmetología
+insert into co_modulo_especialidad(cat_especialidad,co_empresa, nombre,genero)
+values(5,1,'Diplomado de Cosmetología',1) returning id;
+
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(10,1,1,'SEMANA 1',1,1),
+	 (10,1,1,'SEMANA 2',1,1),
+	 (10,1,1,'SEMANA 3',1,1),
+	 (10,1,1,'SEMANA 4',1,1),
+	 (10,1,1,'SEMANA 5',1,1),
+	 (10,1,1,'SEMANA 6',1,1),
+	 (10,1,1,'SEMANA 7',1,1),
+	 (10,1,1,'SEMANA 8',1,1),
+	 (10,1,1,'SEMANA 9',1,1),
+	 (10,1,1,'SEMANA 11',1,1),
+	 (10,1,1,'SEMANA 12',1,1) ;
+
+
+
+ 
+-- Diplomado de Cosmetología
+insert into co_modulo_especialidad(cat_especialidad,co_empresa, nombre,genero)
+values(6,1,'Diplomado de Colorimetría',1) returning id;
+
+insert into co_materia_modulo_especialidad(co_modulo_especialidad,co_empresa,cat_duracion,nombre,duracion,genero)
+VALUES(11,1,1,'SEMANA 1',1,1),
+	 (11,1,1,'SEMANA 2',1,1),
+	 (11,1,1,'SEMANA 3',1,1),
+	 (11,1,1,'SEMANA 4',1,1),
+	 (11,1,1,'SEMANA 5',1,1),
+	 (11,1,1,'SEMANA 6',1,1),
+	 (11,1,1,'SEMANA 7',1,1),
+	 (11,1,1,'SEMANA 8',1,1),
+	 (11,1,1,'SEMANA 9',1,1),
+	 (11,1,1,'SEMANA 11',1,1),
+	 (11,1,1,'SEMANA 12',1,1) ;
+

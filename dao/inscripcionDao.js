@@ -79,7 +79,7 @@ const actualizarTotalAdeudaInscripcion = async (idAlumno,idCurso,genero) => {
   console.log("@actualizarTotalAdeudaInscripcion");  
 
   return genericDao.execute(` UPDATE CO_INSCRIPCION SET 
-                                  total_adeudo = (select case when sum(total) is null then 0 else sum(total) end from co_cargo_balance_alumno where co_alumno = $1 and co_curso = $2 and eliminado = false),
+                                  total_adeuda = (select case when sum(total) is null then 0 else sum(total) end from co_cargo_balance_alumno where co_alumno = $1 and co_curso = $2 and eliminado = false),
                                   fecha_modifico = (getDate('')+getHora(''))::timestamp,
                                   modifico = $3
                             WHERE 

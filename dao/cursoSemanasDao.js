@@ -36,15 +36,15 @@ const guardarCursoSemana = async (semanaData) => {
             fecha_clase,
             anio,            
             genero)
-          values($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING ID;
+          values($1,$2,$3,$4,$5,$6::date,$7::date,$8::date,$9,$10) RETURNING ID;
     `,[ co_curso,
       co_materia_modulo_especialidad,
       co_modulo_especialidad,
       numero_semana_curso,
       numero_semana_anio,
-      new Date(fecha_inicio_semana),
-      new Date(fecha_fin_semana),
-      new Date(fecha_clase),
+      fecha_inicio_semana,
+      fecha_fin_semana,
+      fecha_clase,
       anio,      
       genero    ]);      
 
@@ -124,11 +124,11 @@ m.id as co_materia_modulo_especialidad,
 m.nombre as materia_modulo_especialidad,
 esp.id as co_modulo_especialidad,
 esp.nombre as modulo_especialidad,
-p.fecha_inicio_previsto,
-p.fecha_fin_previsto,	
+to_char(p.fecha_inicio_previsto,'YYYY-MM-DD')::text as fecha_inicio_previsto,
+to_char(p.fecha_fin_previsto,'YYYY-MM-DD')::text as fecha_fin_previsto,	
 p.id_curso,
 to_char((p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval)::date,'DD-MM-YYYY') as fecha_clase_format, 	
-(p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval) as fecha_clase, 	
+((p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval)::date)::text as fecha_clase, 	
 p.equivalencia     
 FROM co_materia_modulo_especialidad m inner join co_modulo_especialidad esp on esp.id = m.co_modulo_especialidad
                inner join periodo p on p.cat_especialidad = esp.cat_especialidad

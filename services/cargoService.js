@@ -86,7 +86,7 @@ const registrarInscripcion = async (idCurso,idAlumno,genero) => {
       
         //actualizar totales adeuda
         await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno,inscripcionAlumno.id_curso,genero);
-        await alumnoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
+        await cursoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
        
     }
 
@@ -175,7 +175,8 @@ const guardarColegiatura = async (idCurso,idAlumno,coCursoSemana,folio,numeroSem
 
          //actualizar totales adeuda
          await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno,inscripcionAlumno.id_curso,genero);
-         await alumnoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
+         //await alumnoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
+         await cursoDao.actualizarTotalAdeudaAlumno(idAlumno,genero);
 
         
     }else{

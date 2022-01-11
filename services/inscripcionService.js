@@ -1,5 +1,5 @@
 const inscripcionDao = require('../dao/inscripcionDao');
-//const alumnoDao = require('../dao/alumnoDao');
+const alumnoDao = require('../dao/alumnoDao');
 const cargoService = require('../services/cargoService');
 const cursoDao = require('../dao/cursoDao');
 
