@@ -101,18 +101,19 @@ const getInscripcionesCurso = async (uidCurso)=>{
 const getInscripcionesConfirmadasCurso = async (uidCurso)=>{
   console.log("@getInscripcionesConfirmadasCurso");
   
-  return await genericDao.findAll(getQueryBase(" curso.uid = $1 AND  i.confirmado "),[uidCurso]);
+  //return await genericDao.findAll(getQueryBase(" curso.uid = $1 AND  i.confirmado "),[uidCurso]);
+  return await genericDao.findAll(getQueryBase(" curso.uid = $1  "),[uidCurso]);
 }
 
 const getIncripcionesCursoIniciaHoy = async (idCurso)=>{
   console.log("@getIncripcionesIniciarCursoHoy id="+idCurso);  
-  return await genericDao.findAll(getQueryBase(" curso.id = $1 and i.confirmado and curso.fecha_inicio::date <= getDate('') and curso.semana_actual = 0 and curso.activo = false "),[idCurso]);
+  return await genericDao.findAll(getQueryBase(" curso.id = $1 and curso.fecha_inicio::date <= getDate('') and curso.semana_actual = 0 and curso.activo = false "),[idCurso]);
 }
 
 const getIncripcionesIniciarCursoHoyPorSucursal =(idSucursal)=>{
   console.log("@getIncripcionesIniciarCursoHoyPorSucursal");
   
-  return genericDao.findAll(getQueryBase("  i.confirmado and curso.fecha_inicio::date <= getDate('') and a.co_sucursal = $1 and curso.semana_actual = 0  and curso.activo = false "),[idSucursal]);
+  return genericDao.findAll(getQueryBase("  curso.fecha_inicio::date <= getDate('') and a.co_sucursal = $1 and curso.semana_actual = 0  and curso.activo = false "),[idSucursal]);
 }
 
 

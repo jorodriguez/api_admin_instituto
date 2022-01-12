@@ -21,9 +21,9 @@ const iniciarCurso = async (uidCurso,genero) => {
                         //for (const element of inscripcionesConfirmadas) {
                         for(let i =0; i < inscripcionesConfirmadas.length; i++){
                                 const element = inscripcionesConfirmadas[i];
-                                console.log("==Iniciando Generacion de cargo INSCRIPCION  "+element.alumno);
-                                await cargoService.registrarInscripcion(element.id_curso, element.id_alumno, genero);
-                                console.log("Finalizando generacion de cargo para "+element.alumno);
+                                //console.log("==Iniciando Generacion de cargo INSCRIPCION  "+element.alumno);
+                                //await cargoService.registrarInscripcion(element.id_curso, element.id_alumno, genero);
+                                //console.log("Finalizando generacion de cargo para "+element.alumno);
                                 
                                 console.log("==Iniciando Generacion de COLEGIATURA "+element.alumno);
                                 //await cargoService.registrarColegiatura(element.id_curso,element.id_alumno, genero);

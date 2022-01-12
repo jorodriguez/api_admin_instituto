@@ -12,8 +12,9 @@ const guardarInscripcion = async(inscripcionData)=>{
     const idAlumno = await alumnoDao.guardarAlumno(alumnoData);
     console.log("======== infoAlumno "+idAlumno);
     const idInscripcion = await inscripcionDao.guardarInscripcion(idAlumno,inscripcion);
+    await  cargoService.registrarInscripcion(co_curso,idAlumno,genero);
     const alumno = await alumnoDao.getAlumnoPorId(idAlumno);
-
+    
     //Enviar un correo
     return alumno;
 }
