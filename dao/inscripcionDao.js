@@ -40,7 +40,7 @@ const getInscripcionesAlumno = async(uidAlumno)=>{
 
 const getInscripcionesActivasAlumno = async(uidAlumno)=>{
   console.log("@getInscripcionesActivasAlumno"); 
-  return await genericDao.findAll(getQueryBase(' a.uid = $1 AND curso.activo = true'),[uidAlumno]);
+  return await genericDao.findAll(getQueryBase(' a.uid = $1 '),[uidAlumno]);
 }
 
 const getInscripciones = async (idSucursal) => {

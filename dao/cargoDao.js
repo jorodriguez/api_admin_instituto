@@ -95,7 +95,7 @@ const registrarCargoGeneral =async  (cargoData) => {
         const id =  await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(
                             CO_ALUMNO,CO_CURSO,FOLIO,CO_CURSO_SEMANAS,FECHA,Cat_Cargo,CANTIDAD,CARGO,
                             TOTAL,NOTA,MONTO_MODIFICADO,MONTO_ORIGINAL,TEXTO_AYUDA,GENERO)
-                            VALUES($1,$2,$3,$4,getDate(''),$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ID;`
+                            VALUES($1,$2,$3,$4,(getDate('')+getHora(''))::timestamp,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ID;`
                             ,[id_alumno,co_curso,folio || '',co_curso_semanas, cat_cargo,cantidad,cargo,total,nota,monto_modificado,monto_original,texto_ayuda,genero]);
         console.log("ID DE CARGO GENERADO "+id);
 
