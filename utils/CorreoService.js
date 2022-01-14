@@ -133,38 +133,7 @@ const loadTemplate = async(templateName, params,idEmpresaParam) => {
     } catch (e) {
         console.log("Error al obtener el template de la BD "+e);
         throw "error al obtener el template ";
-    }    
-    //se dejo de esta forma por que moustache no soporta async/await
-  /* return new Promise((resolve, reject) => {
-        try {
-            params.nombre_empresa = '';
-            getQueryInstance(QUERY.TEMPLATE_EMPRESA, [idEmpresaParam])
-                .then((rowTemplate) => {
-                    console.log("TEMPLATE ENCONTRADO EN LA BD");
-                    if (rowTemplate.rowCount > 0) {
-                        let row = rowTemplate.rows[0];                    
-                        fs.readFile(path.resolve(__dirname, "../templates/" + templateName), 'utf8', (err, data) => {
-                            params.nombre_empresa = row.nombre_empresa;
-                            let htmlTemp = '';
-                            htmlTemp = htmlTemp.concat(row.encabezado, (data || ''), row.pie);                            
-                            html = mustache.to_html(htmlTemp, params);
-                            resolve(html);
-                        });
-                    } else {
-                        fs.readFile(path.resolve(__dirname, "../templates/" + templateName), 'utf8', (err, data) => {                                                        
-                            html = mustache.to_html(data, params);
-                            resolve(html);
-                        });
-                    }
-                }).catch((e) => {
-                    //leer template de archivos
-                    console.log("Error al obtener el template de la BD");
-                    reject(e);
-                });
-        } catch (e) {
-            reject(e);
-        }
-    });*/
+    }      
 };
 
 function obtenerCorreosCopiaPorTema(co_sucursal, id_tema) {
@@ -371,5 +340,6 @@ module.exports = {
     enviarCorreoTemplate,
     enviarCorreoFamiliaresAlumno,
     getHtmlPreviewTemplate,
-    enviarCorreoTemplateAsync
+    enviarCorreoTemplateAsync,
+  
 };

@@ -1,30 +1,105 @@
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="90%" border="1" cellspacing="0" cellpadding="0">
+	<tr>
+        <td>
+        	<table width="100%" border="0" cellspacing="3" cellpadding="3">
+            	<tr>
+                	<td>
+                    	 <img style="height:70px;" src="{{& logotipo}}" />
+                    </td>
+                    <td  width="30%"  align="right">
+                    	<table width="100%" style="height: 70px;border: 1px solid black;text-align: center; border-radius: 5px;"  cellspacing="1">
+                        	<tr bgcolor="red" style="color:#fff;">
+                            	<td style="border: 0px solid black;text-align: center; border-radius: 5px;">
+                    				<strong>Recibo</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td>
+                    			<strong>000</strong>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    
+                </tr>
+            </table>            
+        </td>        
+    </tr>
 
     <tr>
-        <td class="h2">
-            <strong>Hola {{nombre_cliente}},</strong>
-
+        <td >
+          
+          <table width="100%"  style="height: 70px;border: 0px solid black;text-align: left;"   border="0" cellspacing="3" cellpadding="3">
+            	<tr>
+                	<td>
+                    	<p>direccion</p>
+                        <p>RFC</p>
+                        <p>Plantel</p>
+                        <p>Domicilio suc </p>
+                    </td>
+                    <td  width="30%"  align="right">
+                    	<table width="100%" style="height: 70px;border: 1px solid black;text-align: center;"  cellspacing="1">
+                        	<tr bgcolor="white" style="color:black;">
+                            	<td style="border-bottom: 1px solid gray;">
+                    				<strong>Fecha</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td>
+                    							2022-01-01                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    
+                </tr>
+            </table>            
+          
         </td>
     </tr>
+   
     <tr>
-        <td class="h2">
-            <small> Enviamos el detalle de tu recibo de pago.</small>
-        </td>
-    </tr>
-    <tr>
-        <td class="h2">
-            <small>
-               ☺ {{alumno.nombre}} - {{alumno.grupo}} 
-                </small>
+        <td >
+        <!-- datos alumno -->
+        <table width="100%"  style="border: 0px solid black;text-align: left;"   border="0" cellspacing="3" cellpadding="3">
+            	<tr>
+                	<td width="15%">
+                    	<p><strong>Alumno</strong></p>                        
+                    </td>                 
+                    <td>
+                    	<p>{{nombre_alumno}}</strong></p>                                            </td>                 
+                </tr>
+                <tr>
+                	<td width="15%">
+                    	<p><strong>Turno</strong></p>                        
+                    </td>                 
+                    <td>
+                    	<p>{{turno}}</p>                                            </td>                 
+                </tr>
+                <tr>
+                	<td width="15%">
+                    	<p><strong>Semana</strong></p>                        
+                    </td>                 
+                    <td>
+                    	<p>{{turno}}</p>                                            </td>                 
+                </tr>
+                <tr>
+                	<td width="15%">
+                    	<p><strong>Taller</strong></p>                        
+                    </td>                 
+                    <td>
+                    	<p>{{taller}}</p>                                            </td>                 
+                </tr>
+            </table>    
+          
         </td>
     </tr>
     <tr>
         <td class="bodycopy">
             <br/>
-            <table width="90%" style="background-color:white">
+            <table width="100%" style="background-color:white">
                 <tr>
-                    <td><strong>Fecha</strong></td>
+                    <td  width="15%"><strong>Fecha</strong></td>
                     <td>{{pago.fecha}}</td>
                 </tr>
                 <tr>
@@ -50,11 +125,10 @@
 
             <table width="100%" border="0" cellspacing="2" cellpadding="2">
                 <tr>
-                    <th style="border-bottom:1pt solid #57A8B6;" width="3%">Descripción</th>
+                    <th  style="border-bottom:1pt solid #57A8B6;" >Descripción</th>
                     <!--<th>Adeuda</th>-->
                     <th style="border-bottom:1pt solid #57A8B6;" width="10%">Cant.</th>
-                    <th style="border-bottom:1pt solid #57A8B6;text-align:right" width="15%" align="right">Cargo</th>
-                    <th style="border-bottom:1pt solid #57A8B6;text-align:right" width="15%" align="right">Desc.</th>
+                    <th style="border-bottom:1pt solid #57A8B6;text-align:right" width="15%" align="right">Cargo</th>                    
                     <th style="border-bottom:1pt solid #57A8B6;text-align:right" width="15%" align="right">Pagado</th>
                     <th style="border-bottom:1pt solid #57A8B6;text-align:right" width="15%" align="right">Adeuda</th>
                     <!--<th>Nota</th>-->
@@ -63,22 +137,13 @@
                 {{#pago.cargos}}
                 <!-- IF -->
                 <tr style="text-align:center">
-                    <td style="border-bottom:1pt solid #57A8B6;">{{nombre_cargo}} {{texto_ayuda}}                     
-                                {{#descuento_aplicado}} 
-                                    <small style="color:blue;"> ({{nombre_descuento}}) </small>                                     
-                                {{/descuento_aplicado}}
+                    <td style="border-bottom:1pt solid #57A8B6;">{{nombre_cargo}} {{texto_ayuda}}                   
+                               
 
-                                <!--
-                                  {{#es_facturable}} 
-                                    {{#pago.escribir_folio_factura}}
-                                         <small style="color:blue;"> (Factura {{pago.factura}})</small> 
-                                    {{/pago.escribir_folio_factura}} 
-                                {{/es_facturable}}                        
-                                -->
                     </td>
                     <td style="border-bottom:1pt solid #57A8B6;">{{cantidad}}</td>
                     <td style="border-bottom:1pt solid #57A8B6;text-align:right" align="right">${{cargo}}</td>
-                    <td style="border-bottom:1pt solid #57A8B6;text-align:right" align="right">${{descuento}}</td>
+                    
                     <td style="border-bottom:2pt solid #57A8B6;text-align:right" align="right">${{total_pagado}}</td>
                     <td style="border-bottom:2pt solid #57A8B6;text-align:right" align="right">${{total}}</td>
                     <!--<td>{{nota}}</td>-->
@@ -95,11 +160,8 @@
             </tr>
           </table>
         </td>
-      </tr>     
-      
-      <!--Se consulta la base de datos y se agrega el contenido . puede ser el formulario de satisfacci{o}-->
-      {{{anexo_recibo_pago}}}
-          
+      </tr>              
+                
 </table>
 
 <!--analytics-->

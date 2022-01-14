@@ -75,6 +75,52 @@ const getPagosByCargoId = (idCargoBalanceAlumno) => {
         [idCargoBalanceAlumno]);
 };
 
+
+const getInfoPagoId= async (idPago)=>{
+
+    return await genericDao.findOne(`
+    WITH relacion_cargos AS (	            
+        SELECT  cargo.id,
+            rel.pago,
+            cat.nombre as nombre_cargo,			
+            cargo.texto_ayuda, --nombre del mes
+            cargo.pagado,
+            cargo.nota as nota_cargo,
+            cargo.cantidad,
+            cargo.cargo,
+            cargo.total,
+            cargo.descuento,
+            cargo.total_pagado,
+            cat.es_facturable
+        FROM co_pago_cargo_balance_alumno rel inner join co_cargo_balance_alumno cargo on rel.co_cargo_balance_alumno = cargo.id									
+                                        inner join cat_cargo cat on cat.id = cargo.cat_cargo												                                                
+         WHERE rel.co_pago_balance_alumno =$1 and cargo.eliminado = false 		        
+    ) select pago.id,
+             pago.pago,
+            fpago.nombre as forma_pago,
+            fpago.permite_factura as permite_factura_forma_pago,
+            pago.identificador_factura,
+            pago.identificador_pago,
+          TO_CHAR(pago.fecha, 'dd-mm-yyyy') as fecha,		            
+          al.nombre as nombre_alumno,
+            al.apellidos as apellidos_alumno,                                        
+            suc.id as id_sucursal,
+          suc.nombre as nombre_sucursal,
+          suc.direccion as direccion_sucursal,		
+          count(cargo.id) as count_cargos,		
+            suc.co_empresa,
+            array_to_json(array_agg(to_json(cargo.*))) AS cargos
+        from co_pago_balance_alumno pago inner join co_pago_cargo_balance_alumno rel on pago.id = rel.co_pago_balance_alumno
+                            inner join relacion_cargos cargo on rel.co_cargo_balance_alumno = cargo.id
+                            inner join co_forma_pago fpago on fpago.id = pago.co_forma_pago									
+                            inner join co_alumno al on al.id = pago.co_alumno																		
+                            inner join co_sucursal suc on al.co_sucursal = suc.id									
+        where pago.id = $1
+        group by pago.id,fpago.permite_factura,fpago.nombre,al.nombre,al.apellidos,suc.id,suc.nombre,suc.direccion,suc.co_empresa
+    `,[idPago]);
+
+}
+
 /*
 const getAlumnoByPagoId = (idPago) => {
     console.log("@getPagosByCargoId");
@@ -107,6 +153,7 @@ const getAlumnoByPagoId = (idPago) => {
 
 module.exports = {
     registrarPago,
-    getPagosByCargoId
+    getPagosByCargoId,
+    getInfoPagoId
 
 }

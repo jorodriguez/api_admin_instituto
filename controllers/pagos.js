@@ -91,8 +91,28 @@ const getPagosByCargoId = (request, response) => {
         handle.callbackErrorNoControlado(e, response);
     }
 };
+
+
+
+
+const imprimirComprobantePago = async (request, response) => {
+    console.log("@imprimirComprobantePago");
+    try {
+        
+        const {id_pago } = request.params;
+
+        const html = await pagoService.obtenerPreviewComprobantePago(id_pago);
+
+        response.status(200).send(html);
+
+    } catch (e) {
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
 module.exports = {
     registrarPago,
     getPagosByCargoId,
-    reenviarComprobantePago
+    reenviarComprobantePago,
+    imprimirComprobantePago
 };

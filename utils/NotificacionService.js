@@ -137,50 +137,46 @@ const notificarReciboPago = (id_alumno, id_pago, es_reenvio) => {
 function enviarReciboComplemento(lista_correos, lista_tokens, nombres_padres, id_pago, es_reenvio) {
 
     pool.query(`        
-            WITH relacion_cargos AS (
-	            SELECT  cargo.id,
-			        rel.pago,
-                    cat.nombre as nombre_cargo,			
-                    cargo.texto_ayuda, --nombre del mes
-			        cargo.pagado,
-			        cargo.nota as nota_cargo,
-			        cargo.cantidad,
-			        cargo.cargo,
-                    cargo.total,
-                    cargo.descuento,
-                    cargo.total_pagado,
-                    cat.es_facturable
-		        FROM co_pago_cargo_balance_alumno rel inner join co_cargo_balance_alumno cargo on rel.co_cargo_balance_alumno = cargo.id									
-                                                inner join cat_cargo cat on cat.id = cargo.cat_cargo												                                                
- 		        WHERE rel.co_pago_balance_alumno = $1 and cargo.eliminado = false
-            ) select pago.id,
- 		            pago.pago,
-                    fpago.nombre as forma_pago,
-                    fpago.permite_factura as permite_factura_forma_pago,
-                    pago.identificador_factura,
-                    pago.identificador_pago,
-		            TO_CHAR(pago.fecha, 'dd-mm-yyyy') as fecha,
-		            grupo.nombre as nombre_grupo,
-		            al.nombre as nombre_alumno,
-                    al.apellidos as apellidos_alumno,
-                    al.factura, 
-                    (select to_json(a.*) from co_datos_facturacion a where a.id = al.co_datos_facturacion and a.eliminado = false) AS datos_factura,
-                    suc.id as id_sucursal,
-		            suc.nombre as nombre_sucursal,
-		            suc.direccion as direccion_sucursal,		
-		            count(cargo.id) as count_cargos,		
-                    suc.co_empresa,
-                    array_to_json(array_agg(to_json(cargo.*))) AS cargos
-                from co_pago_balance_alumno pago inner join co_pago_cargo_balance_alumno rel on pago.id = rel.co_pago_balance_alumno
-    								inner join relacion_cargos cargo on rel.co_cargo_balance_alumno = cargo.id
-									inner join co_forma_pago fpago on fpago.id = pago.co_forma_pago
-									inner join co_balance_alumno bal on pago.co_balance_alumno = bal.id
-									inner join co_alumno al on al.co_balance_alumno = bal.id
-									inner join co_grupo grupo on al.co_grupo = grupo.id
-									inner join co_sucursal suc on al.co_sucursal = suc.id									
-	            where pago.id = $2
-                group by pago.id,fpago.permite_factura,fpago.nombre,al.nombre,al.apellidos,al.factura,al.co_datos_facturacion,grupo.nombre,suc.id,suc.nombre,suc.direccion,suc.co_empresa
-          `, [id_pago, id_pago],
+    WITH relacion_cargos AS (	            
+        SELECT  cargo.id,
+            rel.pago,
+            cat.nombre as nombre_cargo,			
+            cargo.texto_ayuda, --nombre del mes
+            cargo.pagado,
+            cargo.nota as nota_cargo,
+            cargo.cantidad,
+            cargo.cargo,
+            cargo.total,
+            cargo.descuento,
+            cargo.total_pagado,
+            cat.es_facturable
+        FROM co_pago_cargo_balance_alumno rel inner join co_cargo_balance_alumno cargo on rel.co_cargo_balance_alumno = cargo.id									
+                                        inner join cat_cargo cat on cat.id = cargo.cat_cargo												                                                
+         WHERE rel.co_pago_balance_alumno =$1 and cargo.eliminado = false 		        
+    ) select pago.id,
+             pago.pago,
+            fpago.nombre as forma_pago,
+            fpago.permite_factura as permite_factura_forma_pago,
+            pago.identificador_factura,
+            pago.identificador_pago,
+          TO_CHAR(pago.fecha, 'dd-mm-yyyy') as fecha,		            
+          al.nombre as nombre_alumno,
+            al.apellidos as apellidos_alumno,                                        
+            suc.id as id_sucursal,
+          suc.nombre as nombre_sucursal,
+          suc.direccion as direccion_sucursal,		
+          count(cargo.id) as count_cargos,		
+            suc.co_empresa,
+            array_to_json(array_agg(to_json(cargo.*))) AS cargos
+        from co_pago_balance_alumno pago inner join co_pago_cargo_balance_alumno rel on pago.id = rel.co_pago_balance_alumno
+                            inner join relacion_cargos cargo on rel.co_cargo_balance_alumno = cargo.id
+                            inner join co_forma_pago fpago on fpago.id = pago.co_forma_pago									
+                            inner join co_alumno al on al.id = pago.co_alumno																		
+                            inner join co_sucursal suc on al.co_sucursal = suc.id									
+        where pago.id = $1
+        group by pago.id,fpago.permite_factura,fpago.nombre,al.nombre,al.apellidos,suc.id,suc.nombre,suc.direccion,suc.co_empresa
+
+          `, [id_pago],
         (error, results) => {
             if (error) {
                 console.log("x x x x x x x No se envio el correo del recibo Fallo algo en el query x x x x x x xx ");
