@@ -1,4 +1,4 @@
-
+const pdf = require('html-pdf');
 const cargoService = require('../services/cargoService');
 const handle = require('../helpers/handlersErrors');
 const { enviarEstadoCuenta } = require('../utils/NotificacionService');
@@ -213,6 +213,68 @@ const obtenerHtmlPreviewEstadoCuenta = async (request, response) => {
     }
 };
 
+const obtenerPdfPreviewEstadoCuenta = async (request, response) => {
+    console.log("@obtenerPdfPreviewEstadoCuenta");    
+    try {
+
+        const { id_alumno } = request.params;
+        
+        const options = { format: 'Letter', path: './templates/recibo_pago.pdf' }; 
+
+        const html = await cargoService.obtenerPreviewEstadoCuenta(id_alumno);
+
+        pdf.create(html).toStream((error, stream) => {
+            if (error) {
+                console.log(error);
+                response.end("Error creando PDF: " + error)
+            } else {
+                response.setHeader("Content-Type", "application/pdf");
+                stream.pipe(response);
+            }
+        });
+
+               
+       /* pdf.create(html).toStream((err, pdfStream) => {
+            if (err) {   
+              // handle error and return a error response code
+              console.log(err)
+              return response.sendStatus(500);
+            } else {
+              // send a status code of 200 OK
+              res.statusCode = 200             
+        
+              // once we are done reading end the response
+              pdfStream.on('end', () => {
+                // done reading
+                return response.end();
+              })
+        
+              // pipe the contents of the PDF directly to the response
+              pdfStream.pipe(response);
+            }
+          })*/
+
+        //response.status(200).json(html);               
+        //response.status(200).send(html);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+function toPDF (html, options,  output) {
+    return new Promise(function (resolve, reject) {
+        pdf.create(html, options).toFile(output, function(error, response) {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve(response);
+            }
+        });
+    });
+}
 
 
 module.exports = {
@@ -226,6 +288,6 @@ module.exports = {
     obtenerEstadoCuentaAlumno,
     enviarEstadoCuentaAlumno,
     obtenerHtmlPreviewEstadoCuenta,
-    
+    obtenerPdfPreviewEstadoCuenta   
     
 };

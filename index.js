@@ -70,6 +70,8 @@ app.get('/genero_alumno', checkAuth,catagolos.getCatGeneroAlumno);
 app.post('/pagos/registrar',checkAuth, pagos.registrarPago);
 app.post('/pagos/:id_alumno',checkAuth, pagos.registrarPago);
 app.get('/pagos/:id_cargo_balance_alumno',checkAuth, pagos.getPagosByCargoId);
+//app.get('/pagos/printing/:id_pago',checkAuth, cargos.obtenerHtmlPreviewEstadoCuenta);
+
 //Reenviar correo
 app.put('/pagos/reenviar_comprobante',checkAuth, pagos.reenviarComprobantePago);
 
@@ -108,6 +110,7 @@ app.get('/alumnos_balance_crecimiento_mensual_sucursal/:id_sucursal/:mes_anio',c
 //-Estado de cuenta
 app.get('/estado_cuenta/:id_alumno',checkAuth,cargos.obtenerEstadoCuentaAlumno);
 app.get('/estado_cuenta/preview/:id_alumno',checkAuth, cargos.obtenerHtmlPreviewEstadoCuenta);
+app.get('/estado_cuenta/print/:id_alumno', cargos.obtenerPdfPreviewEstadoCuenta);
 app.post('/estado_cuenta/enviar',checkAuth,cargos.enviarEstadoCuentaAlumno);
 
 app.get('/meses_activos', checkAuth,utilerias.getMesesActivos);
