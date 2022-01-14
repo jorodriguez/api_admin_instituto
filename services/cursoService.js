@@ -16,7 +16,7 @@ const iniciarCurso = async (uidCurso,genero) => {
                 if (inscripcionesConfirmadas && inscripcionesConfirmadas.length > 0) {
                         
                         //guardar las semanas del curso
-                        await cursoSemanasService.guardarSemanasCurso(uidCurso,genero);
+//                        await cursoSemanasService.guardarSemanasCurso(uidCurso,genero);
 
                         //for (const element of inscripcionesConfirmadas) {
                         for(let i =0; i < inscripcionesConfirmadas.length; i++){
@@ -46,10 +46,47 @@ const iniciarCurso = async (uidCurso,genero) => {
 }
 
 
+const createCurso = async (cursoData) => {
+        console.log("@createCurso ");
+        try {
+
+                const idCursoCreado =  await cursoDao.createCurso(cursoData);
+                
+                console.log("curso creado "+idCursoCreado);               
+                
+                await cursoSemanasService.guardarSemanasCurso(idCursoCreado,cursoData.genero);
+                
+                return idCursoCreado;
+
+        } catch (e) {
+                console.log("XX excepcion "+e);
+                return null;
+        }
+}
+
+const updateCurso = async (id,cursoData) => {
+        console.log("@updateCurso ");
+        try {
+                const uidCursoCreado =  await  cursoDao.updateCurso(id,cursoData);
+                
+                console.log(uidCursoCreado);               
+                //falta modificar las semanas cuando se modifique la fecha
+                //await cursoSemanasService.guardarSemanasCurso(uidCurso,genero);
+                
+                return idCursoCreado;
+
+        } catch (e) {
+                console.log("XX excepcion "+e);
+                return null;
+        }
+}
+
+
+
 module.exports = {
         iniciarCurso:iniciarCurso,
-        createCurso: cursoDao.createCurso,
-        updateCurso: cursoDao.updateCurso,
+        createCurso,
+        updateCurso,
         eliminarCurso: cursoDao.eliminarCurso,
         getCursosActivos: cursoDao.getCursosActivos,
         getCursosSucursal: cursoDao.getCursosSucursal,

@@ -55,6 +55,27 @@ const guardarCursoSemana = async (semanaData) => {
 };
 
 
+const guardarRealcionCargoCursoSemana = async (idCursoSemana,idCargo,genero) => {
+  console.log("@guardarRealcionCargoCursoSemana");    
+  try{	  
+        
+    return await genericDao.execute(`
+          UPDATE co_curso_semanas
+          SET co_cargo_balance_alumno = $2,
+              fecha_modifico = (getDate('')+getHora(''))::timestamp,
+              modifico = $3
+          WHERE ID = $1
+          RETURNING ID;
+    `,[idCursoSemana,idCargo,genero]);      
+
+  }catch(e){  
+    console.log("Error al modificar la relacion cargo "+e);
+    throw new ExceptionBD("Error");
+  }
+};
+
+
+
 const getSeriesPeriodosCurso = (uidCurso) => {    
   return genericDao.findAll(getQueryBaseSeries(), [uidCurso]);
 }
@@ -65,10 +86,14 @@ const getSemanasCurso = (uidCurso) => {
 
 const getSemanaCursoById = (idSemanaCurso)=>{
   return genericDao.findOne(`
-      select * 
-      from co_curso_semanas
-      where id = $1
-          and eliminado = false
+  select sem.*,modulo.nombre as modulo,materia.nombre as materia_modulo,especialidad.nombre as especialidad
+  from 
+  co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
+    inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad
+    inner join co_materia_modulo_especialidad materia on materia.id = sem.co_materia_modulo_especialidad
+    inner join co_modulo_especialidad modulo on modulo.id = sem.co_modulo_especialidad
+  where sem.id = $1
+      and sem.eliminado = false
   `,[idSemanaCurso]);
 }
 
@@ -101,11 +126,13 @@ select sem.id,
 		  to_char(sem.fecha_clase,'DD-MM-YYYY') as fecha_clase_format,
 		  sem.anio,
 		  (sem.numero_semana_anio < extract(week from getDate(''))::int) as semana_ocurrida,
-		  (sem.numero_semana_anio = extract(week from getDate(''))::int) as semana_actual
+		  (sem.numero_semana_anio = extract(week from getDate(''))::int) as semana_actual,
+      bal.id is not null as tiene_cargo
 	from co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
 						inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad
 						inner join co_materia_modulo_especialidad materia on materia.id = sem.co_materia_modulo_especialidad
 						inner join co_modulo_especialidad modulo on modulo.id = sem.co_modulo_especialidad
+            left join co_cargo_balance_alumno bal on bal.id = sem.co_cargo_balance_alumno
 	where  ${criterio ? criterio+' and ':''} 
 		      curso.eliminado = false
 
@@ -144,5 +171,6 @@ module.exports = {
   getSeriesPeriodosCurso,
   getSemanaActualCurso,
   getSemanasCurso,
-  getSemanaCursoById
+  getSemanaCursoById,
+  guardarRealcionCargoCursoSemana
 };

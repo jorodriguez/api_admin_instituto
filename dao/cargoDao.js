@@ -160,8 +160,40 @@ const getCargosAlumno = (uidAlumno,limite) => {
     //console.log("pagin " + pagina);
     
 //    let offset = (limite * pagina);
+return genericDao.findAll(
+    ` 
+    SELECT
+b.id as id_cargo_balance_alumno,
+b.fecha,
+to_char(b.fecha,'dd-mm-yyyy HH24:MI') as fecha_format,
+b.cantidad,
+cargo.nombre as nombre_cargo,
+cargo.aplica_descuento,
+b.texto_ayuda,
+cat_cargo as id_cargo,
+cargo.es_facturable,
+b.total as total,
+b.cargo,
+b.total_pagado,
+b.nota,
+b.pagado,               	                                         
+false as checked,
+0 as pago,
+esp.nombre as especialidad,
+semana.numero_semana_curso,
+materia.nombre as materia_modulo
+FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
+                            inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
+                            left join co_curso curso on curso.id = b.co_curso
+                            left join cat_especialidad esp on esp.id = curso.cat_especialidad
+                            left join co_curso_semanas semana on semana.id = b.co_curso_semanas
+                            left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad
+WHERE a.uid = $1 and b.eliminado = false and a.eliminado = false
+ORDER by b.pagado, b.fecha desc
+         LIMIT ${limite}`,
+    [uidAlumno]);
 
-    return genericDao.findAll(
+   /* return genericDao.findAll(
         ` SELECT
                b.id as id_cargo_balance_alumno,
                b.fecha,
@@ -184,8 +216,8 @@ const getCargosAlumno = (uidAlumno,limite) => {
              WHERE a.uid = $1 and b.eliminado = false and a.eliminado = false
              ORDER by b.pagado, b.fecha desc
              LIMIT ${limite}`,
-        [uidAlumno]);
-//LIMIT ${limite} OFFSET ${offset}
+        [uidAlumno]);*/
+
 };
 
 const getBalanceAlumno = (idAlumno) => {
@@ -342,25 +374,22 @@ const obtenerEstadoCuenta = async (idAlumno) => {
     console.log("ID alumno " + idAlumno);
 
     const alumno = await genericDao.findOne(`
-        SELECT al.nombre as nombre_alumno,
-			al.apellidos as apellidos_alumno,
-            al.correo,			
-			al.fecha_inscripcion,
-			bal.total_adeudo,
-			grupo.nombre as grupo,
-			suc.nombre as sucursal,
-            suc.id as co_sucursal,
-			suc.direccion as direccion_sucursal,
-            empresa.id as id_empresa,
-			empresa.nombre as empresa,
-            bal.total_adeudo > 0 as adeuda,
-            to_char(getDate(''),'YYYY-MM-DD') as fecha,			
-			to_char(getHora(''),'HH24:MI') as hora
-         FROM co_alumno al inner join co_balance_alumno bal on al.co_balance_alumno = bal.id and bal.eliminado = false
-		 					inner join co_sucursal suc on suc.id = al.co_sucursal
-							inner join co_grupo grupo on  grupo.id = al.co_grupo							
-							inner join co_empresa empresa on empresa.id = suc.co_empresa
-         WHERE al.id = $1::int and al.eliminado = false`,
+    SELECT al.nombre as nombre_alumno,
+    al.apellidos as apellidos_alumno,            	
+    al.correo,			
+    al.total_adeudo,			
+    suc.nombre as sucursal,
+        suc.id as co_sucursal,
+    suc.direccion as direccion_sucursal,
+        empresa.id as id_empresa,
+    empresa.nombre as empresa,
+        al.total_adeudo > 0 as adeuda,
+        to_char(getDate(''),'YYYY-MM-DD') as fecha,			
+    to_char(getHora(''),'HH24:MI') as hora
+ FROM co_alumno al 
+                     inner join co_sucursal suc on suc.id = al.co_sucursal							
+                    inner join co_empresa empresa on empresa.id = suc.co_empresa
+ WHERE al.id = $1 and al.eliminado = false`,
         [idAlumno]);
 
     const detalleMensualidadesPendientes = await obtenerDetalleEstadoCuenta(
@@ -396,7 +425,7 @@ const obtenerDetalleEstadoCuenta = async (idAlumno) => {
                b.pagado,                              
                b.descuento, 
                cargo.id <> ${CARGOS.ID_CARGO_MENSUALIDAD} as mostrar_nota
-             FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_balance_alumno = a.co_balance_alumno 
+             FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id 
                                            inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
              WHERE a.id = $1                  
 					and b.pagado = false

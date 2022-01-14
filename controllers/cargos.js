@@ -8,7 +8,8 @@ const registrarCargo = async (request, response) => {
     console.log("@registrarCargo");
     
     try {
-        const params = { fecha_cargo, uid_alumno, cat_cargo, cantidad, monto, nota, genero } = request.body;
+        //const params = { fecha_cargo, uid_alumno,co_curso_semanas, cat_cargo, cantidad, monto, nota, genero } = request.body;
+        const params = {id_curso,cat_cargo,uid_alumno,id_curso_semanas,cantidad, monto, nota,genero}  = request.body;
         
         const respuesta = await cargoService.registrarCargo(params);
         if(respuesta && respuesta.resultado){

@@ -2,11 +2,11 @@ const cursoDao = require('../dao/cursoDao');
 const cursoSemanasDao = require('../dao/cursoSemanasDao');
 const CONSTANTES = require('../utils/Constantes');
 
-const guardarSemanasCurso = async (uidCurso,genero) => {
-        console.log("@guardarSemanasCurso "+uidCurso);
+const guardarSemanasCurso = async (idCurso,genero) => {
+        console.log("@guardarSemanasCurso "+idCurso);
         try {
                 
-                const curso = await cursoDao.getCursoByUid(uidCurso);
+                const curso = await cursoDao.getCursoById(idCurso);
 
                 if(curso && curso.activo == true){
                         console.log("                                          ");
@@ -15,7 +15,7 @@ const guardarSemanasCurso = async (uidCurso,genero) => {
                         return true;
                 }
 
-                const semanasCurso = await cursoSemanasDao.getSeriesPeriodosCurso(uidCurso);
+                const semanasCurso = await cursoSemanasDao.getSeriesPeriodosCurso(curso.uid);
                                 
                 if (semanasCurso && semanasCurso.length > 0) {
                         
@@ -47,10 +47,14 @@ const guardarSemanasCurso = async (uidCurso,genero) => {
         }
 }
 
-module.exports = {
+
+
+
+module.exports = {        
         guardarSemanasCurso,
         getSeriesPeriodosCurso: cursoSemanasDao.getSeriesPeriodosCurso,
         getSemanaActualCurso: cursoSemanasDao.getSemanaActualCurso,
         getSemanasCurso: cursoSemanasDao.getSemanasCurso,
         getSemanaCursoById: cursoSemanasDao.getSemanaCursoById,
+        guardarRealcionCargoCursoSemana: cursoSemanasDao.guardarRealcionCargoCursoSemana,
 };

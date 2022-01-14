@@ -42,7 +42,6 @@ const catEscolaridad = require('./routes/catEscolaridad');
 const perdiodosCurso = require('./routes/periodosCurso');
 const catMateria = require('./routes/catMateria');
 
-
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
 app.use('/curso',cursoRoute);

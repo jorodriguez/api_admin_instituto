@@ -18,25 +18,27 @@ const registrarCargo = async (cargoData) => {
     console.log("@registrarCargo");
     try{        
 
-     const {id_curso,cat_cargo,uid_alumno,id_curso_semana,cantidad, monto, nota,genero} = cargoData;
+     const {id_curso,cat_cargo,uid_alumno,id_curso_semanas,cantidad, monto, nota,genero} = cargoData;
+      
+     console.log("===="+ JSON.stringify({id_curso,cat_cargo,uid_alumno,id_curso_semanas,cantidad, monto, nota,genero}));
 
      const alumno = await alumnoService.getAlumnoPorUId(uid_alumno);
 
      let respuesta = null;
 
-     if(cat_cargo.id == CONSTANTES.ID_CARGO_COLEGIATURA){
+     if(cat_cargo == CONSTANTES.ID_CARGO_COLEGIATURA){
          console.log("Es colegiatura");
-         respuesta = await registrarColegiatura(id_curso,alumno.id,id_curso_semana,genero);
+         respuesta = await registrarColegiatura(id_curso,alumno.id,id_curso_semanas,genero);
      }
 
-     if(cat_cargo.id == CONSTANTES.ID_CARGO_INSCRIPCION){
+     if(cat_cargo == CONSTANTES.ID_CARGO_INSCRIPCION){
         console.log("Es inscripcion");
         respuesta = await registrarInscripcion(id_curso,alumno.id,genero);
      }
 
-     if(cat_cargo.id != CONSTANTES.ID_CARGO_INSCRIPCION && cat_cargo != CONSTANTES.ID_CARGO_COLEGIATURA){
+     if(cat_cargo != CONSTANTES.ID_CARGO_INSCRIPCION && cat_cargo != CONSTANTES.ID_CARGO_COLEGIATURA){
         console.log("Es un cargo especial");
-        respuesta = await guardarCargoGenerico(alumno.id,cat_cargo.id,cantidad,monto,"",nota,genero);
+        respuesta = await guardarCargoGenerico(alumno.id,cat_cargo,cantidad,monto,"",nota,genero);
      }
        
      //enviar correo de recibo
@@ -75,7 +77,7 @@ const registrarInscripcion = async (idCurso,idAlumno,genero) => {
              cantidad:1,
              cargo:inscripcionAlumno.costo_inscripcion,
              total:inscripcionAlumno.costo_inscripcion,
-             nota:"CARGO DE INSCRIPCIÓN GENERADO AUTOMÁTICAMENTE.",
+             nota:`Cargo generado automáticamente.`,
              monto:inscripcionAlumno.costo_inscripcion,
              monto_modificado:false,
              monto_original:inscripcionAlumno.costo_inscripcion,
@@ -103,6 +105,7 @@ const registrarColegiaturaAlumnoSemanaActual = async (idCurso,idAlumno,genero) =
 
     //verificar existencia del registro
     const cargoColegiatura = await cargosDao.buscarCargoColegiatura(idCurso,cursoSemanaActual.id,idAlumno);
+    //const existeCargoColegiatura = (cursoSemana.co_cargo_colegiatura != null);
 
     console.log("      Colegiatura "+JSON.stringify(cargoColegiatura));
     
@@ -111,7 +114,9 @@ const registrarColegiaturaAlumnoSemanaActual = async (idCurso,idAlumno,genero) =
             console.log(">> YA EXISTE LA COLEGIATURA DE LA SEMANA ");
             console.log("                                          ");
     }else{    
-        const idColegiatura = await  guardarColegiatura(idCurso,idAlumno,cursoSemanaActual.id,'',cursoSemanaActual.numero_semana_curso, genero);
+        //const idColegiatura = await  guardarColegiatura(idCurso,idAlumno,cursoSemanaActual.id,'',`Semana ${cursoSemana.numero_semana_curso}`,`Sem-${cursoSemana.numero_semana_curso} ${cursoSemana.modulo}-${cursoSemana.materia_modulo}`, genero);
+        const idColegiatura = await  guardarColegiatura(idCurso,idAlumno,cursoSemanaActual.id,'', genero);
+        await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemanaActual.id,idColegiatura,genero);
         console.log("cargo registrado "+idColegiatura);
     }   
 
@@ -126,16 +131,21 @@ const registrarColegiatura = async (idCurso,idAlumno,idCursoSemana,genero) => {
 
     const cursoSemana = await cursoSemanasService.getSemanaCursoById(idCursoSemana);
         
-    const cargoColegiatura = await cargosDao.buscarCargoColegiatura(idCurso,idCursoSemana,idAlumno);
+    const cargoColegiatura = await cargosDao.buscarCargoColegiatura(idCurso,cursoSemana.id,idAlumno);
 
-    console.log("      Colegiatura "+JSON.stringify(cargoColegiatura));
+    //const existeCargoColegiatura = (cursoSemana.co_cargo_colegiatura != null);
+
+    console.log("  existe Colegiatura "+JSON.stringify(cargoColegiatura));
     
     if(cargoColegiatura != null){
             console.log("                                          ");
             console.log(">> YA EXISTE LA COLEGIATURA DE LA SEMANA ");
             console.log("                                          ");
     }else{    
-        retId = await  guardarColegiatura(idCurso,idAlumno,idCursoSemana,'',cursoSemana.numero_semana_curso, genero);
+        //retId = await  guardarColegiatura(idCurso,idAlumno,cursoSemana.id,'',`Semana ${cursoSemana.numero_semana_curso}`, `${cursoSemana.modulo}-${cursoSemana.materia_modulo}`, genero);
+        retId = await  guardarColegiatura(idCurso,idAlumno,cursoSemana.id,'', genero);
+        //relacionar en el registro co_semanas
+        await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemana.id,retId,genero);
         console.log("cargo registrado "+idColegiatura);
     }   
 
@@ -143,7 +153,7 @@ const registrarColegiatura = async (idCurso,idAlumno,idCursoSemana,genero) => {
 
 }
 
-const guardarColegiatura = async (idCurso,idAlumno,coCursoSemana,folio,numeroSemana,genero) => {
+const guardarColegiatura = async (idCurso,idAlumno,coCursoSemana,folio,genero) => {
     console.log("@guardarColegiatura");
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
     
@@ -161,15 +171,15 @@ const guardarColegiatura = async (idCurso,idAlumno,coCursoSemana,folio,numeroSem
              cat_cargo:ID_CARGO_COLEGIATURA, 
              cantidad:1,
              folio:folio,            
-             cargo:inscripcionAlumno.costo_colegiatura,
              co_curso_semanas:coCursoSemana,
+             cargo:inscripcionAlumno.costo_colegiatura,             
              total:inscripcionAlumno.costo_colegiatura,
-             nota:"CARGO GENERADO AUTOMÁTICAMENTE.",
+             nota:`Cargo generado automáticamente.`,
              monto:inscripcionAlumno.costo_colegiatura,
              monto_modificado:false,
              monto_original:inscripcionAlumno.costo_colegiatura,
              co_curso:inscripcionAlumno.id_curso,    
-             texto_ayuda:`Semana ${numeroSemana || ''}`,
+             texto_ayuda:``,
              genero:genero
         });      
 

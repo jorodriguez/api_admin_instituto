@@ -169,15 +169,15 @@ const getSeriesPeriodosCurso = async (request,response) =>{
 
         console.log("uid "+uid);
 
-        const curso = await cursoService.getCursoByUid(uid);
+        //const curso = await cursoService.getCursoByUid(uid);
         let results = [];
-        if(curso && curso.activo){       
+        //if(curso && curso.activo){       
 
             results = await cursoSemanasService.getSemanasCurso(uid);
             
-        } else{
+        /*} else{
             results =  await cursoSemanasService.getSeriesPeriodosCurso(uid);        
-        }               
+        } */              
 
         response.status(200).json(results);
 
