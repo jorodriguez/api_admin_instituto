@@ -11,8 +11,8 @@ const loadTemplateReciboPago = async(params,idEmpresaParam) => {
                 //let htmlTemp = '';
                 //htmlTemp = htmlTemp.concat(template.encabezado_template, (htmlDataTemplateFile || ''), template.pie_template);                            
                 params.nombre_empresa = template.nombre_empresa;
-                params.nombre_empresa = template.direccion_empresa;
-                params.telefono_empresa = template.telefono_empresa;                
+                params.direccion_empresa = template.direccion_empresa;
+                params.rfc = template.rfc;                
                 params.logotipo = template.logotipo;                
                 html = mustache.to_html(template.template_recibo_pago, params);                        
         }

@@ -79,7 +79,7 @@ const getPagosByCargoId = (idCargoBalanceAlumno) => {
 const getInfoPagoId= async (idPago)=>{
 
     return await genericDao.findOne(`
-    WITH relacion_cargos AS (	            
+    WITH relacion_cargos AS (	              
         SELECT  cargo.id,
             rel.pago,
             cat.nombre as nombre_cargo,			
@@ -91,23 +91,29 @@ const getInfoPagoId= async (idPago)=>{
             cargo.total,
             cargo.descuento,
             cargo.total_pagado,
-            cat.es_facturable
+            esp.nombre as especialidad,
+            'Semana '||semana.numero_semana_curso as numero_semana_curso,
+            materia.nombre as materia
         FROM co_pago_cargo_balance_alumno rel inner join co_cargo_balance_alumno cargo on rel.co_cargo_balance_alumno = cargo.id									
                                         inner join cat_cargo cat on cat.id = cargo.cat_cargo												                                                
-         WHERE rel.co_pago_balance_alumno =$1 and cargo.eliminado = false 		        
+                                        left join co_curso curso on curso.id = cargo.co_curso
+                                        left join cat_especialidad esp on esp.id =  curso.cat_especialidad
+                                        left join co_curso_semanas semana on semana.id =  cargo.co_curso_semanas
+                                        left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad
+         WHERE rel.co_pago_balance_alumno = $1 and cargo.eliminado = false 		                 
     ) select pago.id,
              pago.pago,
             fpago.nombre as forma_pago,
             fpago.permite_factura as permite_factura_forma_pago,
             pago.identificador_factura,
             pago.identificador_pago,
-          TO_CHAR(pago.fecha, 'dd-mm-yyyy') as fecha,		            
-          al.nombre as nombre_alumno,
+            TO_CHAR(pago.fecha, 'dd-mm-yyyy') as fecha,		            
+            al.nombre as nombre_alumno,
             al.apellidos as apellidos_alumno,                                        
             suc.id as id_sucursal,
-          suc.nombre as nombre_sucursal,
-          suc.direccion as direccion_sucursal,		
-          count(cargo.id) as count_cargos,		
+            suc.nombre as nombre_sucursal,
+            suc.direccion as direccion_sucursal,		
+            count(cargo.id) as count_cargos,		
             suc.co_empresa,
             array_to_json(array_agg(to_json(cargo.*))) AS cargos
         from co_pago_balance_alumno pago inner join co_pago_cargo_balance_alumno rel on pago.id = rel.co_pago_balance_alumno
