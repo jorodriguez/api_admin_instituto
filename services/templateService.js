@@ -9,7 +9,7 @@ const loadTemplateReciboPago = async(params,idEmpresaParam) => {
         if(template){
                 console.log("template encontrado "+template.nombre_empresa);
                 //let htmlTemp = '';
-                //htmlTemp = htmlTemp.concat(template.encabezado_template, (htmlDataTemplateFile || ''), template.pie_template);                            
+                //htmlTemp = htmlTemp.concat(template.encabezado_template, (htmlDataTemplateFile || ''), template.pie_template);                                            
                 params.nombre_empresa = template.nombre_empresa;
                 params.direccion_empresa = template.direccion_empresa;
                 params.rfc = template.rfc;                

@@ -80,7 +80,7 @@ const getInfoPagoId= async (idPago)=>{
 
     return await genericDao.findOne(`
     WITH relacion_cargos AS (	              
-        SELECT  cargo.id,
+        SELECT  cargo.id,            
             rel.pago,
             cat.nombre as nombre_cargo,			
             cargo.texto_ayuda, --nombre del mes
@@ -102,6 +102,7 @@ const getInfoPagoId= async (idPago)=>{
                                         left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad
          WHERE rel.co_pago_balance_alumno = $1 and cargo.eliminado = false 		                 
     ) select pago.id,
+            pago.id as folio,
              pago.pago,
             fpago.nombre as forma_pago,
             fpago.permite_factura as permite_factura_forma_pago,
