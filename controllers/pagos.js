@@ -21,13 +21,14 @@ const registrarPago = async (request, response) => {
                 cat_forma_pago,
                 identificador_factura,
                 identificador_pago,
+                id_sucursal,
                 genero
             } = request.body;
 
                     
         const alumno = await alumnoService.getAlumnoPorUId(uid_alumno);
 
-        console.log("ALUMNO "+JSON.stringify(alumno));
+        console.log("v "+JSON.stringify(pagoData));
 
         const result = await pagoService.registrarPago({id_alumno:alumno.id,...pagoData});
         

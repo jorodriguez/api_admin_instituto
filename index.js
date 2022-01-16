@@ -68,7 +68,7 @@ app.get('/genero_alumno', checkAuth,catagolos.getCatGeneroAlumno);
 
 //pagos
 app.post('/pagos/registrar',checkAuth, pagos.registrarPago);
-app.post('/pagos/:id_alumno',checkAuth, pagos.registrarPago);
+//app.post('/pagos/:id_alumno',checkAuth, pagos.go);
 app.get('/pagos/:id_cargo_balance_alumno',checkAuth, pagos.getPagosByCargoId);
 //app.get('/pagos/printing/:id_pago',checkAuth, cargos.obtenerHtmlPreviewEstadoCuenta);
 

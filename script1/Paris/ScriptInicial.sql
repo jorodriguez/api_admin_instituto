@@ -353,7 +353,7 @@ alter table co_alumno drop column color;
 alter table co_alumno drop column alergias;
 
 
-alter table co_inscripcion add column co_sucursal integer not null references co_empresa(id);
+alter table co_inscripcion add column co_sucursal integer not null references co_sucursal(id);
 
 alter table cat_especialidad add column color text;
 

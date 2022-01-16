@@ -8,7 +8,7 @@ const registrarPago = (pagoData) => {
     console.log("@registrarPago");
     console.log("=====>> " + JSON.stringify(pagoData));
     return new Promise((resolve, reject) => {
-        const { id_alumno, pago, nota, ids_cargos, cargos_desglosados,ids_cargos_descuento,id_descuentos_desglose, cat_forma_pago, identificador_factura,identificador_pago, genero } = pagoData;
+        const { id_alumno, pago, nota, ids_cargos, cargos_desglosados,ids_cargos_descuento,id_descuentos_desglose, cat_forma_pago, identificador_factura,identificador_pago,id_sucursal, genero } = pagoData;
         
         console.log("identificador_pagoidentificador_pagoidentificador_pago "+identificador_pago);
 
@@ -23,6 +23,7 @@ const registrarPago = (pagoData) => {
             ${cat_forma_pago},
             '${identificador_factura}',
             '${identificador_pago}',
+            '${id_sucursal}',            
             ${genero});`;
 
         console.log(SQL);
@@ -67,6 +68,7 @@ const getPagosByCargoId = (idCargoBalanceAlumno) => {
                     pago.id as id_pago,
                     pago.nota,
                     pago.co_forma_pago,
+                    pago.folio,
                     r.folio_factura                    
                FROM co_pago_cargo_balance_alumno r inner join co_pago_balance_alumno pago on r.co_pago_balance_alumno = pago.id
                                                    inner join co_forma_pago forma_pago on pago.co_forma_pago = forma_pago.id
@@ -102,7 +104,7 @@ const getInfoPagoId= async (idPago)=>{
                                         left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad
          WHERE rel.co_pago_balance_alumno = $1 and cargo.eliminado = false 		                 
     ) select pago.id,
-            pago.id as folio,
+            pago.folio as folio,
              pago.pago,
             fpago.nombre as forma_pago,
             fpago.permite_factura as permite_factura_forma_pago,

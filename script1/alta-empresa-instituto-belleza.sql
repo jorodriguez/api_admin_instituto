@@ -252,3 +252,75 @@ alter table co_alumno add column correo text
     	anexo_pie_correo=' ',
     	anexo_recibo_pago=''
     where id = 2;
+
+
+
+CREATE OR REPLACE FUNCTION public.obtener_consecutivo(IN identificador_param text,IN id_sucursal integer,OUT consecutivo co_consecutivo)  
+AS $function$
+DECLARE
+	fecha_current timestamp;
+	retorno integer := 0;
+	consecutivo_anterior RECORD;
+	--consecutivo co_consecutivo%ROWTYPE;	
+	anio_current integer;
+	sqlerr_message_text TEXT;
+	sqlerr_exception_detail TEXT;
+	sqlerr_exception_hint TEXT;							
+
+BEGIN    
+
+	raise notice 'OBTENER CONSECUTIVO';			
+		 
+		--consultar el consecutivo actual	
+	select * from co_consecutivo where identificador = identificador_param and co_sucursal = id_sucursal INTO consecutivo_anterior;
+
+	raise notice 'consecutivo_anterior %',consecutivo_anterior;
+	
+	IF FOUND THEN				
+				fecha_current := ((getDate('')+getHora(''))::timestamp);										
+				raise notice 'consecutivo_anterior %',consecutivo_anterior;								
+
+				select EXTRACT(YEAR FROM fecha_current)::integer INTO anio_current;		
+
+				IF anio_current = consecutivo_anterior.anio THEN
+					--son iguales los años, procedera generar un nuevo consecutivo
+					 update co_consecutivo 
+					 set valor = (consecutivo_anterior.valor+1)
+					 where id = consecutivo_anterior.id
+					 returning *
+					 INTO consecutivo;
+					 
+				ELSE
+					--son DIFERENTES los años, procedera generar un nuevo consecutivo y actualizar el año
+					update co_consecutivo 
+					 set valor = (consecutivo_anterior.valor+1),
+					 	anio = anio_current,
+					 	valor = 1
+					 where id = consecutivo_anterior.id
+					 returning *
+					 INTO consecutivo;
+				END IF;			   			
+			
+	ELSE
+		raise notice 'NO EXISTE EL IDENTIFICADOR';
+		consecutivo := null;
+	END IF;		
+	raise notice 'consecutivo %',consecutivo;
+	
+	--return  consecutivo;
+END;
+$function$
+LANGUAGE 'plpgsql';
+
+
+alter table co_pago_balance_alumno add column folio text not null default '';
+
+
+
+alter table co_inscripcion drop column co_sucursal
+
+alter table co_inscripcion add column co_sucursal integer references co_sucursal(id);
+
+update co_inscripcion set co_sucursal = 1 
+
+alter table co_inscripcion alter column co_sucursal set not null;
