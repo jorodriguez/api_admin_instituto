@@ -2,11 +2,19 @@
 
 const cortesDao = require('../dao/cortesDao');
 
-const getCorteDiaSucursal = async (idSucursal)=>{
+const getCorteDiaSucursal = async (corteData)=>{
+    console.log("@getCorteDiaSucursal");
     
-    const results = await cortesDao.getCortePagosSucursal(idSucursal);
+    const {idSucursal,fecha} = corteData;
+
+    console.log("Fecha "+fecha);
+    console.log("suc "+idSucursal);
     
-     return results;
+    const suma = await cortesDao.getSumaPagosPorRango({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
+
+    const results = await cortesDao.getDetallePagos({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
+    
+    return {fecha:fecha,total: (suma ? suma.total : 0),detalle:results};
 };
 
 

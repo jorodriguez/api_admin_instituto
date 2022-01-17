@@ -41,6 +41,7 @@ const catHorario = require('./routes/catHorario');
 const catEscolaridad = require('./routes/catEscolaridad');
 const perdiodosCurso = require('./routes/periodosCurso');
 const catMateria = require('./routes/catMateria');
+const corte = require('./routes/corte');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -50,8 +51,10 @@ app.use('/especialidad',especialidadRoute);
 app.use('/dias',catDiaRoute);
 app.use('/horarios',catHorario);
 app.use('/escolaridad',catEscolaridad);
-app.use('/periodos-curso/',perdiodosCurso);
-app.use('/materias/',catMateria);
+app.use('/periodos-curso',perdiodosCurso);
+app.use('/materias',catMateria);
+app.use('/reportes',corte);
+
 //app.use('/escolaridad',catEscolaridad);
 
 //Cambio de sucursal
@@ -87,6 +90,7 @@ app.put('/cargos/:id_alumno',checkAuth, cargos.eliminarCargos);
 
 //app.get('/cargos/meses_adeuda/:id_alumno', pagos.obtenerMesesAdeudaMensualidad);
 app.get('/cargos_meses_adeuda/:id_alumno', checkAuth,cargos.obtenerMesesAdeudaMensualidad);
+
 
 //recargos proximos
 //app.get('/mensualidad/vence_semana_actual/:id_sucursal', recargoService.obtenerPagosVencenSemanaActual);

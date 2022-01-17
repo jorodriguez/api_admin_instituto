@@ -1,65 +1,80 @@
-const genericDao = require('./genericDao');
 
-const getCortePagosSucursal = async (idSucursal) => {
-    console.log("@getCortePagos");
+const genericDao = require('./genericDao');
+const {castDateToStr} = require('../utils/UtilsDate');
+
+const getSumaPagosPorRango = async (corteData) => {
+    console.log("@getSumaPagosPorRango");
+    
+    const {idSucursal,fechaInicio,fechaFin} = corteData;
+
+    const fechaInicioFormat =castDateToStr(fechaInicio);
+    const fechaFinFormat =castDateToStr(fechaFin);
    
-    return await genericDao.findAll(
-        `
-            
-WITH relacion_cargos AS (	                   
-    SELECT  cargo.id,            
-        rel.pago,
-        cat.nombre as nombre_cargo,			            
-        cargo.pagado,
-        cargo.nota as nota_cargo,
-        cargo.cantidad,
-        cargo.cargo,
-        cargo.total,
-        cargo.descuento,
-        cargo.total_pagado,
-        esp.nombre as especialidad,
-        'Semana '||semana.numero_semana_curso as numero_semana_curso,
-        materia.nombre as materia
-    FROM co_pago_cargo_balance_alumno rel inner join co_cargo_balance_alumno cargo on rel.co_cargo_balance_alumno = cargo.id									
-                                inner join co_alumno al on al.id = cargo.co_alumno
-                                    inner join cat_cargo cat on cat.id = cargo.cat_cargo												                                                
-                                    left join co_curso curso on curso.id = cargo.co_curso
-                                    left join cat_especialidad esp on esp.id =  curso.cat_especialidad
-                                    left join co_curso_semanas semana on semana.id =  cargo.co_curso_semanas
-                                    left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad
-     WHERE al.co_sucursal = $1 and cargo.eliminado = false 		                          
-)    
-select pago.id,
-        pago.id as folio,
-         pago.pago,
-        fpago.nombre as forma_pago,
-        fpago.permite_factura as permite_factura_forma_pago,
-        pago.identificador_factura,
-        pago.identificador_pago,
-        TO_CHAR(pago.fecha, 'dd-mm-yyyy') as fecha,		            
-        al.nombre as nombre_alumno,
-        al.apellidos as apellidos_alumno,                                        
-        suc.id as id_sucursal,
-        suc.nombre as nombre_sucursal,
-        suc.direccion as direccion_sucursal,		
-        count(cargo.id) as count_cargos,		
-        suc.co_empresa,
-        array_to_json(array_agg(to_json(cargo.*))) AS cargos
-    from co_pago_balance_alumno pago inner join co_pago_cargo_balance_alumno rel on pago.id = rel.co_pago_balance_alumno
-                        inner join relacion_cargos cargo on rel.co_cargo_balance_alumno = cargo.id
-                        inner join co_forma_pago fpago on fpago.id = pago.co_forma_pago									
-                        inner join co_alumno al on al.id = pago.co_alumno																		
-                        inner join co_sucursal suc on al.co_sucursal = suc.id									
-    where al.co_sucursal = $1
-            and pago.fecha::date = getDate('')
-    group by pago.id,fpago.permite_factura,fpago.nombre,al.nombre,al.apellidos,suc.id,suc.nombre,suc.direccion,suc.co_empresa
+    return await genericDao.findOne(`            
+        select	
+	        sum(rel.pago) as total
+        from co_pago_cargo_balance_alumno rel inner join co_pago_balance_alumno pago on pago.id = rel.co_pago_balance_alumno
+					  		   inner join co_cargo_balance_alumno cargo on cargo.id = rel.co_cargo_balance_alumno
+					  		   inner join co_alumno al on al.id = pago.co_alumno
+        where pago.fecha::date between $2::date and $3::date
+	            and rel.co_sucursal = $1
+	            and rel.eliminado = false
+	            and pago.eliminado = false
+	            and cargo.eliminado = false
 `,
-        [idSucursal]);
+        [idSucursal,fechaInicioFormat,fechaFinFormat]);
+};
+
+const getDetallePagos = async (corteData) => {
+    console.log("@getDetallePagos");
+   
+    const {idSucursal,fechaInicio,fechaFin} = corteData;
+
+  
+    const fechaInicioFormat =castDateToStr(fechaInicio);
+    const fechaFinFormat =castDateToStr(fechaFin);
+
+    return await genericDao.findAll(`            
+            select rel.id as co_pago_cargo_balance_alumno,		
+                rel.pago,
+                pago.folio,
+                to_char(pago.fecha,'DD-MM-YYYY HH24:mm') as fecha,		
+                pago.nota,
+                al.foto,
+                al.nombre as alumno,
+                al.apellidos as apellidos,
+                al.total_adeudo,
+                fpago.nombre as forma_pago,
+                esp.nombre as especialidad,
+                semana.numero_semana_curso as numero_semana_curso,
+                materia.nombre as materia,
+                horario.nombre as horario,
+                tipo_cargo.nombre as nombre_cargo                
+            from co_pago_cargo_balance_alumno rel inner join co_pago_balance_alumno pago on pago.id = rel.co_pago_balance_alumno
+                            inner join co_cargo_balance_alumno cargo on cargo.id = rel.co_cargo_balance_alumno
+                            inner join cat_cargo tipo_cargo on tipo_cargo.id = cargo.cat_cargo
+                            inner join co_alumno al on al.id = pago.co_alumno
+                            inner join co_forma_pago fpago on fpago.id = pago.co_forma_pago
+                            left join co_curso curso on curso.id = cargo.co_curso
+                            left join cat_horario horario on horario.id = curso.cat_horario
+                            left join cat_especialidad esp on esp.id = curso.cat_especialidad
+                            left join co_curso_semanas semana on semana.id = cargo.co_curso_semanas
+                            left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad							 
+            where pago.fecha::date between $2::date and $3::date
+                    and rel.co_sucursal = $1
+                    and rel.eliminado = false
+                    and pago.eliminado = false
+                    and cargo.eliminado = false
+            order by pago.folio
+
+`,
+        [idSucursal,fechaInicioFormat,fechaFinFormat]);
 };
 
 
 
 
-module.exports = {
-    getCortePagosSucursal
+module.exports = {    
+    getDetallePagos,
+    getSumaPagosPorRango
 }

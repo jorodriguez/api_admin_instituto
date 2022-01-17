@@ -1,3 +1,4 @@
+const moment = require('moment');
 
 const DIAS = [
         {numero:0,es:'Domingo',es_abr:'Dom'},
@@ -40,9 +41,13 @@ function numeroValido(num){
     return (num != null && num != undefined);
 }
 
+const castDateToStr = (date)=>{    
+    return moment(date).format('YYYY-MM-DD');
+}
 
 
 module.exports = {
     castNumDayToSpanish,
-    castNumMonthToSpanish
+    castNumMonthToSpanish,
+    castDateToStr
 };

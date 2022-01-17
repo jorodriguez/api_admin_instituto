@@ -134,8 +134,8 @@ DECLARE
 	sqlInsertPago TEXT := 'INSERT INTO co_pago_balance_alumno(CO_ALUMNO,FECHA,PAGO,NOTA,GENERO)
 							VALUES($1,$2,$3,$4,$5) RETURNING id INTO id_pago';	
 							
-	sqlInsertRelacion TEXT := 'INSERT INTO co_pago_cargo_balance_alumno(fecha,co_pago_balance_alumno,co_cargo_balance_alumno,pago,genero)
-							VALUES($1,$2,$3,$4,$5)';		
+	sqlInsertRelacion TEXT := 'INSERT INTO co_pago_cargo_balance_alumno(fecha,co_pago_balance_alumno,co_cargo_balance_alumno,pago,co_sucursal,genero)
+							VALUES($1,$2,$3,$4,$5,$6)';		
 							
 
 BEGIN    
@@ -167,8 +167,8 @@ BEGIN
 
 				folio := (consecutivo_record.anio||'-'||consecutivo_record.valor::text);
 								
-				INSERT INTO co_pago_balance_alumno(folio,CO_ALUMNO,FECHA,PAGO,NOTA,CO_FORMA_PAGO,IDENTIFICADOR_FACTURA,IDENTIFICADOR_PAGO,GENERO)
-							VALUES(folio ,alumno_record.ID,fecha_current,pago_param,nota,forma_pago_param,identificador_factura_param,identificador_pago_param, id_genero) 
+				INSERT INTO co_pago_balance_alumno(folio,co_sucursal,CO_ALUMNO,FECHA,PAGO,NOTA,CO_FORMA_PAGO,IDENTIFICADOR_FACTURA,IDENTIFICADOR_PAGO,GENERO)
+							VALUES(folio,id_sucursal,alumno_record.ID,fecha_current,pago_param,nota,forma_pago_param,identificador_factura_param,identificador_pago_param, id_genero) 
 				RETURNING id INTO id_pago_balance_alumno;
 									
 				raise notice 'id_pago_balance insertartado %',id_pago_balance_alumno;
@@ -178,7 +178,7 @@ BEGIN
 
 			raise notice 'aplicar descuentos a cargos ';
 
-						raise notice 'ids_cargos_descuento_aplicar %',ids_cargos_descuento_aplicar; 
+			raise notice 'ids_cargos_descuento_aplicar %',ids_cargos_descuento_aplicar; 
 			
 			
 				FOR i IN 1 .. coalesce(array_upper(ids_cargos_descuento_aplicar, 1),1)
@@ -208,7 +208,8 @@ BEGIN
 						USING fecha_current,
 								id_pago_balance_alumno,
 								ids_cargos_relacionar[i],
-								cargos_desglose_relacionar[i],								
+								cargos_desglose_relacionar[i],		
+								id_sucursal,						
 								id_genero;		
 					raise notice 'guardado..';			
 		

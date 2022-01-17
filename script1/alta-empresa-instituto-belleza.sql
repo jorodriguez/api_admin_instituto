@@ -324,3 +324,19 @@ alter table co_inscripcion add column co_sucursal integer references co_sucursal
 update co_inscripcion set co_sucursal = 1 
 
 alter table co_inscripcion alter column co_sucursal set not null;
+
+
+
+alter table co_pago_balance_alumno add column co_sucursal integer references co_sucursal(id);
+
+alter table co_pago_cargo_balance_alumno add column co_sucursal integer references co_sucursal(id);
+
+update co_pago_cargo_balance_alumno set co_sucursal = 1 where id <> 41
+
+
+update co_pago_balance_alumno set co_sucursal = 1 where id <> 38
+
+
+ALTER TABLE co_pago_balance_alumno ALTER COLUMN co_sucursal set NOT NULL
+
+ALTER TABLE co_pago_cargo_balance_alumno ALTER COLUMN co_sucursal set NOT NULL;
