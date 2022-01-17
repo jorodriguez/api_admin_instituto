@@ -127,6 +127,7 @@ app.get('/alumnos_crecimiento_mes/:anio/:mes/:id_usuario',checkAuth, reporteDeud
 //gastos
 app.get('/gastos/:co_sucursal/:anio_mes',checkAuth, gastos.getGastosPorSucursal);
 app.get('/historico_gastos/:co_sucursal',checkAuth, gastos.getSumaMesGastosPorSucursal);
+//app.put('/gastos/corte/dia/sucursal/:id_sucursal',checkAuth, gastos.getGastosCortePorSucursal);
 app.post('/gastos',checkAuth, gastos.registrarGasto);
 app.put('/gastos',checkAuth, gastos.modificarGasto);
 app.delete('/gastos/:id', checkAuth,gastos.eliminarGasto);

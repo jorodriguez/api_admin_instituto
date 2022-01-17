@@ -28,6 +28,7 @@ const getCorteDiaSucursal = async (request, response) => {
         response.status(200).json(results);
 
     } catch (e) {
+        console.log(e);
         handle.callbackErrorNoControlado(e, response);
     }
 };

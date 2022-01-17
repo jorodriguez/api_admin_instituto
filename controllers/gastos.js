@@ -147,6 +147,26 @@ const getGastosAgrupadosPorSucursal = (request, response) => {
     }
 };
 
+
+
+//put
+const getGastosCortePorSucursal = async (request, response) => {
+    console.log("@getGastosCortePorSucursal");
+    try {
+        console.log("request.params.co_sucursal" + request.params.id_sucursal);
+        const id_sucursal = request.params.id_sucursal;
+        const fecha = request.params.fecha;
+
+        const results = await gastoService.getGastosCortePorSucursal({idSucursal:id_sucursal,fechaInicio:fecha,fechaFin:fecha});
+        
+        response.status(200).json(results);        
+
+    } catch (e) {
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
 module.exports = {
     registrarGasto,
     modificarGasto,
@@ -154,5 +174,6 @@ module.exports = {
     getGastosPorSucursal,
     eliminarGasto,
     getSumaMesGastosPorSucursal,
-    getGastosAgrupadosPorSucursal
+    getGastosAgrupadosPorSucursal,
+    getGastosCortePorSucursal
 };

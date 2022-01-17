@@ -1,5 +1,6 @@
 
 const { getQueryInstance } = require('../controllers/sqlHelper');
+const { castDateToStr } = require('../utils/UtilsDate');
 const { ExceptionBD } = require('../exception/exeption');
 //const { isEmptyOrNull } = require('../utils/Utils');
 const genericDao = require('./genericDao');
@@ -77,29 +78,59 @@ const getGastosPorSucursal = (idSucursal, anioMes) => {
     const co_sucursal = idSucursal;
     const anio_mes = anioMes;
     return genericDao.findAll(
-        `
-                select 
-                tipo.nombre as nombre_tipo_gasto, 
-                fpago.nombre as nombre_tipo_pago,
-                suc.nombre as nombre_sucursal,
-                g.fecha,
-                to_char(g.fecha,'dd-mm-yyyy') as fecha_text,
-                g.id,
-                g.cat_tipo_gasto,
-                g.co_forma_pago,
-                g.co_sucursal,
-                g.gasto,
-                g.observaciones
-                from co_gasto g inner join cat_tipo_gasto tipo on g.cat_tipo_gasto = tipo.id
-                    inner join co_forma_pago fpago on g.co_forma_pago = fpago.id
-                    inner join co_sucursal suc on g.co_sucursal = suc.id
-                where suc.id = $1 and g.eliminado  = false  
-                        and to_char(g.fecha,'YYYYMM') = $2
-                order by g.fecha desc                
-            `
+            queryBaseGastoSucursal(" suc.id = $1 and to_char(g.fecha,'YYYYMM') = $2 ")       
         , [co_sucursal, anio_mes]);
 };
 
+
+const getGastosSumaCortePorSucursal = async (corteData) => {
+    
+    console.log("@getGastosSumaCortePorSucursal");
+
+    const {idSucursal,fechaInicio,fechaFin} = corteData;
+        
+    return await genericDao.findOne(
+            `select 
+                    sum(g.gasto) as total
+            from co_gasto g                 						
+            where g.co_sucursal = $1 
+                and g.fecha::date between $2::date and $3::date                
+                and g.eliminado  = false                        `
+        , [idSucursal, castDateToStr(fechaInicio),castDateToStr(fechaFin)]);
+};
+
+const getGastosCortePorSucursal = async (corteData) => {
+    
+    console.log("@getGastosCortePorSucursal");
+
+    const {idSucursal,fechaInicio,fechaFin} = corteData;
+    
+    console.log("request.params.co_sucursal" + idSucursal);
+    return await genericDao.findAll(
+            queryBaseGastoSucursal(" suc.id = $1 and g.fecha::date between $2::date and  $3::date ")       
+        , [idSucursal, castDateToStr(fechaInicio),castDateToStr(fechaFin)]);
+};
+
+const queryBaseGastoSucursal = (criterio)=>`
+select 
+tipo.nombre as nombre_tipo_gasto, 
+fpago.nombre as nombre_tipo_pago,
+suc.nombre as nombre_sucursal,
+g.fecha,
+to_char(g.fecha,'dd-mm-yyyy') as fecha_text,
+g.id,
+g.cat_tipo_gasto,
+g.co_forma_pago,
+g.co_sucursal,
+g.gasto,
+g.observaciones
+from co_gasto g inner join cat_tipo_gasto tipo on g.cat_tipo_gasto = tipo.id
+    inner join co_forma_pago fpago on g.co_forma_pago = fpago.id
+    inner join co_sucursal suc on g.co_sucursal = suc.id
+where ${criterio ? criterio+" and ":''} 
+       g.eliminado  = false          
+order by g.fecha desc       
+`;
 
 const getSumaMesGastosPorSucursal = (idSucursal) => {
     console.log("@getSumaMesGastosPorSucursal");
@@ -153,6 +184,8 @@ module.exports = {
     getCatalogoTipoGasto,
     getGastosPorSucursal,
     getSumaMesGastosPorSucursal,
-    getGastosAgrupadosPorSucursal
+    getGastosAgrupadosPorSucursal,
+    getGastosCortePorSucursal,
+    getGastosSumaCortePorSucursal
 
 };
