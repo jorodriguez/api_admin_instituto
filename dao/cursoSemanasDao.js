@@ -109,6 +109,29 @@ const getSemanaActualCurso = (idCurso)=>{
   `,[idCurso]);
 }
 
+//es para el proceso automatico de generacion de colegiaturas
+const getInformacionCrearColegiaturaSemanaActual = ()=>{
+  return genericDao.findAll(`
+  select	c.id as id_semana_actual,
+  c.co_curso,
+  c.numero_semana_curso,      		
+  inscripcion.co_alumno,
+  al.nombre||' '||al.apellidos  as alumno,
+  inscripcion.* 
+from co_curso_semanas c inner join co_inscripcion inscripcion on inscripcion.co_curso = c.co_curso
+        inner join co_alumno al on al.id = inscripcion.co_alumno
+        inner join co_curso curso on curso.id = inscripcion.co_curso
+where       	
+   c.numero_semana_anio =  extract(week from getDate(''))::int 
+  and c.anio = extract(year from getDate(''))::int
+  and c.eliminado = false
+  and inscripcion.eliminado = false
+  and al.eliminado = false
+  and curso.eliminado = false
+
+  `,[]);
+}
+
 const getQueryBaseSemanasCurso = (criterio)=>`
 select sem.id, 
 		  curso.id as id_curso,
@@ -172,5 +195,6 @@ module.exports = {
   getSemanaActualCurso,
   getSemanasCurso,
   getSemanaCursoById,
-  guardarRealcionCargoCursoSemana
+  guardarRealcionCargoCursoSemana,
+  getInformacionCrearColegiaturaSemanaActual
 };

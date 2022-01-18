@@ -1,9 +1,9 @@
 const router = require('express').Router();
 const schedule = require('node-schedule');
-
+const cargoService = require('../services/cargoService');
 //const inscripcionService = require('../services/inscripcionService');
 
-const inscripcionService = require('../services/inscripcionService');
+//const inscripcionService = require('../services/inscripcionService');
 
 
 //---------------------------
@@ -13,16 +13,36 @@ const inscripcionService = require('../services/inscripcionService');
 // Sec,Min,Hor,D,M,Y
 // Crear los cargos de las semanas de los alumnos corre todos los días a las 8 am
 //schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
-schedule.scheduleJob({ hour: 21 , minute:31, second: 0 }, function () {
-	console.log('AGREGAR INSCRIPCIONES AUTOMATICAS' + new Date());
+schedule.scheduleJob({ hour: 17 , minute:51, second: 0 }, async function () {
+	console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
 	try {
 		//
-		inscripcionService.generarInscripcionesAutomaticamente();
-	} catch (error) {
-		console.error("ERROR EN EL PROCESO AUTOMATICO DE GENERACION DE CARGOS  " + error);
+		const listaCargosColegiaturas = await cargoService.registrarColegiaturaAlumnoSemanaActualAutomatico();
+		//enviarcorreos
+		console.log("---------- COLEGIATURAS GENERADAS ---------");
+		console.log(JSON.stringify(listaCargosColegiaturas));
 
+	} catch (error) {
+		console.error("ERROR EN EL PROCESO AUTOMATICO DE GENERACION DE COLEGIATURAS  " + error);
 	}
 });
+
+
+schedule.scheduleJob({ hour: 0 , minute:1, second: 0 }, async function () {
+	console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
+	try {
+		//
+		const listaCargosColegiaturas = await cargoService.registrarColegiaturaAlumnoSemanaActualAutomatico();
+		//enviarcorreos
+		console.log("---------- COLEGIATURAS GENERADAS ---------");
+		console.log(JSON.stringify(listaCargosColegiaturas));
+
+	} catch (error) {
+		console.error("ERROR EN EL PROCESO AUTOMATICO DE GENERACION DE COLEGIATURAS  " + error);
+	}
+});
+
+
 
 
 //INICIAR UN CURSO - GENERAR TODOS LOS CARGOS Y CAMBIAR A ACTIVO INICIADO EL REGISTRO DE CURSO

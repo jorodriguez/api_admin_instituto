@@ -72,8 +72,6 @@ const getDetallePagos = async (corteData) => {
 };
 
 
-
-
 module.exports = {    
     getDetallePagos,
     getSumaPagosPorRango

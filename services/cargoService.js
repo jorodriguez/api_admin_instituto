@@ -94,6 +94,41 @@ const registrarInscripcion = async (idCurso,idAlumno,genero) => {
 
 }
 
+///registrar automaticamente las colegiaturas
+const registrarColegiaturaAlumnoSemanaActualAutomatico = async () => {
+    
+    console.log("@registrarColegiaturaAlumnoSemanaActualAutomatico");
+    
+    const colegiaturasGeneradas = [];
+    //obtener Semana ocurriendo
+    const listaInfoCrearColegiaturasSemanaActual = await cursoSemanasService.getInformacionCrearColegiaturaSemanaActual();
+
+    console.log("Colegiaturas que se van a generar "+listaInfoCrearColegiaturasSemanaActual.length);
+
+    for(let i=0;i < listaInfoCrearColegiaturasSemanaActual.length;i++) {
+   
+        const cursoSemanaActual = listaInfoCrearColegiaturasSemanaActual[i];
+
+        //verificar existencia del registro
+        const cargoColegiatura = await cargosDao.buscarCargoColegiatura(cursoSemanaActual.co_curso,cursoSemanaActual.id_semana_actual,cursoSemanaActual.co_alumno);
+    
+        console.log("      Colegiatura "+JSON.stringify(cargoColegiatura));    
+        if(cargoColegiatura != null){
+                console.log("                                          ");
+                console.log(`>> YA EXISTE LA COLEGIATURA DE LA SEMANA ${cursoSemanaActual.numero_semana_curso} ALUMNO ${cursoSemanaActual.alumno} <<`);
+                console.log("                                          ");
+        }else{            
+            const idColegiatura = await  guardarColegiatura(cursoSemanaActual.co_curso,cursoSemanaActual.co_alumno,cursoSemanaActual.id_semana_actual,'',CONSTANTES.USUARIO_DEFAULT );
+            await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemanaActual.id_semana_actual,idColegiatura,CONSTANTES.USUARIO_DEFAULT );
+            colegiaturasGeneradas.push(idColegiatura);
+            console.log("cargo registrado "+idColegiatura);            
+        }   
+    }
+    return colegiaturasGeneradas;
+
+}
+
+
 const registrarColegiaturaAlumnoSemanaActual = async (idCurso,idAlumno,genero) => {
     
     console.log("@registrarColegiaturaAlumnoSemanaActual");
@@ -323,5 +358,5 @@ module.exports = {
     obtenerEstadoCuentaAlumno,
     obtenerPreviewEstadoCuenta,
     getCargoExtraMensualidadEmpresa,
-    registrarColegiaturaAlumnoSemanaActual
+    registrarColegiaturaAlumnoSemanaActualAutomatico
 }; 

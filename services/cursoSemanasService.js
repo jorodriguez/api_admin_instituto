@@ -54,6 +54,7 @@ module.exports = {
         guardarSemanasCurso,
         getSeriesPeriodosCurso: cursoSemanasDao.getSeriesPeriodosCurso,
         getSemanaActualCurso: cursoSemanasDao.getSemanaActualCurso,
+        getInformacionCrearColegiaturaSemanaActual: cursoSemanasDao.getInformacionCrearColegiaturaSemanaActual,
         getSemanasCurso: cursoSemanasDao.getSemanasCurso,
         getSemanaCursoById: cursoSemanasDao.getSemanaCursoById,
         guardarRealcionCargoCursoSemana: cursoSemanasDao.guardarRealcionCargoCursoSemana,

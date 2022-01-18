@@ -51,7 +51,7 @@ const generarInscripcionesAutomaticamente = async ()=>{
 
         const inscripcionesAutomaticas = await inscripcionDao.getIncripcionesCursoIniciaHoy(curso.id);
 
-        if(inscripcionesAutomaticas && inscripcionesAutomaticas.lenght > 0){
+        if(inscripcionesAutomaticas && inscripcionesAutomaticas.length > 0){
 
             for (const element of inscripcionesAutomaticas) {           
                                
