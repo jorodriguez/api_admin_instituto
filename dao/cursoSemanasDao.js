@@ -110,7 +110,7 @@ const getSemanaActualCurso = (idCurso)=>{
 }
 
 //es para el proceso automatico de generacion de colegiaturas
-const getInformacionCrearColegiaturaSemanaActual = ()=>{
+/*const getInformacionCrearColegiaturaSemanaActual = ()=>{
   return genericDao.findAll(`
   select	c.id as id_semana_actual,
   c.co_curso,
@@ -122,12 +122,34 @@ from co_curso_semanas c inner join co_inscripcion inscripcion on inscripcion.co_
         inner join co_alumno al on al.id = inscripcion.co_alumno
         inner join co_curso curso on curso.id = inscripcion.co_curso
 where       	
-   c.numero_semana_anio =  extract(week from getDate(''))::int 
+  c.numero_semana_anio =  extract(week from getDate(''))::int 
+  and c.fecha_clase = getDate('')
   and c.anio = extract(year from getDate(''))::int
   and c.eliminado = false
   and inscripcion.eliminado = false
   and al.eliminado = false
   and curso.eliminado = false
+
+  `,[]);
+}*/
+const getInformacionCrearColegiaturaSemanaActual = ()=>{
+  return genericDao.findAll(`
+    select	
+	      c.id as id_semana_actual,
+  	    c.co_curso,
+  	    c.numero_semana_curso,      		  	  	
+      	array_to_json(array_agg(row_to_json((inscripcion.*)))) array_inscripciones,
+  	    count(inscripcion.*) as contador_inscripciones
+    from co_curso_semanas c inner join co_curso curso on curso.id = c.co_curso
+		    		  	inner join co_inscripcion inscripcion on inscripcion.co_curso = c.co_curso
+            				inner join co_alumno al on al.id = inscripcion.co_alumno        
+    where       	  
+      c.fecha_clase = getDate('')
+      and c.eliminado = false
+      and inscripcion.eliminado = false
+      and al.eliminado = false
+      and curso.eliminado = false
+      group by c.id,c.co_curso,c.numero_semana_curso
 
   `,[]);
 }

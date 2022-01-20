@@ -13,7 +13,7 @@ const cargoService = require('../services/cargoService');
 // Sec,Min,Hor,D,M,Y
 // Crear los cargos de las semanas de los alumnos corre todos los días a las 8 am
 //schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
-schedule.scheduleJob({ hour: 17 , minute:51, second: 0 }, async function () {
+schedule.scheduleJob({ hour: 22 , minute:25, second: 0 }, async function () {
 	console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
 	try {
 		//
