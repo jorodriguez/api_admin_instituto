@@ -78,7 +78,7 @@ app.get('/pagos/:id_cargo_balance_alumno',checkAuth, pagos.getPagosByCargoId);
 //Reenviar correo
 app.put('/pagos/reenviar_comprobante',checkAuth, pagos.reenviarComprobantePago);
 //imprimir - obtiene html
-app.get('/pagos/imprimir/:id_pago',checkAuth, pagos.imprimirComprobantePago);
+app.get('/pagos/imprimir/:id_pago/:id_usuario',checkAuth, pagos.imprimirComprobantePago);
 
 app.post('/cargos/registrar',checkAuth, cargos.registrarCargo);
 //app.post('/cargos/registrarColegiatura',checkAuth, cargos.registrarCargo);

@@ -4,5 +4,6 @@ const checkAuth = require('./check-auth');
 
 //router.get('/',((re,res)=>{console.log("")}));
 router.put('/corte/dia/sucursal/:id_sucursal',corte.getCorteDiaSucursal);
+router.put('/corte/dia/sucursal/imprimir/:id_sucursal',corte.getHtmlCorteDiaSucursal);
 
 module.exports = router;

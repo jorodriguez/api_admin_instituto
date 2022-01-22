@@ -12,7 +12,7 @@ const getSumaPagosPorRango = async (corteData) => {
    
     return await genericDao.findOne(`            
         select	
-	        sum(rel.pago) as total
+            coalesce(sum(rel.pago),0) as total
         from co_pago_cargo_balance_alumno rel inner join co_pago_balance_alumno pago on pago.id = rel.co_pago_balance_alumno
 					  		   inner join co_cargo_balance_alumno cargo on cargo.id = rel.co_cargo_balance_alumno
 					  		   inner join co_alumno al on al.id = pago.co_alumno

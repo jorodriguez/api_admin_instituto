@@ -100,9 +100,9 @@ const imprimirComprobantePago = async (request, response) => {
     console.log("@imprimirComprobantePago");
     try {
         
-        const {id_pago } = request.params;
+        const {id_pago,id_usuario } = request.params;
 
-        const html = await pagoService.obtenerPreviewComprobantePago(id_pago);
+        const html = await pagoService.obtenerPreviewComprobantePago(id_pago,id_usuario);
 
         response.status(200).send(html);
 

@@ -20,14 +20,16 @@ const getTemplateCorreoEmpresa = async (idEmpresa) => {
     `, [idEmpresa]);
 };
 
-const getTemplateReciboPago = async (idEmpresa) => {
-    console.log("@getTemplateReciboPago");
+const getTemplateEmpresa = async (idEmpresa) => {
+    console.log("@getTemplateEmpresa");
     return await genericDao.findOne(
     `select em.nombre as nombre_empresa,
             em.direccion as direccion_empresa,
             em.telefono as telefono_empresa,		
+            em.rfc as rfc,		
             tem.nombre as nombre_template,
             tem.template_recibo_pago,
+            tem.template_corte_dia,
             tem.logo_correo as logotipo,
 			em.pagina_oficial,
             to_char(getDate('') + getHora(''),'dd-mm-yyyy HH24:mi') as fecha_impresion
@@ -42,5 +44,5 @@ const getTemplateReciboPago = async (idEmpresa) => {
 
 module.exports = {
     getTemplateCorreoEmpresa,
-    getTemplateReciboPago
+    getTemplateEmpresa
 };

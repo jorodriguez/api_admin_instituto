@@ -340,3 +340,5 @@ update co_pago_balance_alumno set co_sucursal = 1 where id <> 38
 ALTER TABLE co_pago_balance_alumno ALTER COLUMN co_sucursal set NOT NULL
 
 ALTER TABLE co_pago_cargo_balance_alumno ALTER COLUMN co_sucursal set NOT NULL;
+
+alter table co_template add column template_corte_dia text;

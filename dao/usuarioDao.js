@@ -169,6 +169,11 @@ const buscarUsuarioId = (idUsuario) => {
     return genericDao.buscarPorId("USUARIO", idUsuario);
 };
 
+const findById = async (idUsuario) => {
+    console.log("@findById");
+    return await genericDao.buscarPorId("USUARIO", idUsuario);
+};
+
 const getSucursalesUsuario = (idUsuario)=>{
     return genericDao.findAll(
         `
@@ -188,6 +193,7 @@ module.exports = {
     , modificarUsuario
     , desactivarUsuario
     , buscarUsuarioId
+    ,findById
     , modificarContrasena
     , getUsuarioPorSucursal
     , validarCorreoUsuario

@@ -41,12 +41,12 @@ const eliminarSucursal = async (id, genero) => {
 
 const getSucursalPorEmpresa = async (idEmpresa) => {
     console.log("@getSucursalPorEmpresa");
-    return await genericDao.findAll("SELECT id,nombre,direccion,class_color,co_empresa FROM co_sucursal WHERE co_empresa =  $1 and eliminado = false order by nombre", [idEmpresa]);
+    return await genericDao.findAll("SELECT id,nombre,direccion,class_color,co_empresa,telefono FROM co_sucursal WHERE co_empresa =  $1 and eliminado = false order by nombre", [idEmpresa]);
 };
 
-const getSucursalPorId = async (idEmpresa) => {
+const getSucursalPorId = async (idSucursal) => {
     console.log("@getSucursalPorId");
-    return await genericDao.findOne("SELECT id,nombre,direccion,class_color,co_empresa FROM co_sucursal WHERE id =  $1 and eliminado = false", [idEmpresa]);
+    return await genericDao.findOne("SELECT id,nombre,direccion,class_color,co_empresa,telefono FROM co_sucursal WHERE id =  $1 and eliminado = false", [idSucursal]);
 
 };
 

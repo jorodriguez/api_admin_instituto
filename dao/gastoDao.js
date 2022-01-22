@@ -91,7 +91,7 @@ const getGastosSumaCortePorSucursal = async (corteData) => {
         
     return await genericDao.findOne(
             `select 
-                    sum(g.gasto) as total
+            coalesce(sum(g.gasto),0)  as total
             from co_gasto g                 						
             where g.co_sucursal = $1 
                 and g.fecha::date between $2::date and $3::date                
