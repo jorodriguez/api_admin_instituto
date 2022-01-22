@@ -29,7 +29,8 @@ const getTemplateReciboPago = async (idEmpresa) => {
             tem.nombre as nombre_template,
             tem.template_recibo_pago,
             tem.logo_correo as logotipo,
-			em.pagina_oficial
+			em.pagina_oficial,
+            to_char(getDate('') + getHora(''),'dd-mm-yyyy HH24:mi') as fecha_impresion
     from co_empresa em inner join co_template tem on tem.id = em.co_template
         where em.id = $1
         and  em.activa = true 

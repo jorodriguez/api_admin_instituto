@@ -105,27 +105,31 @@ const getInfoPagoId= async (idPago)=>{
          WHERE rel.co_pago_balance_alumno = $1 and cargo.eliminado = false 		                 
     ) select pago.id,
             pago.folio as folio,
-             pago.pago,
+            pago.pago,
             fpago.nombre as forma_pago,
             fpago.permite_factura as permite_factura_forma_pago,
             pago.identificador_factura,
             pago.identificador_pago,
-            TO_CHAR(pago.fecha, 'dd-mm-yyyy') as fecha,		            
+            TO_CHAR(pago.fecha, 'dd-mm-yyyy dd-mm-yyyy HH24:mi') as fecha,		            
             al.nombre as nombre_alumno,
             al.apellidos as apellidos_alumno,                                        
             suc.id as id_sucursal,
             suc.nombre as nombre_sucursal,
             suc.direccion as direccion_sucursal,		
+            suc.telefono as telefono_sucursal,		
             count(cargo.id) as count_cargos,		
             suc.co_empresa,
+            u.nombre as nombre_usuario,
             array_to_json(array_agg(to_json(cargo.*))) AS cargos
         from co_pago_balance_alumno pago inner join co_pago_cargo_balance_alumno rel on pago.id = rel.co_pago_balance_alumno
                             inner join relacion_cargos cargo on rel.co_cargo_balance_alumno = cargo.id
                             inner join co_forma_pago fpago on fpago.id = pago.co_forma_pago									
-                            inner join co_alumno al on al.id = pago.co_alumno																		
+                            inner join co_alumno al on al.id = pago.co_alumno																		                            
                             inner join co_sucursal suc on al.co_sucursal = suc.id									
+                            inner join usuario u on u.id = pago.genero
         where pago.id = $1
-        group by pago.id,fpago.permite_factura,fpago.nombre,al.nombre,al.apellidos,suc.id,suc.nombre,suc.direccion,suc.co_empresa
+        group by pago.id,fpago.permite_factura,fpago.nombre,al.nombre,al.apellidos,suc.id,suc.nombre,suc.direccion,suc.co_empresa,u.nombre
+
     `,[idPago]);
 
 }

@@ -40,8 +40,8 @@ const guardarAlumno = async (alumnoData) => {
     const { co_sucursal, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, co_empresa, genero } = alumnoData;
 
     return await genericDao.execute(`        
-            INSERT INTO CO_ALUMNO(co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero)
-            VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
+            INSERT INTO CO_ALUMNO(matricula,co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero)
+            VALUES((select (prefijo||''||anio||'-'||valor::text) from obtener_consecutivo('MATRICULA',$1)),$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
     `, [co_sucursal, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, co_empresa, genero]);
 
 }
