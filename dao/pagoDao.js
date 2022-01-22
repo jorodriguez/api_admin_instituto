@@ -110,7 +110,7 @@ const getInfoPagoId= async (idPago)=>{
             fpago.permite_factura as permite_factura_forma_pago,
             pago.identificador_factura,
             pago.identificador_pago,
-            TO_CHAR(pago.fecha, 'dd-mm-yyyy dd-mm-yyyy HH24:mi') as fecha,		            
+            TO_CHAR(pago.fecha, 'dd-mm-yyyy HH24:mi') as fecha,		            
             al.nombre as nombre_alumno,
             al.apellidos as apellidos_alumno,                                        
             suc.id as id_sucursal,
