@@ -33,7 +33,7 @@ router.get('/colegiaturas',async(request,response)=>{
 // Sec,Min,Hor,D,M,Y
 // Crear los cargos de las semanas de los alumnos corre todos los días a las 8 am
 //schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
-schedule.scheduleJob({ hour: 22 , minute:25, second: 0 }, async function () {
+schedule.scheduleJob({ hour: 7 , minute:0, second: 0 }, async function () {
 	console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
 	try {
 		//
@@ -48,7 +48,7 @@ schedule.scheduleJob({ hour: 22 , minute:25, second: 0 }, async function () {
 });
 
 
-schedule.scheduleJob({ hour: 0 , minute:1, second: 0 }, async function () {
+schedule.scheduleJob({ hour: 0 , minute:2, second: 0 }, async function () {
 	console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
 	try {
 		//
