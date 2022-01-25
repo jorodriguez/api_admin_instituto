@@ -216,6 +216,9 @@ suc.nombre as sucursal,
 curso.activo,
 curso.uid,
 curso.foto as foto_curso,
+(curso.fecha_genero::date = getDate('')) as es_nuevo,
+curso.fecha_inicio_previsto >= getDate('') as fecha_inicio_previsto_pasada,
+(curso.fecha_inicio_previsto = getDate('')+1) as inicia_manana,
 (select count(*) from co_inscripcion where co_curso = curso.id and eliminado = false) as inscripciones
 from co_curso curso inner join cat_especialidad esp on esp.id = curso.cat_especialidad  
   inner join cat_horario horario on horario.id = curso.cat_horario

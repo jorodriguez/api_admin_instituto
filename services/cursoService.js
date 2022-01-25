@@ -67,13 +67,13 @@ const createCurso = async (cursoData) => {
 const updateCurso = async (id,cursoData) => {
         console.log("@updateCurso ");
         try {
-                const uidCursoCreado =  await  cursoDao.updateCurso(id,cursoData);
+                const uidCursoModificado =  await  cursoDao.updateCurso(id,cursoData);
                 
-                console.log(uidCursoCreado);               
+                console.log(uidCursoModificado);               
                 //falta modificar las semanas cuando se modifique la fecha
-                //await cursoSemanasService.guardarSemanasCurso(uidCurso,genero);
+                await cursoSemanasService.modificarSemanasCurso(uidCursoModificado,cursoData.genero);
                 
-                return idCursoCreado;
+                return uidCursoModificado;
 
         } catch (e) {
                 console.log("XX excepcion "+e);

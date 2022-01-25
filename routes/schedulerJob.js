@@ -6,6 +6,26 @@ const cargoService = require('../services/cargoService');
 //const inscripcionService = require('../services/inscripcionService');
 
 
+//testing
+router.get('/colegiaturas',async(request,response)=>{
+	console.log("@Colegiaturas");
+	try{
+
+		const listaCargosColegiaturas = await cargoService.registrarColegiaturaAlumnoSemanaActualAutomatico();
+		
+		//enviarcorreos
+		console.log("---------- COLEGIATURAS GENERADAS ---------");
+		console.log(JSON.stringify(listaCargosColegiaturas));
+		response.status(200).json(listaCargosColegiaturas);
+
+	}catch(e){
+		console.log("Error "+e);
+		response.status(400).json({error:e})
+	}
+
+});
+
+
 //---------------------------
 // Tareas automatizadas 
 //---------------------------

@@ -151,6 +151,7 @@ const getAlumnosCurso = (uidCurso) => {
 
 const getQueryAlumno = (criterio) => `
 SELECT 
+    a.matricula,  
     a.id as id_alumno,
     i.id as id_inscripcion,
     a.nombre as alumno,             	

@@ -55,6 +55,50 @@ const guardarCursoSemana = async (semanaData) => {
 };
 
 
+
+const modificarCursoSemana = async (semanaData) => {
+  console.log("@modificarCursoSemana");    
+  try{
+	  
+    const {
+      id,            
+      numero_semana_curso,
+      numero_semana_anio,
+      fecha_inicio_semana,
+      fecha_fin_semana,
+      fecha_clase,
+      anio,      
+      genero    
+    } = semanaData;
+    
+    return await genericDao.execute(`
+         UPDATE CO_CURSO_SEMANAS
+         SET 
+              numero_semana_curso = $2,
+              numero_semana_anio= $3,
+              fecha_inicio_semana = $4::date,
+              fecha_fin_semana = $5::date,
+              fecha_clase = $6::date,
+              anio = $7, 
+              fecha_modifico=(getDate('')+getHora(''))::timestamp,
+              genero = $8
+         WHERE ID = $1 
+         RETURNING ID;                    
+    `,[id, 
+      numero_semana_curso,
+      numero_semana_anio,
+      fecha_inicio_semana,
+      fecha_fin_semana,
+      fecha_clase,
+      anio,      
+      genero    ]);      
+
+  }catch(e){  
+    console.log("Error al modificar la semana del curso "+e);
+    throw new ExceptionBD("Error");
+  }
+};
+
 const guardarRealcionCargoCursoSemana = async (idCursoSemana,idCargo,genero) => {
   console.log("@guardarRealcionCargoCursoSemana");    
   try{	  
@@ -78,6 +122,35 @@ const guardarRealcionCargoCursoSemana = async (idCursoSemana,idCargo,genero) => 
 
 const getSeriesPeriodosCurso = (uidCurso) => {    
   return genericDao.findAll(getQueryBaseSeries(), [uidCurso]);
+}
+
+const getSemanasCursoRecalculados = (uidCurso) =>{
+
+  return genericDao.findAll(`
+  with periodo as(     		
+    select c.id as id_curso,fecha_inicio_previsto::date,fecha_fin_previsto::date,e.duracion,d.equivalencia,d.nombre as periodo
+        from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad
+                inner join cat_duracion d on d.id = e.cat_duracion
+    where c.uid = $1 and c.eliminado = false      
+  ), materias as(
+  SELECT 
+    curso_semana.id,	
+    curso_semana.numero_semana_curso,	
+    date_trunc('week', ((p.fecha_inicio_previsto + ((curso_semana.numero_semana_curso - 1) ||' week')::interval)))::date as fecha_inicio_semana,
+    (date_trunc('week', ((p.fecha_inicio_previsto + ((curso_semana.numero_semana_curso - 1) ||' week')::interval)))::date + interval '6 days')::date as fecha_fin_semana,
+    p.id_curso,
+    to_char(((p.fecha_inicio_previsto + ((curso_semana.numero_semana_curso - 1) ||' week')::interval))::date,'DD-MM-YYYY') as fecha_clase_format,
+    ((p.fecha_inicio_previsto + ((curso_semana.numero_semana_curso - 1) ||' week')::interval))::date as fecha_clase,	
+    p.equivalencia     
+  FROM co_curso_semanas curso_semana  inner join periodo p on p.id_curso = curso_semana.co_curso
+  where curso_semana.eliminado = false
+  ) select m.*,
+      extract(week from m.fecha_clase::date)::int as numero_semana_anio,
+      extract(year from m.fecha_clase::date)::int as numero_anio 	 	
+  from materias m 
+
+  `,[uidCurso]);
+
 }
 
 const getSemanasCurso = (uidCurso) => {    
@@ -213,6 +286,8 @@ from materias m`;
 
 module.exports = {
   guardarCursoSemana,
+  modificarCursoSemana,
+  getSemanasCursoRecalculados,
   getSeriesPeriodosCurso,
   getSemanaActualCurso,
   getSemanasCurso,

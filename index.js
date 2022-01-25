@@ -55,6 +55,8 @@ app.use('/periodos-curso',perdiodosCurso);
 app.use('/materias',catMateria);
 app.use('/reportes',corte);
 
+app.use('/jobs',schedulerJob);
+
 //app.use('/escolaridad',catEscolaridad);
 
 //Cambio de sucursal
