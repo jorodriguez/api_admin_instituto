@@ -90,7 +90,9 @@ const createCurso = async (request, response) => {
         const cursoData = {  
             cat_especialidad,
             dias_array,
-            cat_horario,
+            //cat_horario,
+            hora_inicio,
+            hora_fin,
             co_empresa,
             co_sucursal,
             costo_colegiatura_base,
@@ -139,7 +141,9 @@ const updateCurso = async (request, response) => {
         const cursoData = {  
             cat_especialidad,
             dias_array,
-            cat_horario,
+            //cat_horario,
+            hora_inicio,
+            hora_fin,
             co_empresa,
             co_sucursal,
             costo_colegiatura_base,

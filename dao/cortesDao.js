@@ -48,7 +48,7 @@ const getDetallePagos = async (corteData) => {
                 esp.nombre as especialidad,
                 semana.numero_semana_curso as numero_semana_curso,
                 materia.nombre as materia,
-                horario.nombre as horario,
+                to_char(curso.hora_inicio,'H24:mi')||' - '||to_char(curso.hora_fin,'H24:mi') as horario,
                 tipo_cargo.nombre as nombre_cargo                
             from co_pago_cargo_balance_alumno rel inner join co_pago_balance_alumno pago on pago.id = rel.co_pago_balance_alumno
                             inner join co_cargo_balance_alumno cargo on cargo.id = rel.co_cargo_balance_alumno
@@ -56,7 +56,7 @@ const getDetallePagos = async (corteData) => {
                             inner join co_alumno al on al.id = pago.co_alumno
                             inner join co_forma_pago fpago on fpago.id = pago.co_forma_pago
                             left join co_curso curso on curso.id = cargo.co_curso
-                            left join cat_horario horario on horario.id = curso.cat_horario
+                            --left join cat_horario horario on horario.id = curso.cat_horario
                             left join cat_especialidad esp on esp.id = curso.cat_especialidad
                             left join co_curso_semanas semana on semana.id = cargo.co_curso_semanas
                             left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad							 

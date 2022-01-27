@@ -5,7 +5,7 @@ const { pool } = require('../db/conexion');
 const port = process.env.PORT || 5000;
 
 //version/branch
-const version = "v1.0.33/2022-generar-colegiatura-auto/";
+const version = "v1.0.33/2201-preinicio";
 
 
 app.use(bodyParser.json());
@@ -27,7 +27,7 @@ app.get('/', (request, response) => {
 	console.log(process.env);
 	console.log("=====================");
 	console.log(JSON.stringify(pool));
-	response.json({ info: `Instituto service ${version} (env:${process.env.ENV})` });
+	response.json({ info: `Instituto paris ${version} (env:${process.env.ENV})` });
 
 });
 

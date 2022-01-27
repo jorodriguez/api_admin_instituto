@@ -142,9 +142,8 @@ const getQueryBase = (criterio) => `
     i.pagado,
     esp.id as id_especialidad,
     esp.nombre as especialidad,
-    esp.color as color_especialidad, 
-    horario.id as id_horario,	 
-    horario.nombre as horario,
+    esp.color as color_especialidad,     
+    to_char(curso.hora_inicio,'H24:mi')||' - '||to_char(curso.hora_fin,'H24:mi') as horario,
     a.id as id_alumno,
     a.nombre as alumno,
     a.direccion as direccion,
@@ -156,7 +155,7 @@ const getQueryBase = (criterio) => `
     curso.activo
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
-    inner join cat_horario horario on horario.id = curso.cat_horario
+    --inner join cat_horario horario on horario.id = curso.cat_horario
     inner join co_alumno a on a.id = i.co_alumno
     inner join co_sucursal suc on suc.id = i.co_sucursal
 where ${criterio}

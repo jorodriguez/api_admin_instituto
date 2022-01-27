@@ -13,14 +13,17 @@ const createCurso = async (cursoData) => {
     const {
       cat_especialidad,      
       dias_array,
-      cat_horario,
+      cat_dia,
+      //cat_horario,
+      hora_inicio,
+      hora_fin,
       co_empresa,
       co_sucursal,
       costo_colegiatura_base,
       costo_inscripcion_base,
       nota,
       fecha_inicio_previsto,
-            
+      numero_semanas,
       genero    
     } = cursoData;
 
@@ -29,19 +32,20 @@ const createCurso = async (cursoData) => {
     const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1",[cat_especialidad]);
 
     const id =  await genericDao.execute(`
-          insert into co_curso(cat_especialidad,dias_array,cat_horario,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,foto,genero)
-          values($1,$2::int[],$3,$4,$5,$6,$7,$8::date,($8::date + interval '${especialidad.duracion} weeks'),$9,$10,$11) RETURNING ID;
+          insert into co_curso(cat_especialidad,cat_dia,hora_inicio,hora_fin,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,foto,genero)
+          values($1,$2,$3,$4,$5,$6,$7,$8,$9::date,($9::date + interval '${numero_semanas} weeks'),$10,$11,$12) RETURNING ID;
     `,[cat_especialidad,
-      dias_array,
-      cat_horario,
-      co_empresa,      
-      costo_colegiatura_base,
-      costo_inscripcion_base,
-      nota,
-      new Date(fecha_inicio_previsto),            
-      co_sucursal,
-      especialidad.foto,
-      genero]);      
+      cat_dia,
+      hora_inicio,//3
+      hora_fin,//4
+      co_empresa, //5
+      costo_colegiatura_base,//6
+      costo_inscripcion_base,//7
+      nota,//8
+      new Date(fecha_inicio_previsto),            //9
+      co_sucursal,//10
+      especialidad.foto,//11
+      genero]);      //12
 
       console.log("nuevo id del curso "+id);
 
@@ -58,40 +62,47 @@ const updateCurso = async (id,cursoData) => {
   const { 
     cat_especialidad,
     dias_array,
-    cat_horario,        
+    //cat_horario,        
+    hora_inicio,
+    hora_fin,
     costo_colegiatura_base,
     costo_inscripcion_base,
     nota,
     fecha_inicio_previsto,    
+    numero_semanas,
     genero} = cursoData;
 
-  const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1",[cat_especialidad]);
+  //const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1",[cat_especialidad]);
 
   return await genericDao.execute(
     `
                                     UPDATE CO_CURSO
                                     SET cat_especialidad = $2,
                                         dias_array = $3::int[],
-                                        cat_horario = $4,
-                                        costo_colegiatura_base = $5,
-                                        costo_inscripcion_base = $6,
-                                        nota = $7,
-                                        fecha_inicio_previsto = $8,
-                                        fecha_fin_previsto = ($8::date + interval '${especialidad.duracion} weeks'),                 
+                                        hora_inicio = $4,
+                                        hora_fin = $5,
+                                        costo_colegiatura_base = $6,
+                                        costo_inscripcion_base = $7,
+                                        nota = $8,
+                                        fecha_inicio_previsto = $9,
+                                        fecha_fin_previsto = ($9::date + interval '${numero_semanas} weeks'),                 
                                         fecha_modifico = (getDate('')+getHora('')),
-                                        modifico = $9
+                                        modifico = $10
                                     WHERE id = $1
                                     RETURNING ID;
                                     `,
-    [id,
-      cat_especialidad,
-      dias_array,
-      cat_horario,        
-      costo_colegiatura_base,
-      costo_inscripcion_base,
-      nota,
-      fecha_inicio_previsto,      
-      genero]
+    [id,//1
+      cat_especialidad,//2
+      dias_array,//3
+      //cat_horario,        
+      hora_inicio,//4
+      hora_fin,//5
+      costo_colegiatura_base,//6
+      costo_inscripcion_base,//7
+      nota,//8
+      fecha_inicio_previsto,      //9
+      genero//10
+    ]
   );
 };
 
@@ -209,8 +220,7 @@ to_char(curso.fecha_fin,'DD Mon YY') as fecha_fin_format,
 
 esp.id as cat_especialidad,
 esp.nombre as especialidad,
-horario.id as cat_horario,	 
-horario.nombre as horario,
+to_char(curso.hora_inicio,'H24:mi')||' - '||to_char(curso.hora_fin,'H24:mi') as horario,
 suc.id as co_sucursal,
 suc.nombre as sucursal,
 curso.activo,
@@ -221,7 +231,7 @@ curso.fecha_inicio_previsto >= getDate('') as fecha_inicio_previsto_pasada,
 (curso.fecha_inicio_previsto = getDate('')+1) as inicia_manana,
 (select count(*) from co_inscripcion where co_curso = curso.id and eliminado = false) as inscripciones
 from co_curso curso inner join cat_especialidad esp on esp.id = curso.cat_especialidad  
-  inner join cat_horario horario on horario.id = curso.cat_horario
+  --inner join cat_horario horario on horario.id = curso.cat_horario
   inner join co_sucursal suc on suc.id = curso.co_sucursal
 where 
   ${criterio}  
