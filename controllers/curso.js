@@ -138,20 +138,17 @@ const updateCurso = async (request, response) => {
     try {
         
         const id =  parseInt(request.params.id);
-        const cursoData = {  
-            cat_especialidad,
-            dias_array,
-            //cat_horario,
+        const cursoData = {                      
+            cat_dia,
             hora_inicio,
-            hora_fin,
-            co_empresa,
-            co_sucursal,
+            hora_fin,            
             costo_colegiatura_base,
             costo_inscripcion_base,
             nota,
             fecha_inicio_previsto,            
             genero } = request.body;
         
+            console.log(`fecha_inicio_previsto,            ${fecha_inicio_previsto}`);
         const results = await cursoService.updateCurso(id,cursoData);
        
         response.status(200).json(results);       

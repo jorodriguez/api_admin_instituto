@@ -174,7 +174,7 @@ SELECT
     to_char(curso.fecha_fin_previsto,'DD Mon YY') as fecha_inicio_previsto_format,    
     curso.foto as foto_curso,
     genero.foto as foto_perfil,
-    to_char(curso.hora_inicio,'H24:mi')||' - '||to_char(curso.hora_fin,'H24:mi') as horario,
+    to_char(curso.hora_inicio,'HH24:MI')||' - '||to_char(curso.hora_fin,'HH24:MI') as horario,
     a.ocupacion,
     a.originario,
     a.uid,

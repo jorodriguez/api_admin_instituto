@@ -95,13 +95,12 @@ const getInfoPagoId= async (idPago)=>{
             cargo.total_pagado,
             esp.nombre as especialidad,
             'Semana '||semana.numero_semana_curso as numero_semana_curso,
-            materia.nombre as materia
+            'Semana '||semana.numero_semana_curso as materia
         FROM co_pago_cargo_balance_alumno rel inner join co_cargo_balance_alumno cargo on rel.co_cargo_balance_alumno = cargo.id									
                                         inner join cat_cargo cat on cat.id = cargo.cat_cargo												                                                
                                         left join co_curso curso on curso.id = cargo.co_curso
                                         left join cat_especialidad esp on esp.id =  curso.cat_especialidad
-                                        left join co_curso_semanas semana on semana.id =  cargo.co_curso_semanas
-                                        left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad
+                                        left join co_curso_semanas semana on semana.id =  cargo.co_curso_semanas                                        
          WHERE rel.co_pago_balance_alumno = $1 and cargo.eliminado = false 		                 
     ) select pago.id,
             pago.folio as folio,

@@ -162,7 +162,7 @@ const getCargosAlumno = (uidAlumno,limite) => {
 //    let offset = (limite * pagina);
 return genericDao.findAll(
     ` 
-    SELECT
+SELECT
 b.id as id_cargo_balance_alumno,
 b.fecha,
 to_char(b.fecha,'dd-mm-yyyy HH24:MI') as fecha_format,
@@ -181,13 +181,12 @@ false as checked,
 0 as pago,
 esp.nombre as especialidad,
 semana.numero_semana_curso,
-materia.nombre as materia_modulo
+semana.numero_semana_curso as materia_modulo
 FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
                             inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
                             left join co_curso curso on curso.id = b.co_curso
                             left join cat_especialidad esp on esp.id = curso.cat_especialidad
-                            left join co_curso_semanas semana on semana.id = b.co_curso_semanas
-                            left join co_materia_modulo_especialidad materia on materia.id = semana.co_materia_modulo_especialidad
+                            left join co_curso_semanas semana on semana.id = b.co_curso_semanas                            
 WHERE a.uid = $1 and b.eliminado = false and a.eliminado = false
 ORDER by b.pagado, b.fecha desc
          LIMIT ${limite}`,

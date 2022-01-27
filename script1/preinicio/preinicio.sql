@@ -20,6 +20,16 @@ alter table co_curso add column hora_inicio time not null;
 alter table co_curso add column hora_fin time not null;
 
 
+
 alter table co_curso add column cat_dia integer not null references cat_dia(id);
 
 
+		alter table co_curso add column numero_semanas integer;
+
+		update co_curso set numero_semanas =0;
+
+		alter table co_curso alter column numero_semanas set not null;
+
+
+alter table co_curso_semanas drop column co_materia_modulo_especialidad;
+alter table co_curso_semanas drop column co_modulo_especialidad;

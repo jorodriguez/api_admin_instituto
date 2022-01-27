@@ -12,9 +12,7 @@ const guardarCursoSemana = async (semanaData) => {
   try{
 	  
     const {
-      co_curso,
-      co_materia_modulo_especialidad,
-      co_modulo_especialidad,
+      co_curso,            
       numero_semana_curso,
       numero_semana_anio,
       fecha_inicio_semana,
@@ -26,9 +24,7 @@ const guardarCursoSemana = async (semanaData) => {
     
     return await genericDao.execute(`
           insert into co_curso_semanas(
-            co_curso,
-            co_materia_modulo_especialidad,
-            co_modulo_especialidad,
+            co_curso,            
             numero_semana_curso,
             numero_semana_anio,
             fecha_inicio_semana,
@@ -36,10 +32,8 @@ const guardarCursoSemana = async (semanaData) => {
             fecha_clase,
             anio,            
             genero)
-          values($1,$2,$3,$4,$5,$6::date,$7::date,$8::date,$9,$10) RETURNING ID;
-    `,[ co_curso,
-      co_materia_modulo_especialidad,
-      co_modulo_especialidad,
+          values($1,$2,$3,$4::date,$5::date,$6::date,$7,$8) RETURNING ID;
+    `,[ co_curso,      
       numero_semana_curso,
       numero_semana_anio,
       fecha_inicio_semana,
@@ -128,9 +122,8 @@ const getSemanasCursoRecalculados = (uidCurso) =>{
 
   return genericDao.findAll(`
   with periodo as(     		
-    select c.id as id_curso,fecha_inicio_previsto::date,fecha_fin_previsto::date,e.duracion,d.equivalencia,d.nombre as periodo
-        from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad
-                inner join cat_duracion d on d.id = e.cat_duracion
+    select c.id as id_curso,fecha_inicio_previsto::date,fecha_fin_previsto::date
+        from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad                
     where c.uid = $1 and c.eliminado = false      
   ), materias as(
   SELECT 
@@ -140,15 +133,14 @@ const getSemanasCursoRecalculados = (uidCurso) =>{
     (date_trunc('week', ((p.fecha_inicio_previsto + ((curso_semana.numero_semana_curso - 1) ||' week')::interval)))::date + interval '6 days')::date as fecha_fin_semana,
     p.id_curso,
     to_char(((p.fecha_inicio_previsto + ((curso_semana.numero_semana_curso - 1) ||' week')::interval))::date,'DD-MM-YYYY') as fecha_clase_format,
-    ((p.fecha_inicio_previsto + ((curso_semana.numero_semana_curso - 1) ||' week')::interval))::date as fecha_clase,	
-    p.equivalencia     
+    ((p.fecha_inicio_previsto + ((curso_semana.numero_semana_curso - 1) ||' week')::interval))::date as fecha_clase    
   FROM co_curso_semanas curso_semana  inner join periodo p on p.id_curso = curso_semana.co_curso
   where curso_semana.eliminado = false
   ) select m.*,
       extract(week from m.fecha_clase::date)::int as numero_semana_anio,
       extract(year from m.fecha_clase::date)::int as numero_anio 	 	
   from materias m 
-
+ 
   `,[uidCurso]);
 
 }
@@ -159,12 +151,10 @@ const getSemanasCurso = (uidCurso) => {
 
 const getSemanaCursoById = (idSemanaCurso)=>{
   return genericDao.findOne(`
-  select sem.*,modulo.nombre as modulo,materia.nombre as materia_modulo,especialidad.nombre as especialidad
+  select sem.*,curso.numero_semana as modulo,curso.numero_semana as materia_modulo,especialidad.nombre as especialidad
   from 
   co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
-    inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad
-    inner join co_materia_modulo_especialidad materia on materia.id = sem.co_materia_modulo_especialidad
-    inner join co_modulo_especialidad modulo on modulo.id = sem.co_modulo_especialidad
+    inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad    
   where sem.id = $1
       and sem.eliminado = false
   `,[idSemanaCurso]);
@@ -230,11 +220,7 @@ const getInformacionCrearColegiaturaSemanaActual = ()=>{
 const getQueryBaseSemanasCurso = (criterio)=>`
 select sem.id, 
 		  curso.id as id_curso,
-		  especialidad.nombre as especialidad,
-		  materia.id as id_materia_modulo_especialidad,
-		  materia.nombre as materia_modulo_especialidad,
-		  modulo.id as id_modulo_especialidad,
-		  modulo.nombre as modulo_especialidad,
+		  especialidad.nombre as especialidad,		  
 		  sem.numero_semana_anio,
 		  sem.numero_semana_curso,
       sem.fecha_inicio_semana,
@@ -247,40 +233,29 @@ select sem.id,
 		  (sem.numero_semana_anio = extract(week from getDate(''))::int) as semana_actual,
       bal.id is not null as tiene_cargo
 	from co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
-						inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad
-						inner join co_materia_modulo_especialidad materia on materia.id = sem.co_materia_modulo_especialidad
-						inner join co_modulo_especialidad modulo on modulo.id = sem.co_modulo_especialidad
+						inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad						
             left join co_cargo_balance_alumno bal on bal.id = sem.co_cargo_balance_alumno
 	where  ${criterio ? criterio+' and ':''} 
 		      curso.eliminado = false
+  order by sem.fecha_clase
 
 `;
 
-const getQueryBaseSeries = ()=>`
-with periodo as(     
-  select c.id as id_curso,e.id as cat_especialidad,fecha_inicio_previsto::date,fecha_fin_previsto::date,e.duracion,d.equivalencia,d.nombre as periodo
-  from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad
-               inner join cat_duracion d on d.id = e.cat_duracion
-  where c.uid = $1 and c.eliminado = false      
-), materias as(
-SELECT 
-ROW_NUMBER () OVER (ORDER BY m.id) as numero_semana_curso,
-m.id as co_materia_modulo_especialidad,
-m.nombre as materia_modulo_especialidad,
-esp.id as co_modulo_especialidad,
-esp.nombre as modulo_especialidad,
-to_char(p.fecha_inicio_previsto,'YYYY-MM-DD')::text as fecha_inicio_previsto,
-to_char(p.fecha_fin_previsto,'YYYY-MM-DD')::text as fecha_fin_previsto,	
-p.id_curso,
-to_char((p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval)::date,'DD-MM-YYYY') as fecha_clase_format, 	
-((p.fecha_inicio_previsto + (ROW_NUMBER() OVER (ORDER BY m.id) -1 ||' week')::interval)::date)::text as fecha_clase, 	
-p.equivalencia     
-FROM co_materia_modulo_especialidad m inner join co_modulo_especialidad esp on esp.id = m.co_modulo_especialidad
-               inner join periodo p on p.cat_especialidad = esp.cat_especialidad
-) select m.*,
-    extract(week from m.fecha_clase::date)::int as numero_semana_anio,
-    extract(year from m.fecha_clase::date)::int as numero_anio 	 	
-from materias m`;
+const getQueryBaseSeries =()=>`
+with fechas_curso as (  
+  select c.fecha_inicio_previsto,c.fecha_fin_previsto from co_curso c  where c.uid = $1   and c.eliminado = false  			 			
+), fechas as(
+select generate_series(fc.fecha_inicio_previsto::timestamp,(fc.fecha_fin_previsto-1)::timestamp,'1 week')::date as dia
+from fechas_curso fc 	
+) select ROW_NUMBER() over ( order by dia) as numero_semana_curso, 
+        f.dia as fecha_clase, 		        
+        (f.dia + interval '1 week')::date as fecha_fin_semana,
+        extract(week from f.dia)::int as numero_semana_anio,
+        extract(year from f.dia::date)::int as numero_anio 	 	
+from fechas f
+
+`;
+
 
 
 
