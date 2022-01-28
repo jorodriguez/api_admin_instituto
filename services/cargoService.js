@@ -200,7 +200,7 @@ const registrarColegiatura = async (idCurso, idAlumno, idCursoSemana, genero) =>
         retId = await guardarColegiatura(idCurso, idAlumno, cursoSemana.id, '', genero);
 
         //    await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemana.id,retId,genero);
-        console.log("cargo registrado " + idColegiatura);
+        console.log("cargo registrado " + retId);
     }
 
     return retId;

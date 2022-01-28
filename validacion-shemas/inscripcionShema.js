@@ -26,16 +26,11 @@ const schemaInscripcion =
     apellidos:Joi.string().required(),
     direccion:Joi.string().allow('').optional(),
     telefono:Joi.string().required(),
-    foto:Joi.string().allow('').optional(),
-    /*cat_escolaridad: Joi.number().allow(null).optional(),
-    ocupacion: Joi.string().allow('').optional(),
-    originario:Joi.string().allow('').optional(),
-    tutor: Joi.string().allow('').optional(),
-    telefono_tutor: Joi.string().allow('').optional(),*/
+    foto:Joi.string().allow('').optional(),    
     fecha_nacimiento:Joi.date().required(),        
     nota:Joi.string().optional().allow('').allow(null),
     costo_colegiatura:Joi.number().positive().required(),
-    costo_inscripcion:Joi.number().positive().required(),
+    costo_inscripcion:Joi.number().required(),
     genero:Joi.number().required(),
 });
 

@@ -151,7 +151,7 @@ const getSemanasCurso = (uidCurso) => {
 
 const getSemanaCursoById = (idSemanaCurso)=>{
   return genericDao.findOne(`
-  select sem.*,curso.numero_semana as modulo,curso.numero_semana as materia_modulo,especialidad.nombre as especialidad
+  select sem.*,curso.numero_semanas as modulo,curso.numero_semanas as materia_modulo,especialidad.nombre as especialidad
   from 
   co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
     inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad    
