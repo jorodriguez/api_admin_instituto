@@ -4,6 +4,7 @@ const genericDao = require('./genericDao');
 const { ExceptionDatosFaltantes, ExceptionBD } = require('../exception/exeption');
 const { isEmptyOrNull } = require('../utils/Utils');
 
+
 //registrar pagos
 /*const registrarCargo = (cargoData) => {
     console.log("@registrarCargo");
@@ -107,6 +108,48 @@ const getCatCargo = async (id) => {
     console.log("@getCatCargo");
     return await genericDao.findOne("SELECT * from cat_cargo WHERE id = $1 and eliminado = false ", [id]);
 };
+
+
+
+const getColegiaturasPendientesCobranza = async (idSucursal) => {
+    console.log("@getColegiaturasPendientesCobranza");
+    return await genericDao.findAll(
+        `
+        select c.id,
+        to_char(c.fecha,'dd-MM-yyyy HH24:MI') as fecha_cargo,
+        tcargo.nombre as cargo,
+        al.uid as uid_alumno,
+        al.foto as foto_alumno,
+        al.matricula as matricula,
+        al.nombre as alumno,
+        al.apellidos as apellidos,
+        curso.id as id_curso,
+        curso.uid as uid_curso,          				
+        curso.foto as foto_curso,
+        to_char(curso.hora_inicio,'HH24:MI') as hora_inicio_curso,
+        to_char(curso.hora_inicio,'HH24:MI') as hora_fin_curso,
+        esp.id as id_especialidad,
+        esp.nombre as especialidad,
+        dia.id as numero_dia_semana,
+        dia.nombre as dia,
+          semana.numero_semana_curso,
+          to_char(semana.fecha_clase,'DD-MM-YYYY') as fecha_clase
+    from co_cargo_balance_alumno c inner join cat_cargo tcargo on tcargo.id = c.cat_cargo
+                              inner join co_curso_semanas semana on semana.id = c.co_curso_semanas
+                              inner join co_alumno al on al.id = c.co_alumno
+                              inner join co_curso curso on curso.id = c.co_curso                  							  
+                              inner join cat_especialidad esp on esp.id = curso.cat_especialidad
+                              inner join cat_dia dia on dia.id = curso.cat_dia
+    where c.cat_cargo = $1 
+--                  		and semana.fecha_clase = getDate('')   
+  and curso.co_sucursal = $2
+        and c.pagado = false
+        and c.eliminado = false
+    order by semana.fecha_clase desc
+        `
+        ,[CARGOS.ID_CARGO_MENSUALIDAD,idSucursal]);
+};
+
 
 const buscarCargoColegiatura = async (idCurso,idCoCursoSemana,idAlumno)=>{
     return await genericDao.findOne(
@@ -467,5 +510,6 @@ module.exports = {
     getCargoPorAlumno,
     buscarCargoColegiatura,
     buscarCargoInscripcion,
-    getCatCargo
+    getCatCargo,
+    getColegiaturasPendientesCobranza
 };

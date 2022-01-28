@@ -90,6 +90,26 @@ const getCargosAlumno = async (request, response) => {
 };
 
 
+const getColegiaturasPendientesCobranza = async (request, response) => {
+    console.log("@getColegiaturasPendientesCobranza");
+    try {
+        
+        const id_sucursal = request.params.id_sucursal;
+
+        console.log("id_alumno "+id_sucursal);
+                
+        const results = await cargoService.getColegiaturasPendientesCobranza(id_sucursal);
+        
+        response.status(200).json(results);
+        
+    } catch (e) {
+        console.log("ERROR "+e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+
 const getBalanceAlumno = (request, response) => {
     console.log("@getBalanceAlumno");
     try {
@@ -288,6 +308,7 @@ module.exports = {
     obtenerEstadoCuentaAlumno,
     enviarEstadoCuentaAlumno,
     obtenerHtmlPreviewEstadoCuenta,
-    obtenerPdfPreviewEstadoCuenta   
+    obtenerPdfPreviewEstadoCuenta,
+    getColegiaturasPendientesCobranza
     
 };

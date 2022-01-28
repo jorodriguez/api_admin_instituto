@@ -42,6 +42,7 @@ const catEscolaridad = require('./routes/catEscolaridad');
 const perdiodosCurso = require('./routes/periodosCurso');
 const catMateria = require('./routes/catMateria');
 const corte = require('./routes/corte');
+const cobranza = require('./routes/cobranza');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -54,6 +55,7 @@ app.use('/escolaridad',catEscolaridad);
 app.use('/periodos-curso',perdiodosCurso);
 app.use('/materias',catMateria);
 app.use('/reportes',corte);
+app.use('/cobranza',cobranza);
 
 app.use('/jobs',schedulerJob);
 
@@ -88,6 +90,7 @@ app.get('/cargos/:id_empresa', checkAuth,cargos.getCatalogoCargosPorEmpresa);
 app.get('/cargos/alumno/:id_alumno/:limite',checkAuth, cargos.getCargosAlumno);
 app.get('/balance/:id_alumno',checkAuth, cargos.getBalanceAlumno);
 app.put('/cargos/:id_alumno',checkAuth, cargos.eliminarCargos);
+
 
 
 //app.get('/cargos/meses_adeuda/:id_alumno', pagos.obtenerMesesAdeudaMensualidad);

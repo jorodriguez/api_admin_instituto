@@ -316,6 +316,12 @@ const getCargosAlumno = (idAlumno, limite) => {
     return cargosDao.getCargosAlumno(idAlumno, limite);
 };
 
+const getColegiaturasPendientesCobranza = (idSucursal) => {
+    console.log("@getColegiaturasPendientesCobranza");
+
+    return cargosDao.getColegiaturasPendientesCobranza(idSucursal);
+};
+
 const getBalanceAlumno = (idAlumno) => {
     console.log("@getBalanceAlumno");
 
@@ -377,5 +383,6 @@ module.exports = {
     obtenerEstadoCuentaAlumno,
     obtenerPreviewEstadoCuenta,
     getCargoExtraMensualidadEmpresa,
-    registrarColegiaturaAlumnoSemanaActualAutomatico
+    registrarColegiaturaAlumnoSemanaActualAutomatico,
+    getColegiaturasPendientesCobranza
 }; 

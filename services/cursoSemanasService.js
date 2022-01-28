@@ -100,4 +100,5 @@ module.exports = {
         getSemanasCurso: cursoSemanasDao.getSemanasCurso,
         getSemanaCursoById: cursoSemanasDao.getSemanaCursoById,
         guardarRealcionCargoCursoSemana: cursoSemanasDao.guardarRealcionCargoCursoSemana,
+        getSemanasColegiaturasParaCargo:cursoSemanasDao.getSemanasColegiaturasParaCargo
 };

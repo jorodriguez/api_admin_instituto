@@ -4,6 +4,7 @@ const {
   ExceptionBD,
 } = require("../exception/exeption");
 const { isEmptyOrNull } = require("../utils/Utils");
+const { ID_CARGO_COLEGIATURA } = require('../utils/Constantes');
 
 
 
@@ -116,6 +117,38 @@ const guardarRealcionCargoCursoSemana = async (idCursoSemana,idCargo,genero) => 
 
 const getSeriesPeriodosCurso = (uidCurso) => {    
   return genericDao.findAll(getQueryBaseSeries(), [uidCurso]);
+}
+
+const getSemanasColegiaturasParaCargo =  (uidCurso,idAlumno)=>{
+  
+  return genericDao.findAll(`
+  select sem.id, 
+      curso.id as id_curso,
+      especialidad.nombre as especialidad,                  
+      sem.numero_semana_anio,
+      sem.numero_semana_curso,
+      sem.fecha_inicio_semana,
+      to_char(sem.fecha_inicio_semana,'DD-MM-YYYY') as fecha_inicio_semana_format,
+      sem.fecha_fin_semana,
+      to_char(sem.fecha_fin_semana,'DD-MM-YYYY') as fecha_fin_semana_format,
+      to_char(sem.fecha_clase,'DD-MM-YYYY') as fecha_clase_format,
+      sem.anio,
+      (sem.numero_semana_anio < extract(week from getDate(''))::int) as semana_ocurrida,
+      (sem.numero_semana_anio = extract(week from getDate(''))::int) as semana_actual,
+      (select c.id 
+          from co_cargo_balance_alumno c 
+        where c.cat_cargo = $2 
+            and c.co_alumno = $3 
+            and c.co_curso_semanas = sem.id 
+            and c.co_curso = sem.co_curso 
+            and c.eliminado = false) is not null as tiene_cargo
+from co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
+                                inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad                                                                                                                                            
+where  curso.uid = $1 
+  and curso.eliminado = false                  
+order by sem.fecha_clase
+  `,[uidCurso,ID_CARGO_COLEGIATURA,idAlumno]);
+
 }
 
 const getSemanasCursoRecalculados = (uidCurso) =>{
@@ -268,5 +301,6 @@ module.exports = {
   getSemanasCurso,
   getSemanaCursoById,
   guardarRealcionCargoCursoSemana,
-  getInformacionCrearColegiaturaSemanaActual
+  getInformacionCrearColegiaturaSemanaActual,
+  getSemanasColegiaturasParaCargo
 };
