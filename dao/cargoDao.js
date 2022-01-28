@@ -118,6 +118,7 @@ const getColegiaturasPendientesCobranza = async (idSucursal) => {
         select c.id,
         to_char(c.fecha,'dd-MM-yyyy HH24:MI') as fecha_cargo,
         tcargo.nombre as cargo,
+        c.cargo,
         al.uid as uid_alumno,
         al.foto as foto_alumno,
         al.matricula as matricula,
@@ -133,7 +134,8 @@ const getColegiaturasPendientesCobranza = async (idSucursal) => {
         dia.id as numero_dia_semana,
         dia.nombre as dia,
           semana.numero_semana_curso,
-          to_char(semana.fecha_clase,'DD-MM-YYYY') as fecha_clase
+          to_char(semana.fecha_clase,'DD-MM-YYYY') as fecha_clase,
+          (semana.fecha_clase=getDate('')) as es_hoy
     from co_cargo_balance_alumno c inner join cat_cargo tcargo on tcargo.id = c.cat_cargo
                               inner join co_curso_semanas semana on semana.id = c.co_curso_semanas
                               inner join co_alumno al on al.id = c.co_alumno
@@ -142,10 +144,10 @@ const getColegiaturasPendientesCobranza = async (idSucursal) => {
                               inner join cat_dia dia on dia.id = curso.cat_dia
     where c.cat_cargo = $1 
 --                  		and semana.fecha_clase = getDate('')   
-  and curso.co_sucursal = $2
+        and curso.co_sucursal = $2
         and c.pagado = false
         and c.eliminado = false
-    order by semana.fecha_clase desc
+        order by semana.fecha_clase::date,(semana.fecha_clase=getDate('')), al.nombre,al.apellidos,esp.nombre desc
         `
         ,[CARGOS.ID_CARGO_MENSUALIDAD,idSucursal]);
 };
