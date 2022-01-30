@@ -50,6 +50,9 @@ const getQueryBase = (condicion) => {
 						and r.co_sucursal = u.co_sucursal
 						and opc.si_opcion is null
 						and r.eliminado = false
+                        and ro.eliminado = false
+                        and opc.eliminado = false
+                order by opc.orden
 				) select array_to_json(array_agg(c.*)) from universo c
 			) AS menu,
             (
@@ -60,7 +63,18 @@ const getQueryBase = (condicion) => {
                 where r.usuario = u.id
 						and r.co_sucursal = u.co_sucursal
 						and r.eliminado = false
-			) as opciones_acceso
+                        and ro.eliminado = false
+                        and opc.eliminado = false
+			) as opciones_acceso,
+            (
+				select array_to_json(array_agg(distinct rol.*))
+                	from si_usuario_sucursal_rol r inner join si_rol rol on rol.id = r.si_rol
+										 inner join si_rol_opcion ro on ro.si_rol = rol.id												
+                	where r.usuario = u.id
+					 and r.co_sucursal = u.co_sucursal
+					 and r.eliminado = false
+                          and ro.eliminado = false                          
+                   ) as roles
     FROM usuario u inner join co_sucursal su on u.co_sucursal = su.id
       inner join co_empresa em on em.id = u.co_empresa    
     WHERE ${condicion}

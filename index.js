@@ -8,6 +8,7 @@ const authController = require('./auth/AuthController');
 const pagos = require('./controllers/pagos');
 const cargos = require('./controllers/cargos');
 const mensajeria = require('./controllers/mensajesFirebase');
+const { encriptar } = require('./utils/Utils');
 
 const { configuracion } = require('./config/ambiente');
 const reporteDeudas = require('./controllers/reporteDeudas');
@@ -71,6 +72,38 @@ app.use('/asistencia_usuarios',asistenciaUsuariosRoute);
 app.use('/usuarios_rh',usuarioRhRoute);
 
 app.get('/genero_alumno', checkAuth,catagolos.getCatGeneroAlumno);
+
+app.get('/pass/:text',(request,response)=>{
+	
+	console.log("@Encriptar clave ");
+	try{
+	
+	const { text } = request.params;
+
+	let p = text;
+
+	console.log("@p "+p);
+	
+	if(!p){
+		const desiredMaxLength = 5
+		p='';	
+		for (var i = 0; i < desiredMaxLength; i++) {
+			p += Math.floor(Math.random() * 10);
+		}			
+	}
+
+
+	console.log("@Encriptar clave");
+
+	const enc = encriptar(p);
+
+	console.log("@enc "+enc);
+
+	response.status(200).json({p:p,enc:enc});
+	}catch(error){
+		response.status(200).json(error);
+	}
+});
 
 
 //pagos

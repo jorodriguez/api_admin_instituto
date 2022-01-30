@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 app.get('/', (request, response) => {
 	console.log(process.env);
 	console.log("=====================");
-	console.log(JSON.stringify(pool));
+	//console.log(JSON.stringify(pool));
 	response.json({ info: `Instituto paris ${version} (env:${process.env.ENV})` });
 
 });
