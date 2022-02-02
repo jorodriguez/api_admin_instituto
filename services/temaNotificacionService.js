@@ -1,4 +1,5 @@
 const usuarioDao = require('../dao/usuarioDao');
+const usuarioNotificacionDao = require('../dao/usuarioNotificacionDao');
 const { isEmptyOrNull } = require('../utils/Utils');
 
 function obtenerCorreosPorTema(idSucursal, idTema) {
@@ -28,4 +29,8 @@ function obtenerCorreosPorTema(idSucursal, idTema) {
     });
 }
 
-module.exports = { obtenerCorreosPorTema };
+const getCorreosTemaPorEmpresa = async(data)=>{
+    return await usuarioNotificacionDao.obtenerCorreosPorTema(data);
+}
+
+module.exports = { obtenerCorreosPorTema,getCorreosTemaPorEmpresa };

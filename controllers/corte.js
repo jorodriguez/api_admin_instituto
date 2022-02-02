@@ -1,5 +1,6 @@
 const moment = require('moment');
 const corteService = require('../services/corteService');
+const {TIPO_TEMPLATE} = require('../utils/Constantes');
 const handle = require('../helpers/handlersErrors');
 const notificacionService = require('../utils/NotificacionService');
 
@@ -67,7 +68,7 @@ const getHtmlCorteDiaSucursal = async (request, response) => {
 
         const _fecha = moment(fecha).format('YYYY-MM-DD');
         
-        const html = await corteService.getHtmlCorteDiaSucursal({idSucursal:id_sucursal,idUsuario:id_usuario, fecha:_fecha});
+        const html = await corteService.getHtmlCorteDiaSucursal({idSucursal:id_sucursal,idUsuario:id_usuario, fecha:_fecha,tipoTemplate:TIPO_TEMPLATE.CORTE_DIARIO});
                 
         response.status(200).send(html);
 
@@ -80,5 +81,5 @@ const getHtmlCorteDiaSucursal = async (request, response) => {
 
 module.exports = {
     getCorteDiaSucursal,
-    getHtmlCorteDiaSucursal
+    getHtmlCorteDiaSucursal,    
 };

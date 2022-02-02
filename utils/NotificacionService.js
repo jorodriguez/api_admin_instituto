@@ -289,39 +289,24 @@ const enviarCorreoReciboPago = (para, asunto, params) => {
     );
 };
 
-// no se usa aun
-//const enviarCorreoClaveFamiliar = async (para, asunto, params,idEmpresa) => {
-/*const enviarCorreoClaveFamiliar = async (idFamiliar,nuevoPassword) => {
-    console.log("@enviarCorreoClaveFamiliar");
-    try{
 
-        const familiar = await familiarService.findById(idFamiliar);     
-        const configuracion = await configuracionService.getConfiguracionEmpresa(familiar.co_empresa);
-        const infoEmpresa = await empresaService.getEmpresaId(familiar.co_empresa);      
+const enviarCorreoCorteDiario = async (correoData) => {
+    console.log("@enviarCorreoCorteDiario");
+    
+    const {para, asunto, html,idEmpresa} = correoData;
 
-        const params = {               
-                titulo: "Hola " + (familiar.nombre != undefined ? familiar.nombre:"") +",",
-                subtitulo: "Enviamos tu contraseña de acceso a la aplicación",
-                contenido: `<strong>Usuario : </strong> ${familiar.correo} <br/>
-                           <strong>Contraseña : </strong> ${nuevoPassword}` ,
-                url_descarga_app_android: configuracion.link_descarga_app_android || '',
-                url_descarga_app_ios: configuracion.link_descarga_app_ios || '',
-                url_pagina_oficial : infoEmpresa.link_pagina_oficial || ''
-            };
-        
-        correoService.enviarCorreoTemplate(
-                                            familiar.correo, 
-                                            '',
-                                            "Contraseña", 
-                                            params,
-                                            familiar.co_empresa, 
-                                            TEMPLATES.TEMPLATE_GENERICO
-                                        );
+    
+   
+    return await correoService.enviarCorreoAsync(
+        para,
+        cc,
+        asunto,
+        params,        
+        idEmpresa,
+        TEMPLATES.TEMPLATE_CORTE_DIARIO
+    );
+};
 
-    }catch(e){
-        console.log("Excepción en el envio de correo al familiar: " + e);
-    }
-};*/
 
 const enviarEstadoCuenta = async (idAlumno) => {
 
@@ -343,7 +328,8 @@ const enviarEstadoCuenta = async (idAlumno) => {
 
 
 module.exports = {
-    notificarReciboPago,    
+    /*notificarReciboPago,    
     enviarEstadoCuenta,
-    notificarCargo
+    notificarCargo,*/
+    enviarCorreoCorteDiario
 };

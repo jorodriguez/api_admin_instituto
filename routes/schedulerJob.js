@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const schedule = require('node-schedule');
 const cargoService = require('../services/cargoService');
+const corteService = require('../services/corteService');
 //const inscripcionService = require('../services/inscripcionService');
 
 //const inscripcionService = require('../services/inscripcionService');
@@ -25,6 +26,26 @@ router.get('/colegiaturas',async(request,response)=>{
 
 });
 
+
+//envio de corte dia
+router.get('/x23/:id_empresa',async(request,response)=>{
+	console.log("@envio_corte");
+	try{
+
+		const {id_empresa} = request.params;
+
+		console.log("EMPRESA = "+id_empresa);
+		
+		const infoEnvio = await corteService.enviarCorteEmpresaCorreo({coEmpresa:id_empresa});
+		
+		response.status(200).json(infoEnvio);
+
+	}catch(e){
+		console.log("Error "+e);
+		response.status(400).json({error:e})
+	}
+
+});
 
 //---------------------------
 // Tareas automatizadas 
@@ -61,8 +82,6 @@ schedule.scheduleJob({ hour: 0 , minute:2, second: 0 }, async function () {
 		console.error("ERROR EN EL PROCESO AUTOMATICO DE GENERACION DE COLEGIATURAS  " + error);
 	}
 });
-
-
 
 
 //INICIAR UN CURSO - GENERAR TODOS LOS CARGOS Y CAMBIAR A ACTIVO INICIADO EL REGISTRO DE CURSO

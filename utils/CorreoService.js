@@ -5,7 +5,7 @@ var fs = require('fs').promises;
 var path = require('path');
 //const configEnv = require('../config/configEnv');
 //const { QUERY, getQueryInstance } = require('../services/sqlHelper');
-//const { ID_EMPRESA_DEFAULT } = require('./Constantes');
+const { TEMPLATES } = require('./Constantes');
 const correoTemaService = require('../services/temaNotificacionService');
 const sucursalService = require('../services/sucursalService');
 const templateCorreoService = require('../services/templateCorreoService');
@@ -13,16 +13,6 @@ const configuracionService = require('../services/configuracionService');
 
 const { existeValorArray } = require('./Utils');
 
-const TEMPLATES = {
-    TEMPLATE_AVISO: "aviso.html",
-    TEMPLATE_GENERICO: "generico.html",
-    TEMPLATE_RECIBO_PAGO: "recibo_pago.html",
-    TEMPLATE_AVISO_CARGO: "aviso_cargo.html",
-    TEMPLATE_DATOS_FACTURACION: "datos_factura.html",
-    TEMPLATE_RECORDATORIO_PAGO_MENSUALIDAD: "recordatorio_recargo_mensualidad.html",
-    TEMPLATE_REPORTE_PROX_RECARGOS: "reporte_prox_recargo_mensualidad.html",
-    TEMPLATE_ESTADO_CUENTA: "estado_cuenta.html"
-};
 
 
 function enviarCorreoFamiliaresAlumno(asunto, para, cc, params,idEmpresa, template) {
@@ -98,8 +88,27 @@ const enviarCorreoTemplateAsync = async (para, cc, asunto, params,idEmpresa, tem
 
    const renderHtml = await loadTemplate(template,params,idEmpresa);
 
-   return new Promise((resolve,reject)=>{
+   return enviarCorreoAsync({para, cc, asunto, params,idEmpresa,html:renderHtml})
+
+   /*return new Promise((resolve,reject)=>{
       enviarCorreo(para, cc, asunto, renderHtml,idEmpresa,(error,info)=>{
+            if(error){
+                    reject({enviado:false,mensaje:error});
+            }else{
+                    resolve({enviado:true,mensaje:info});
+            }
+      });    
+    });*/
+};
+
+//FIXME:hacer un solo metodo que reciba un data
+const enviarCorreoAsync = async (dataMail) => {
+    
+    const {para, cc, asunto, html,idEmpresa}=dataMail;
+
+    console.log("@enviarCorreoAsync");
+   return new Promise((resolve,reject)=>{
+      enviarCorreo(para, cc, asunto, html, idEmpresa,(error,info)=>{
             if(error){
                     reject({enviado:false,mensaje:error});
             }else{
@@ -108,6 +117,11 @@ const enviarCorreoTemplateAsync = async (para, cc, asunto, params,idEmpresa, tem
       });    
     });
 };
+
+
+
+
+
 
 const getHtmlPreviewTemplate = async (templateName, params,idEmpresa) => {
     return await loadTemplate(templateName, params,idEmpresa);
@@ -197,140 +211,6 @@ const enviarCorreo = async (para, conCopia, asunto, renderHtml,idEmpresa,handler
     }
 }
 
-//Esta configuracion se cambiara, se usara el API dedicado
-/*
-function enviarCorreo(para, conCopia, asunto, renderHtml,handler) {
-    console.log("Para " + para);
-    console.log("CCC " + conCopia);
-    try {
-        if (para == undefined || para == '' || para == null) {
-            console.log("############ NO EXISTEN CORREOS EN NINGUN CONTENEDOR (para,cc)######");
-            return;
-        }
-        if (conCopia == undefined || conCopia == '' || conCopia == null) {
-            conCopia = "";
-        }
-
-        if (renderHtml != null) {
-
-            const mailOptions = configEnv.EMAIL_CONFIG ? configEnv.EMAIL_CONFIG.mailOptions : {};
-            const configMail = configEnv.EMAIL_CONFIG ? configEnv.EMAIL_CONFIG.configMail : {};
-
-            const mailData = {
-                from: mailOptions.from || '',
-                //from: variables.mailOptions.from,
-                to: para,
-                cc: conCopia,
-                subject: asunto,
-                html: renderHtml
-            };
-
-            console.log(`Sender FROM ${mailOptions.from || 'NO-FROM'}`);
-            console.log("Correo para " + para);
-            console.log("Correo cc " + JSON.stringify(conCopia));
-            console.log("Asunto " + asunto);
-            console.log(`Ambiente ${configEnv.ENV}`);
-            console.log(`EMAIL_CONFIG ${JSON.stringify(configEnv.EMAIL_CONFIG)}`);
-            console.log(`configMail ${configMail}`);
-
-            const transporter = nodemailer.createTransport(configMail);
-            //const transporter = nodemailer.createTransport(variables.configMail);
-
-            const handlerMail =  handler ? handler : (error, info) => {
-                if (error) {
-                    console.log("Error al enviar correo : " + error);
-                } else {
-                    console.log('CORREO ENVIADO ======>>>: ' + info.response);
-                }
-            };
-
-            transporter.sendMail(mailData, handlerMail);
-            
-            transporter.close();
-        } else {
-            console.log("No se envio el correo, no existe HTML");
-        }
-    } catch (e) {
-        console.log("ERROR AL ENVIAR EL CORREO " + e);
-    }
-}*/
-
-/*
-const enviarCorreoAsync = async (para, conCopia, asunto, renderHtml) =>{
-    console.log("Para " + para);
-    console.log("CCC " + conCopia);
-    try {
-        
-           recipientesCorrectos(para,conCopia,renderHtml);
-
-           const config = getMailConfig();
-        
-           const mailData = getMailData(para,conCopia,asunto,renderHtml);          
-
-           const transporter = nodemailer.createTransport(config);            
-          
-           const respuestaEnvio = await transporter.sendMail(mailData);
-            
-           transporter.close();        
-
-           return respuestaEnvio;
-    } catch (e) {
-        console.log("ERROR AL ENVIAR EL CORREO " + e);
-    }
-};
-
-const recipientesCorrectos = (para,cc,html)=>{
-
-    if (para == undefined || para == '' || para == null) {
-        console.log("############ NO EXISTEN CORREOS EN NINGUN CONTENEDOR (para,cc)######");
-        throw 'NO EXISTEN CORREOS EN EN NINGUN CONTENEDOR';        
-    }
-
-    if (cc == undefined || cc == '' || cc == null) {
-        cc = "";
-    }
-    
-    if (html == null) {
-         throw 'NO EXISTEN EL HTML';        
-    }    
-
-    return true;
-};
-
-const getMailData =(para,cc,asunto,html)=>{
-    
-    const mailOptions = configEnv.EMAIL_CONFIG ? configEnv.EMAIL_CONFIG.mailOptions : {};    
-    cc = cc ? cc : "";      
-    
-    const mailData = {
-        from: mailOptions.from || '',    
-        to: para,
-        cc: cc,
-        subject: asunto,
-        html: html
-    }; 
-
-    console.log(`Sender FROM ${mailOptions.from || 'NOT-FROM'}`);
-    console.log("Correo para " + para);
-    console.log("Correo cc " + JSON.stringify(cc));    
-        
-    return mailData;
-};
-
-const getMailConfig = ()=>{
-    
-    try{
-        const congigMail =  configEnv.EMAIL_CONFIG ? configEnv.EMAIL_CONFIG.configMail : {};
-    
-        console.log(`Ambiente ${configEnv.ENV}`);    
-        console.log(`EMAIL_CONFIG ${JSON.stringify(congigMail)}`);
-
-        return configMail;
-    }catch(e){
-        console.log("Error al leer la configuracion del email");
-        return {};
-    }
-};*/
 
 module.exports = {
     TEMPLATES,
@@ -341,5 +221,6 @@ module.exports = {
     enviarCorreoFamiliaresAlumno,
     getHtmlPreviewTemplate,
     enviarCorreoTemplateAsync,
+    enviarCorreoAsync,
   
 };

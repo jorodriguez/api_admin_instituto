@@ -14,14 +14,30 @@ const TIPO_CARGO = {
 
 const TIPO_TEMPLATE = {
     RECIBO_PAGO : "TEMPLATE_RECIBO_PAGO",
-    CORTE_DIARIO:"TEMPLATE_CORTE_DIA" 
+    CORTE_DIARIO:"TEMPLATE_CORTE_DIA",
+    CORTE_DIARIO_ENVIO_CORREO:"CORTE_DIARIO_ENVIO_CORREO"
+
 };
 
 const TEMA_NOTIFICACION ={  ID_TEMA_NOTIFICACION_PAGOS:2,
                             ID_TEMA_DATOS_FACTURACION:5,
+                            ID_TEMA_CORTE_DIARIO:3,
                             ID_TEMA_NOTIFICACION_ALTA_FAMILIAR:4,
                             ID_TEMA_REPORTE_RECARGOS : 6
                         };
+
+                        const TEMPLATES = {
+                            TEMPLATE_AVISO: "aviso.html",
+                            TEMPLATE_GENERICO: "generico.html",
+                            TEMPLATE_RECIBO_PAGO: "recibo_pago.html",
+                            TEMPLATE_CORTE_DIARIO: "corte_diario.html",
+                            TEMPLATE_AVISO_CARGO: "aviso_cargo.html",
+                            TEMPLATE_DATOS_FACTURACION: "datos_factura.html",
+                            TEMPLATE_RECORDATORIO_PAGO_MENSUALIDAD: "recordatorio_recargo_mensualidad.html",
+                            TEMPLATE_REPORTE_PROX_RECARGOS: "reporte_prox_recargo_mensualidad.html",
+                            TEMPLATE_ESTADO_CUENTA: "estado_cuenta.html"
+                        };
+                        
 
 const ROWS_POR_PAGINACION = 5;
 
@@ -67,5 +83,6 @@ module.exports = {
     SUPER_USUAURIO,
     ID_CARGO_COLEGIATURA,
     ID_CARGO_INSCRIPCION,
-    TIPO_TEMPLATE
+    TIPO_TEMPLATE,
+    TEMPLATES
 };
