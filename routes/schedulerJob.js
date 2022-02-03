@@ -2,6 +2,7 @@ const router = require('express').Router();
 const schedule = require('node-schedule');
 const cargoService = require('../services/cargoService');
 const corteService = require('../services/corteService');
+const empresaService = require('../services/empresaService');
 //const inscripcionService = require('../services/inscripcionService');
 
 //const inscripcionService = require('../services/inscripcionService');
@@ -47,6 +48,7 @@ router.get('/x23/:id_empresa',async(request,response)=>{
 
 });
 
+
 //---------------------------
 // Tareas automatizadas 
 //---------------------------
@@ -54,7 +56,7 @@ router.get('/x23/:id_empresa',async(request,response)=>{
 // Sec,Min,Hor,D,M,Y
 // Crear los cargos de las semanas de los alumnos corre todos los días a las 8 am
 //schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
-schedule.scheduleJob({ hour: 7 , minute:0, second: 0 }, async function () {
+schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_0",{ hour: 7 , minute:0, second: 0 }, async function () {
 	console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
 	try {
 		//
@@ -69,7 +71,7 @@ schedule.scheduleJob({ hour: 7 , minute:0, second: 0 }, async function () {
 });
 
 
-schedule.scheduleJob({ hour: 0 , minute:2, second: 0 }, async function () {
+schedule.scheduleJob("GENERAR_COLEGIATURAS_0_2_0",{ hour: 0 , minute:2, second: 0 }, async function () {
 	console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
 	try {
 		//
@@ -83,9 +85,33 @@ schedule.scheduleJob({ hour: 0 , minute:2, second: 0 }, async function () {
 	}
 });
 
+
+schedule.scheduleJob("CORTE_DIARIO_ENVIO_CORREO_6_30",{ hour: 14, minute: 6, second: 0 }, async function () {
+	console.log('ENVIAR CORTE POR CORREO AUTOMATICO' + new Date());
+	try {
+		
+
+		const listaEmpresas =  await empresaService.getCuentasEmpresa();
+		
+		for(let i=0;i < listaEmpresas.length; i++){
+			
+			const empresa = listaEmpresas[i];
+
+			const infoEnvio = await corteService.enviarCorteEmpresaCorreo({coEmpresa:empresa.id});
+			
+			console.log(`---------- FINALIZA EL ENVIO DE LA EMPRESA ${empresa.nombre} ---------`);
+			console.log(JSON.stringify(infoEnvio));
+		}				
+
+		console.log(`---------- TERMINA EL PROCESO  ---------`);
+
+	} catch (error) {
+		console.error("ERROR EN EL PROCESO  envio de correo del corte " + error);
+	}
+});
 
 //INICIAR UN CURSO - GENERAR TODOS LOS CARGOS Y CAMBIAR A ACTIVO INICIADO EL REGISTRO DE CURSO
-schedule.scheduleJob("INICIAR_CURSO_AUTOMATICO",{ hour: 0 , minute:1, second: 0 }, function () {
+/*schedule.scheduleJob("INICIAR_CURSO_AUTOMATICO",{ hour: 0 , minute:1, second: 0 }, function () {
 	console.log('INICIAR EL CURSO AUTOMATICAMENTE ' + new Date());
 	try {
 		//
@@ -93,9 +119,9 @@ schedule.scheduleJob("INICIAR_CURSO_AUTOMATICO",{ hour: 0 , minute:1, second: 0 
 		console.error("ERROR EN EL PROCESO AUTOMATICO DE INICIAR EL CURSO AUTOMATICAMENTE  " + error);
 
 	}
-});
+});*/
 
-schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
+schedule.scheduleJob("TESTING_HOUR",{ hour: 8 , minute:0, second: 0 }, function () {
 	console.log("TESTING HOUR "+new Date());
 });
 

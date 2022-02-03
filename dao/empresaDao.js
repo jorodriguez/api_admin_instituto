@@ -6,7 +6,14 @@ const getEmpresaId = async (idEmpresa) => {
     `select * from co_empresa where id = $1 and eliminado = false and activa = true `, [idEmpresa]);
 };
 
+const getCuentasEmpresa = async () => {
+    console.log("@getCuentasEmpresa");
+    return await genericDao.findAll(
+    `select * from co_empresa where  eliminado = false and activa = true `, []);
+};
+
 
 module.exports = {
-    getEmpresaId
+    getEmpresaId,
+    getCuentasEmpresa
 };

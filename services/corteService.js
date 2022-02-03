@@ -127,7 +127,8 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
     }
     
   //  let corteSucursales=[];
-    let html ='';
+    let html = `<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p> 
+                <p><small>Enviado ${informacionFecha.fecha_actual_asunto} ${informacionFecha.hora_actual_format}</small></p>` ;
     
     for(let i =0; i< listaSucursales.length;i++){
         const sucursal = listaSucursales[i];
@@ -141,12 +142,8 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
                         tipoTemplate: TIPO_TEMPLATE.CORTE_DIARIO_ENVIO_CORREO
                     }
                     );            
-
-        console.log(`zzzzzzz ${htmlGen}`);
-
-        html = html.concat(htmlGen);
-
         
+        html = html.concat(htmlGen);       
                 
 //        corteSucursales.push({sucursal,html});
 
@@ -163,7 +160,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
         console.log(`usuariosEnviar ${JSON.stringify(usuariosEnviar)}`)
 
         let cc = usuariosEnviar.correos_copia || [];
-        html.concat(`<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p>`);        
+        
         const htmlMergeTemplateMain = await templateService.loadAndMergeHtmlTemplateEmpresa({
                              params:{},
                              html:html,

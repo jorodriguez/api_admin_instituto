@@ -6,8 +6,6 @@ const {
 const { isEmptyOrNull } = require("../utils/Utils");
 const { ID_CARGO_COLEGIATURA } = require('../utils/Constantes');
 
-
-
 const guardarCursoSemana = async (semanaData) => {
   console.log("@guardarCursoSemana");    
   try{
