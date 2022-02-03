@@ -5,17 +5,13 @@ const sucursalDao = require('../dao/sucursalDao');
 const templateService = require('./templateService');
 const temaNotificacionService  = require('./temaNotificacionService');
 const correoService = require('../utils/CorreoService');
-const {TIPO_TEMPLATE,TEMA_NOTIFICACION,USUARIO_DEFAULT} = require('../utils/Constantes');
+const {TEMPLATES,TEMA_NOTIFICACION,USUARIO_DEFAULT, TIPO_TEMPLATE} = require('../utils/Constantes');
 
 const getCorteDiaSucursal = async (corteData) => {
     console.log("@getCorteDiaSucursal");
     
     const {idSucursal,fecha,idUsuario} = corteData;
-
-    console.log("Fecha "+fecha);
-    console.log("suc "+idSucursal);
-    console.log("suc "+idUsuario);
-    
+        
     const sumaIngreso = await cortesDao.getSumaPagosPorRango({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
 
     const resultsIngreso = await cortesDao.getDetallePagos({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
@@ -23,6 +19,11 @@ const getCorteDiaSucursal = async (corteData) => {
     const sumaGastos = await gastoDao.getGastosSumaCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
 
     const resultsGastos = await gastoDao.getGastosCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
+
+    console.log("Fecha "+fecha);
+    console.log("suc "+idSucursal);
+    console.log("sumaIngreso "+sumaIngreso.total);
+    console.log("sumaGastos "+sumaGastos.total);
     
     return {
             fecha:fecha,
@@ -50,13 +51,15 @@ const getHtmlCorteDiaSucursal = async (corteData)=>{
         direccion_sucursal:sucursal.direccion,
         telefono_sucursal:sucursal.telefono
    };
+
    const html = await  templateService
    .loadTemplateEmpresa({
            params:params,
            idEmpresa:sucursal.co_empresa,
            idUsuario:corteData.idUsuario,
-           tipoTemplate:corte.tipoTemplate //TIPO_TEMPLATE.CORTE_DIARIO
+           tipoTemplate:corteData.tipoTemplate //TIPO_TEMPLATE.CORTE_DIARIO
        });
+    console.log(`html Corte ${html}`);
       
     return html;
 };
@@ -103,8 +106,10 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
 
     console.log(`enviado corte de ${JSON.stringify(informacionFecha)}`)
 
-    const fechaHoy = informacionFecha.fecha_actual;
+    const fechaHoy = new Date(`${informacionFecha.fecha_actual_format} 00:00:00`);
     
+    console.log("FECHA "+fechaHoy)
+
     //obtener los usuarios de la empresa de usuario notificacion    
     const usuariosEnviar = await temaNotificacionService.getCorreosTemaPorEmpresa({coEmpresa:coEmpresa,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_CORTE_DIARIO})
 
@@ -127,14 +132,16 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
     for(let i =0; i< listaSucursales.length;i++){
         const sucursal = listaSucursales[i];
 
-        console.log("SUCURSAL ===== "+sucursal.id)
+        console.log(`===== SUCURSAL ${sucursal.nombre}===== `)
            
         const htmlGen = await getHtmlCorteDiaSucursal(
                     {   idUsuario:USUARIO_DEFAULT ,
                         idSucursal:sucursal.id,
                         fecha:fechaHoy,
-                        tipoTemplate: TIPO_TEMPLATE.CORTE_DIARIO_ENVIO_CORREO}
+                        tipoTemplate: TIPO_TEMPLATE.CORTE_DIARIO_ENVIO_CORREO
+                    }
                     );            
+
         console.log(`zzzzzzz ${htmlGen}`);
 
         html = html.concat(htmlGen);
@@ -150,13 +157,13 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
     let infoEnvio = {enviado:'pendiente'};
     //enviar correo
     //if(html){
-        let asunto = `Corte ${informacionFecha.fecha_actual_format}`;
+        let asunto = `Corte del ${informacionFecha.fecha_actual_asunto}`;
         let para = usuariosEnviar.correos_usuarios || [];        
 
         console.log(`usuariosEnviar ${JSON.stringify(usuariosEnviar)}`)
 
         let cc = usuariosEnviar.correos_copia || [];
-                
+        html.concat(`<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p>`);        
         const htmlMergeTemplateMain = await templateService.loadAndMergeHtmlTemplateEmpresa({
                              params:{},
                              html:html,
@@ -167,6 +174,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
         infoEnvio = await correoService.enviarCorreoAsync({para:para,cc:cc,asunto:asunto,html:htmlMergeTemplateMain,idEmpresa:coEmpresa});
 
         console.log("=== ENVIO DE CORTE =="+ JSON.stringify(infoEnvio))
+        console.log("======= ENVIO DE CORREO =====");
     //}
 
     return infoEnvio;

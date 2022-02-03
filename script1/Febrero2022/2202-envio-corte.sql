@@ -26,7 +26,6 @@ update configuracion set link_descarga_app_android = '',co_empresa =1, configura
  ----
 
 
-
 update co_tema_notificacion set nombre = 'CORTE DIARIO' where id = 3;
 
 update co_tema_notificacion set eliminado = true where id in (4,5,6);
@@ -49,6 +48,7 @@ update usuario set correo='gruporedi@hotmail.com' where id = 14;
 update usuario set correo='lic.manueltiburcio@hotmail.com' where id = 12;
 
 
+update co_sucursal set eliminado = true where id in (2,3);
 
 
 

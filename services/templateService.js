@@ -13,7 +13,8 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
         const {params,idEmpresa,idUsuario,tipoTemplate} = templateData;
         let paramsSend = {...params};
 
-        const template = await templateCorreoDao.getTemplateEmpresa(idEmpresa);        
+        const template = await templateCorreoDao.getTemplateEmpresa(idEmpresa);       
+         
         if(template){
                 console.log("template encontrado "+template.nombre_empresa);
                 //const template = await templateCorreoDao.getTemplateCorreoEmpresa(idEmpresaParam);        
@@ -26,8 +27,10 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
                 paramsSend.rfc = template.rfc;                
                 paramsSend.logotipo = template.logotipo;                
 
+                console.log("TIPO_TEMPLATE.RECIBO_PAGO "+tipoTemplate);
+
                 switch(tipoTemplate){
-                    case TIPO_TEMPLATE.RECIBO_PAGO:
+                    case TIPO_TEMPLATE.RECIBO_PAGO:                        
                             html = mustache.to_html(template.template_recibo_pago, paramsSend);
                     break;
                     case TIPO_TEMPLATE.CORTE_DIARIO:
@@ -38,9 +41,16 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
                         const htmlLocalDataTemplateFile = 
                                 await fs.readFile(path.resolve(__dirname, `../templates/${TEMPLATES.TEMPLATE_CORTE_DIARIO}`), 'utf8');
                         if(htmlLocalDataTemplateFile){
+                            console.log("TEMPLATE ENCONTRADO ");
                             html = mustache.to_html(htmlLocalDataTemplateFile, paramsSend);
-                        }
+                            console.log("html mustache"+ html);
+                        }else console.log("TEMPLATE NO ENCONTRADO ");
                     break;
+                    default:
+                        console.log("====================");
+                        console.log("NINGUN TEMPLATE ENCONTRADO");
+                        console.log("====================");
+
                 }
                 
         }

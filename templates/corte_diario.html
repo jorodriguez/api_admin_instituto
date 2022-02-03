@@ -1,29 +1,34 @@
  
-         {{#cargos}}
-        
-         <table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;
-      text-align: left;">  
-      <tr>
-          <td colspan="2">
-              Sucursal : {{nombre_sucursal}}
-          </td>
-      </tr>
-      <tr>
-          <td>
-              + Ingreso
-          </td>
-          <td>
-              ${{total_ingreso}}
-          </td>
-      </tr>
-      <tr>
-          <td>
-              - Gasto
-          </td>
-          <td>
-              ${{total_gasto}}
-          </td>
-      </tr>
-    </table>
-          
-           {{/cargos}}
+               
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;
+                text-align: left;">  
+                <tr>
+                    <td style="background-color:#DBDBDB;margin-right:2px;color:#CC59C5" colspan="2">
+                         <span class="h2"><strong>{{nombre_sucursal}}</strong></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="80%">
+                        <span class="h2"> + Ingreso</span>
+                    </td>
+                    <td>
+                        <span class="h2"><strong>${{total_ingreso}}<strong></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="80%">
+                         <span class="h2">- Gasto</span>
+                    </td>
+                    <td >
+                        <span class="h2"><strong>${{total_gasto}}</strong></span>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="80%">
+                         <span class="h2">En caja </span>
+                    </td>
+                    <td >
+                        <span class="h2"><strong>${{total_gasto}}</strong></span>
+                    </td>
+                </tr>
+              </table>

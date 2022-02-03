@@ -23,7 +23,7 @@ const generarRandomPassword = () => {
 
 
 const getFechaHoy = async () => {
-    return await genericDao.findOne("select getDate('') as fecha_actual, to_char(getDate(''),'YYY-MM-DD') as fecha_actual_format, getHora('') as hora_actual,to_char(getHora(''),'HH24:MI') as hora_actual_format",[]);
+    return await genericDao.findOne("select getDate('') as fecha_actual, to_char(getDate(''),'YYYY-MM-DD') as fecha_actual_format,to_char(getDate(''),'DD Mon YYYY') as fecha_actual_asunto, getHora('') as hora_actual,to_char(getHora(''),'HH24:MI') as hora_actual_format",[]);
 };
 
 
