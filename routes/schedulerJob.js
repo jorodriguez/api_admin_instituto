@@ -86,7 +86,7 @@ schedule.scheduleJob("GENERAR_COLEGIATURAS_0_2_0",{ hour: 0 , minute:2, second: 
 });
 
 
-schedule.scheduleJob("CORTE_DIARIO_ENVIO_CORREO_6_30",{ hour: 14, minute: 6, second: 0 }, async function () {
+schedule.scheduleJob("CORTE_DIARIO_ENVIO_CORREO_6_30",{ hour: 18, minute: 30, second: 0 }, async function () {
 	console.log('ENVIAR CORTE POR CORREO AUTOMATICO' + new Date());
 	try {
 		

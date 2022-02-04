@@ -5,7 +5,7 @@ const { pool } = require('../db/conexion');
 const port = process.env.PORT || 5000;
 
 //version/branch
-const version = "v1.0.33/2201-preinicio";
+const version = "v1.0.33/2201-envio-corte";
 
 
 app.use(bodyParser.json());
