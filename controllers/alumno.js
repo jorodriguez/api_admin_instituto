@@ -3,9 +3,7 @@ const { pool } = require('../db/conexion');
 const handle = require('../helpers/handlersErrors');
 const { isEmptyOrNull } = require('../utils/Utils');
 //const Joi = require('@hapi/joi');
-
 const alumnoService = require('../services/alumnoService');
-const balance_alumno = require('./balance_alumno');
 
 
 const getAlumnos = async (request, response) => {

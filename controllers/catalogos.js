@@ -16,21 +16,6 @@ const getCatGeneroAlumno = (request, response) => {
     getCatalogo(QUERY.CAT_GENERO_ALUMNO,response);
 };
 
-/*const getGrupos = (request, response) => {
-    console.log("@getGruposPorEmpresa");
-    
-    const { id_empresa } = request.param;
-
-    getCatalogo(QUERY.GRUPO,response);
-};*/
-/*
-const getServicios = (request, response) => {
-    console.log("@getServicios");
-    
-    const { id_empresa } = request.params;
-
-    getCatalogo(QUERY.SERVICIOS,response);
-};*/
 
 
 module.exports = {
@@ -38,5 +23,5 @@ module.exports = {
     getFormasPago,
     getCatGeneroFamiliar,    
     getCatGeneroAlumno,    
-  //  getServicios
+  
 }
