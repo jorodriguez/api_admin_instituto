@@ -144,6 +144,21 @@ const getInscripcionesCurso = async (request, response) => {
 };
 
 
+const modificarColegiaturaInscripcion = async (request, response) => {
+    console.log("@modificarColegiaturaInscripcion");
+    try {
+
+        const id_inscripcion = request.params.id_inscripcion;
+        const data = {costo_colegiatura,nota,genero} = request.body;
+        const results = await inscripcionService.modificarCostoColegiaturaInscripcion(id_inscripcion,data);
+        response.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
 module.exports = {
     guardarInscripcion,
     confirmarInscripcion,
@@ -151,5 +166,6 @@ module.exports = {
     getInscripcionesAlumno,
     getInscripcionesCurso,
     getInscripcionesCursoActivoAlumno,
-    getInscripcionesSucursalCurso
+    getInscripcionesSucursalCurso,
+    modificarColegiaturaInscripcion
 };

@@ -33,6 +33,22 @@ const confirmarInscripcion = async(idInscripcion,inscripcionData)=>{
 }
 
 
+
+const modificarColegiaturaInscripcion = async(idInscripcion,inscripcionData)=>{
+  console.log("@modificarColegiaturaInscripcion");
+  const {costo_colegiatura,nota,genero} = inscripcionData;
+
+  return genericDao.execute(`
+          UPDATE CO_INSCRIPCION 
+            SET COSTO_COLEGIATURA = $2,                
+                FECHA_MODIFICO = (getDate('')+getHora(''))::timestamp,
+                NOTA = (NOTA ||' \n '||to_char((getDate('')+getHora('')),'DD-MM-YYYY HH24:MI') ||' '|| $3),                
+                MODIFICO = $4
+          WHERE id = $1 RETURNING ID;              
+  `,[idInscripcion,costo_colegiatura,nota,genero]);
+}
+
+
 const getInscripcionesAlumno = async(uidAlumno)=>{
   console.log("@guardarInscripcionesA1lumno"); 
   return await genericDao.findAll(getQueryBase(' a.uid = $1 '),[uidAlumno]);
@@ -134,7 +150,7 @@ const getQueryBase = (criterio) => `
     to_char(curso.fecha_fin,'DD-MM-YYYY') as fecha_fin,
     to_char(curso.fecha_fin,'DD Mon YY') as fecha_fin_format,          
     to_char(i.fecha_genero,'DD Mon YY HH24:MI') as fecha_inscripcion_format,          
-    (select string_agg(nombre,'-') from cat_dia where id = ANY(curso.dias_array::int[])) as dias, 
+    dia.nombre as dias,
     i.costo_colegiatura,
     i.costo_inscripcion,
     i.nota as nota_inscripcion,
@@ -156,7 +172,7 @@ const getQueryBase = (criterio) => `
     curso.activo
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
-    --inner join cat_horario horario on horario.id = curso.cat_horario
+    inner join cat_dia dia on dia.id = curso.cat_dia
     inner join co_alumno a on a.id = i.co_alumno
     inner join co_sucursal suc on suc.id = i.co_sucursal
 where ${criterio}
@@ -178,5 +194,6 @@ module.exports = {
   getInscripcionesCurso,
   getInscripcionesConfirmadasCurso,
   getInscripcionesActivasAlumno,
-  getInscripcionesSucursalCurso
+  getInscripcionesSucursalCurso,
+  modificarColegiaturaInscripcion
 };

@@ -170,9 +170,6 @@ app.put('/aviso/:id',checkAuth, avisos.modificarAviso);
 app.delete('/aviso',checkAuth,avisos.eliminarAvisos);
 */
 
-
-
-
 //configuracion
 app.get('/configuracion',checkAuth, conf.getConfiguracion);
 

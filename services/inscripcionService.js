@@ -30,6 +30,14 @@ const confirmarInscripcion = async (idInscripcion,inscripcionData)=>{
 }
 
 
+const modificarCostoColegiaturaInscripcion = async (idInscripcion,inscripcionData)=>{    
+    
+    const id = await inscripcionDao.modificarColegiaturaInscripcion(idInscripcion,inscripcionData);
+    
+    return id;
+}
+
+
 const generarInscripcionesAutomaticamente = async ()=>{    
     console.log("@generarInscripcionesAutomaticamente");
     try{
@@ -79,5 +87,6 @@ module.exports = {
     getInscripcionesSucursalCurso: inscripcionDao.getInscripcionesSucursalCurso,
     getInscripcionesAlumno:inscripcionDao.getInscripcionesAlumno,
     getInscripcionesActivasAlumno:inscripcionDao.getInscripcionesActivasAlumno,
-    getInscripcionesCurso:inscripcionDao.getInscripcionesCurso
+    getInscripcionesCurso:inscripcionDao.getInscripcionesCurso,
+    modificarCostoColegiaturaInscripcion
 };
