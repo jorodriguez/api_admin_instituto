@@ -1,15 +1,19 @@
-class CatCliente {
+class CatArticuloSucursal {
   constructor() {
     this.id = null;
     this.co_empresa = null;
     this.co_sucursal = null;
+    this.cat_articulo = null;
     this.genero = null;
     this.modifico = null;
+    this.precio = null;
     this.fecha_genero = null;
     this.fecha_modifico = null;
-    this.nombre = "";
+    this.cantidad_existencia = null;
+    this.nota_interna = "";
     this.eliminado = null;
-    this.correo = "";
+    this.costo_base = null;
+    this.stock_minimo = null;
   }
   setId(id) {
     this.id = id;
@@ -23,12 +27,20 @@ class CatCliente {
     this.co_sucursal = coSucursal;
     return this;
   }
+  setCatArticulo(catArticulo) {
+    this.cat_articulo = catArticulo;
+    return this;
+  }
   setGenero(genero) {
     this.genero = genero;
     return this;
   }
   setModifico(modifico) {
     this.modifico = modifico;
+    return this;
+  }
+  setPrecio(precio) {
+    this.precio = precio;
     return this;
   }
   setFechaGenero(fechaGenero) {
@@ -39,16 +51,24 @@ class CatCliente {
     this.fecha_modifico = fechaModifico;
     return this;
   }
-  setNombre(nombre) {
-    this.nombre = nombre;
+  setCantidadExistencia(cantidadExistencia) {
+    this.cantidad_existencia = cantidadExistencia;
+    return this;
+  }
+  setNotaInterna(notaInterna) {
+    this.nota_interna = notaInterna;
     return this;
   }
   setEliminado(eliminado) {
     this.eliminado = eliminado;
     return this;
   }
-  setCorreo(correo) {
-    this.correo = correo;
+  setCostoBase(costoBase) {
+    this.costo_base = costoBase;
+    return this;
+  }
+  setStockMinimo(stockMinimo) {
+    this.stock_minimo = stockMinimo;
     return this;
   }
   build() {
@@ -56,15 +76,19 @@ class CatCliente {
       id: this.id,
       co_empresa: this.co_empresa,
       co_sucursal: this.co_sucursal,
+      cat_articulo: this.cat_articulo,
       genero: this.genero,
       modifico: this.modifico,
+      precio: this.precio,
       fecha_genero: this.fecha_genero,
       fecha_modifico: this.fecha_modifico,
-      nombre: this.nombre,
+      cantidad_existencia: this.cantidad_existencia,
+      nota_interna: this.nota_interna,
       eliminado: this.eliminado,
-      correo: this.correo
+      costo_base: this.costo_base,
+      stock_minimo: this.stock_minimo
     };
   }
 }
 
-module.exports = CatCliente;
+module.exports = CatArticuloSucursal;

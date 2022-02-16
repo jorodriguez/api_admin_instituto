@@ -60,3 +60,6 @@ class CatMarca {
     };
   }
 }
+
+
+module.exports = CatMarca;

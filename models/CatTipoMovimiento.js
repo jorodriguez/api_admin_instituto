@@ -66,3 +66,6 @@ class CatTipoMovimiento {
     };
   }
 }
+
+
+module.exports = CatTipoMovimiento;

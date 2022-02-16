@@ -66,15 +66,20 @@ drop table cat_articulo_sucursal
 
 
 
-
 CREATE TABLE cat_articulo
 (
 	id serial NOT NULL primary key,	
-	co_empresa integer NOT NULL  references co_empresa(id),			
+	co_empresa integer NOT NULL  references co_empresa(id),		
+	co_sucursal integer NOT NULL  references co_sucursal(id),				
 	cat_marca integer NOT NULL  references cat_marca(id),						
 	codigo text not null,
 	nombre text not null, 
-	descripcion text,			
+	descripcion text,		
+	precio numeric not null default 1,
+	costo_base numeric not null default 0,
+	cantidad_existencia numeric not null default 0,
+	stock_minimo numeric not null default 0,	
+	nota_interna text,		
 	foto text,
 	fecha_genero timestamp without time zone DEFAULT (getDate('')+getHora('')),
 	fecha_modifico timestamp without time zone,
@@ -83,25 +88,6 @@ CREATE TABLE cat_articulo
 	eliminado boolean NOT NULL DEFAULT false    
 );
 
-
-
-CREATE TABLE cat_articulo_sucursal
-(
-	id serial NOT NULL primary key,	
-	co_empresa integer NOT NULL  references co_empresa(id),		
-	co_sucursal integer NOT NULL  references co_sucursal(id),				
-	cat_articulo integer NOT NULL  references cat_articulo(id),						
-	precio numeric not null default 1,
-	costo_base numeric not null default 0,
-	cantidad_existencia numeric not null default 0,
-	stock_minimo numeric not null default 0,	
-	nota_interna text,			
-	fecha_genero timestamp without time zone DEFAULT (getDate('')+getHora('')),
-	fecha_modifico timestamp without time zone,
-	genero integer NOT NULL  references usuario(id),		
-	modifico integer references usuario(id),		
-	eliminado boolean NOT NULL DEFAULT false    
-);
 
 
 CREATE TABLE ve_venta
@@ -126,14 +112,13 @@ CREATE TABLE ve_venta
 
 
 
-
 CREATE TABLE ve_venta_detalle
 (
 	id serial NOT NULL primary key,	
 	co_empresa integer NOT NULL  references co_empresa(id),		
 	co_sucursal integer NOT NULL  references co_sucursal(id),			
 	ve_venta integer NOT NULL  references ve_venta(id),				
-	cat_articulo_sucursal integer NOT NULL  references cat_articulo_sucursal(id),					
+	cat_articulo integer NOT NULL  references cat_articulo(id),					
 	cantidad numeric not null,		
 	precio numeric not null,
 	importe numeric not null,					
@@ -152,7 +137,7 @@ CREATE TABLE ve_movimiento
 	co_empresa integer NOT NULL  references co_empresa(id),		
 	co_sucursal integer NOT NULL  references co_sucursal(id),			
 	cat_tipo_movimiento integer NOT NULL  references cat_tipo_movimiento(id),				
-	cat_articulo_sucursal integer NOT NULL  references cat_articulo_sucursal(id),					
+	cat_articulo integer NOT NULL  references cat_articulo(id),					
 	cantidad numeric not null,				
 	cantidad_anterior numeric not null,				
 	cantidad_posterior numeric not null,				
@@ -162,19 +147,3 @@ CREATE TABLE ve_movimiento
 	modifico integer references usuario(id),		
 	eliminado boolean NOT NULL DEFAULT false    
 );
-alter table  cat_tipo_movimiento add column sistema boolean default false;
-
-insert into cat_tipo_movimiento(id,nombre,descripcion,afectacion,co_empresa,genero)
-values(1,'VENTA','ventas al publico','SALIDA',1,1),
-      (2,'COMPRAS','ventas al publico','ENTRADA',1,1),
-      (3,'AJUSTE','Ajuste del inventario','ENTRADA',1,1),
-      (4,'AJUSTE','Ajuste del inventario','SALIDA',1,1);
-
-insert into cat_marca(nombre,descripcion,co_empresa,genero)
-values('SIN MARCA','SIN MARCA',1,1);
-
-insert into cat_articulo(codigo,nombre,descripcion,foto,co_empresa,cat_marca,genero)
-values('01','PRODUCTO DE PRUEBA','Es un producto de prueba - esto es la descripción',null,1,1,1);
-
-insert into cat_articulo_sucursal(co_empresa,co_sucursal,cat_articulo,precio,costo_base,cantidad_existencia,stock_minimo,nota_interna,genero)
-values(1,1,(select id from cat_articulo where codigo ='01'),1,1,100,10,'es un producto de prueba',1);

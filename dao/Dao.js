@@ -6,7 +6,7 @@ const { Exception } = require('../exception/exeption');
 
 class Dao{
     
-    constructor(tableName){
+    constructor(modelName){
         this.modelName = modelName;
 
         this.validar = () => { if (this.modelName == '') { throw "La tabla no esta definida"; } };
@@ -46,9 +46,13 @@ class Dao{
         this.execRaw = () => {
             return knex.raw;
         };
+
+        this.getTransaction = async () => {            
+            return await knex.transaction;
+        };
     }      
 
 }
 
 
-module.exports = {Dao}
+module.exports = Dao;

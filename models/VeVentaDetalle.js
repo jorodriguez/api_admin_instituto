@@ -4,7 +4,7 @@ class VeVentaDetalle {
     this.co_empresa = null;
     this.co_sucursal = null;
     this.ve_venta = null;
-    this.cat_articulo = null;
+    this.cat_articulo_sucursal = null;
     this.genero = null;
     this.modifico = null;
     this.fecha_genero = null;
@@ -30,8 +30,8 @@ class VeVentaDetalle {
     this.ve_venta = veVenta;
     return this;
   }
-  setCatArticulo(catArticulo) {
-    this.cat_articulo = catArticulo;
+  setCatArticuloSucursal(catArticuloSucursal) {
+    this.cat_articulo_sucursal = catArticuloSucursal;
     return this;
   }
   setGenero(genero) {
@@ -67,20 +67,20 @@ class VeVentaDetalle {
     return this;
   }
   build() {
-    return {
-      id: this.id,
+    return {      
       co_empresa: this.co_empresa,
       co_sucursal: this.co_sucursal,
       ve_venta: this.ve_venta,
-      cat_articulo: this.cat_articulo,
-      genero: this.genero,
-      modifico: this.modifico,
-      fecha_genero: this.fecha_genero,
+      cat_articulo_sucursal: this.cat_articulo_sucursal,
+      genero: this.genero,            
       precio: this.precio,
       importe: this.importe,
       cantidad: this.cantidad,
-      eliminado: this.eliminado,
-      fecha_modifico: this.fecha_modifico
+      eliminado: this.eliminado,      
     };
   }
+  
 }
+
+
+module.exports = VeVentaDetalle;

@@ -44,6 +44,7 @@ const perdiodosCurso = require('./routes/periodosCurso');
 const catMateria = require('./routes/catMateria');
 const corte = require('./routes/corte');
 const cobranza = require('./routes/cobranza');
+const venta = require('./routes/venta');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -57,6 +58,7 @@ app.use('/periodos-curso',perdiodosCurso);
 app.use('/materias',catMateria);
 app.use('/reportes',corte);
 app.use('/cobranza',cobranza);
+app.use('/venta',venta);
 
 app.use('/jobs',schedulerJob);
 

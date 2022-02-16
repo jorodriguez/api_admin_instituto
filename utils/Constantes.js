@@ -84,5 +84,5 @@ module.exports = {
     ID_CARGO_COLEGIATURA,
     ID_CARGO_INSCRIPCION,
     TIPO_TEMPLATE,
-    TEMPLATES
+    TEMPLATES,    
 };

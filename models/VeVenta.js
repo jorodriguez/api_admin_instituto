@@ -82,23 +82,22 @@ class VeVenta {
     return this;
   }
   build() {
-    return {
-      id: this.id,
+    return {      
       co_empresa: this.co_empresa,
       co_sucursal: this.co_sucursal,
       cat_cliente: this.cat_cliente,
-      genero: this.genero,
-      modifico: this.modifico,
+      genero: this.genero,      
       nota_venta: this.nota_venta,
       cambio: this.cambio,
       fecha_genero: this.fecha_genero,
-      folio: this.folio,
-      fecha_modifico: this.fecha_modifico,
-      total: this.total,
-      fecha: this.fecha,
+      folio: this.folio,      
+      total: this.total,      
       eliminado: this.eliminado,
       cantidad_articulos: this.cantidad_articulos,
       recibido: this.recibido
     };
   }
 }
+
+
+module.exports = VeVenta;
