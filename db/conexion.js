@@ -81,6 +81,19 @@ const pool = new Pool({
 }
 })();
 
+const knex = require('knex')({
+    client: 'pg',
+    connection: {
+      host : configEnv.HOST_DB,
+      port : configEnv.PORT_DB,
+      user :  configEnv.USER_DB,
+      password :  configEnv.PASSWORD_DB,
+      database :configEnv.DATABASE_NAME,
+    },
+    pool: { min: 0, max: 4 }
+  });
+
+
 module.exports = {
-    pool
+    pool,knex
 };
