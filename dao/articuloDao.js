@@ -109,11 +109,15 @@ select art.id,
 	a.nombre,
 	a.descripcion,
 	a.foto,
+    m.id as cat_marca,
 	m.nombre as marca, 
+    c.id as cat_categoria,
+    c.nombre as categoria,
 	suc.nombre as sucursal
 from cat_articulo_sucursal art inner join cat_articulo a on a.id = art.cat_articulo
 					    	inner join cat_marca m on m.id = a.cat_marca
-					     inner join co_sucursal suc on suc.id = art.co_sucursal
+                            inner join cat_categoria c on c.id = a.cat_categoria
+					        inner join co_sucursal suc on suc.id = art.co_sucursal
 where ${criterio ? criterio  : ''}
     ${criterio ? ' and '  : ''}
 	a.eliminado = false

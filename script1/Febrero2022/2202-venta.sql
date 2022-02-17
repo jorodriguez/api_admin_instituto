@@ -162,7 +162,26 @@ CREATE TABLE ve_movimiento
 	modifico integer references usuario(id),		
 	eliminado boolean NOT NULL DEFAULT false    
 );
+
+
+
+CREATE TABLE cat_categoria
+(
+	id serial NOT NULL primary key,	
+	co_empresa integer NOT NULL  references co_empresa(id),			
+	nombre text not null, 
+	descripcion text,
+	fecha_genero timestamp without time zone DEFAULT (getDate('')+getHora('')),
+	fecha_modifico timestamp without time zone,
+	genero integer NOT NULL  references usuario(id),		
+	modifico integer references usuario(id),		
+	eliminado boolean NOT NULL DEFAULT false    
+);
+
+
 alter table  cat_tipo_movimiento add column sistema boolean default false;
+
+alter table  cat_articulo add column cat_categoria integer not null references cat_categoria(id);
 
 insert into cat_tipo_movimiento(id,nombre,descripcion,afectacion,co_empresa,genero)
 values(1,'VENTA','ventas al publico','SALIDA',1,1),
@@ -173,8 +192,47 @@ values(1,'VENTA','ventas al publico','SALIDA',1,1),
 insert into cat_marca(nombre,descripcion,co_empresa,genero)
 values('SIN MARCA','SIN MARCA',1,1);
 
-insert into cat_articulo(codigo,nombre,descripcion,foto,co_empresa,cat_marca,genero)
-values('01','PRODUCTO DE PRUEBA','Es un producto de prueba - esto es la descripción',null,1,1,1);
+
+insert into cat_categoria(nombre,descripcion,co_empresa,genero)
+values('SIN CATEGORIA','SIN CATEGORIA',1,1);
+
+
+insert into cat_articulo(codigo,nombre,descripcion,foto,co_empresa,cat_marca,cat_categoria,genero)
+values('01','PRODUCTO DE PRUEBA','Es un producto de prueba - esto es la descripción',null,1,1,1,1);
 
 insert into cat_articulo_sucursal(co_empresa,co_sucursal,cat_articulo,precio,costo_base,cantidad_existencia,stock_minimo,nota_interna,genero)
 values(1,1,(select id from cat_articulo where codigo ='01'),1,1,100,10,'es un producto de prueba',1);
+
+
+------------------ROLES y OPCION
+
+insert into si_rol(id,si_modulo, nombre,genero)
+values(6,1,'VENTAS',1);
+
+--registro de opcion
+select * from si_opcion
+
+insert into si_opcion(id,si_modulo,nombre,ruta,icono_menu,orden,menu_principal,genero)
+values(12,1,'Ventas','Venta','fas fa-barcode',6,true,1);
+
+
+select * from si_rol_opcion
+
+--agregando opcion para el rol ventas
+insert into si_rol_opcion(si_rol,si_opcion,genero)
+values(6,12,1); -- ventas para rol ventas
+
+
+
+select * from usuario
+
+
+-- rol para usuarios vendedores
+insert into si_usuario_sucursal_rol(usuario,co_sucursal,si_rol,co_empresa,genero)
+values(125,1,6,1,1),--para admin
+	 (16,1,6,1,1), -- para yesica
+	 (13,1,6,1,1); -- para direccion
+
+
+insert into cat_cliente(id,co_empresa,co_sucursal,nombre,correo,genero)
+values(1,1,1,'MOSTRADOR','',1);

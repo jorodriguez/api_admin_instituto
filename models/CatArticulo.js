@@ -3,6 +3,7 @@ class CatArticulo {
     this.id = null;
     this.co_empresa = null;
     this.cat_marca = null;
+    this.cat_categoria = null;
     this.genero = null;
     this.modifico = null;
     this.nombre = "";
@@ -23,6 +24,10 @@ class CatArticulo {
   }
   setCatMarca(catMarca) {
     this.cat_marca = catMarca;
+    return this;
+  }
+  setCatCategoria(catCategoria) {
+    this.cat_categoria = catCategoria;
     return this;
   }
   setGenero(genero) {
@@ -65,6 +70,7 @@ class CatArticulo {
     return {      
       co_empresa: this.co_empresa,
       cat_marca: this.cat_marca,
+      cat_categoria: this.cat_categoria,
       genero: this.genero,
       modifico: this.modifico,
       nombre: this.nombre,
@@ -79,6 +85,7 @@ class CatArticulo {
   buildForUpdate() {
     return {            
       cat_marca: this.cat_marca,      
+      cat_categoria: this.cat_categoria,
       modifico: this.modifico,
       nombre: this.nombre,
       eliminado: this.eliminado,
