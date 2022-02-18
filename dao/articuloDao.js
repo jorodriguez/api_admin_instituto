@@ -6,8 +6,8 @@ const articuloSucursalDao = new Dao(Tables.CAT_ARTICULO);
 const  CatArticuloSucursal = require('../models/CatArticuloSucursal');
 const  CatArticulo = require('../models/CatArticulo');
 
-const getArticulos = async (coSucursal) => {
-    console.log("@getArticulos");
+const getArticulosSucursal = async (coSucursal) => {
+    console.log("@getArticulosSucursal");
     return await genericDao
         .findAll(
             queryBase(` suc.id = $1 `)
@@ -17,7 +17,7 @@ const getArticulos = async (coSucursal) => {
 const getArticuloCodigo = async (coSucursal,codigo) => {
     console.log("@getArticuloCodigo");
     return await genericDao
-        .findAll(
+        .findOne(
             queryBase(` a.codigo = $2  and suc.id = $1 `)
             , [coSucursal,codigo]);
 };
@@ -28,6 +28,22 @@ const getArticulosPorNombre = async (coSucursal,nombre) => {
         .findAll(
             queryBase(` a.nombre like '%$2%'  and suc.id = $1 `)
             , [coSucursal,nombre]);
+};
+
+const getArticulosPorCategoria = async (coSucursal,catCategoria) => {
+    console.log("@getArticulosPorCategoria");
+    return await genericDao
+        .findAll(
+            queryBase(` c.id = $1 and suc.id = $1 `)
+            , [coSucursal,catCategoria]);
+};
+
+const getCategoriaArticulos = async (coSucursal) => {
+    console.log("@getCategoriaArticulos");
+    return await genericDao
+        .findAll(
+            queryCategoriaArticulos(` art.cat_sucursal = $1 `)
+            , [coSucursal]);
 };
 
 const updatePrecio = async (id,data) => {
@@ -53,9 +69,9 @@ const updateArticulo = async (id,data) => {
     
     const articuloData = Object.assign(new CatArticulo(),data);
 
-    const data = articuloData.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
+    const dataWillUpdate = articuloData.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
 
-    const row = await articuloDao.update(id,data);
+    const row = await articuloDao.update(id,dataWillUpdate);
     return row;
 }
 
@@ -91,9 +107,6 @@ const createArticulo = async (data) => {
 }
 
 
-
-
-
 const queryBase = (criterio)=>`
 
 select art.id,
@@ -121,17 +134,34 @@ from cat_articulo_sucursal art inner join cat_articulo a on a.id = art.cat_artic
 where ${criterio ? criterio  : ''}
     ${criterio ? ' and '  : ''}
 	a.eliminado = false
-	and art.eliminado = false
+	and art.eliminado = false    
 
 `;
+
+const queryCategoriaArticulos = (criterio)=>{`
+select 
+     c.id as cat_categoria,
+     c.nombre as categoria,
+	 count(art.*) numero_articulos
+from cat_articulo_sucursal art inner join cat_articulo a on a.id = art.cat_articulo					    	    
+                               inner join cat_categoria c on c.id = a.cat_categoria					            
+where ${criterio ? criterio  : ''}
+    ${criterio ? ' and '  : ''}    
+	and art.eliminado = false
+	and a.eliminado = false
+group by c.id`
+}
 
 
 
 module.exports = {
     getArticuloCodigo,
-    getArticulos,
+    getArticulosSucursal,
     updatePrecio,
     updateArticulo,
     createArticulo,    
     getArticulosPorNombre,
+    getCategoriaArticulos,
+    getArticulosPorCategoria,
+    
 };

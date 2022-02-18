@@ -6,9 +6,9 @@ const getArticuloCodigo = async (request, response) => {
     console.log("@getArticuloCodigo");
     try {
        
-            const codigo = parseInt(request.params.codigo);
+            const codigo = request.params.codigo;
             const coSucursal = parseInt(request.params.coSucursal);
-            console.log("Consultando codigo " + codigo);
+            console.log("Consultando codigo " + codigo+" sucursal "+coSucursal);
 
             const results = await articuloService.getArticuloCodigo(coSucursal,codigo);
 
@@ -24,7 +24,7 @@ const getArticuloPorNombre = async (request, response) => {
     console.log("@getArticuloPorNombre");
     try {
        
-            const nombre = parseInt(request.params.nombre);
+            const nombre = request.params.nombre;
             const coSucursal = parseInt(request.params.coSucursal);
             console.log("Consultando nombre " + nombre);
 
@@ -39,8 +39,61 @@ const getArticuloPorNombre = async (request, response) => {
 };
 
 
+const getArticulosPorCategoria = async (request, response) => {
+    console.log("@getArticulosPorCategoria");
+    try {
+       
+            const catCategoria = request.params.catCategoria;
+            const coSucursal = parseInt(request.params.coSucursal);
+            
+            const results = await articuloService.getArticulosPorCategoria(coSucursal,catCategoria);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+const getArticulosSucursal = async (request, response) => {
+    console.log("@getArticulosSucursal");
+    try {
+                  
+            const coSucursal = parseInt(request.params.coSucursal);
+            
+            const results = await articuloService.getArticulosSucursal(coSucursal);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+const getCategoriaArticulos = async (request, response) => {
+    console.log("@getCategoriaArticulos");
+    try {
+                  
+            const coSucursal = parseInt(request.params.coSucursal);
+            
+            const results = await articuloService.getCategoriaArticulos(coSucursal);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
 
 module.exports = {
     getArticuloCodigo,
-    getArticuloPorNombre
+    getArticuloPorNombre,
+    getArticulosPorCategoria,
+    getArticulosSucursal,
+    getCategoriaArticulos
 };

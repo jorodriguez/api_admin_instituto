@@ -200,10 +200,29 @@ values('SIN CATEGORIA','SIN CATEGORIA',1,1);
 insert into cat_articulo(codigo,nombre,descripcion,foto,co_empresa,cat_marca,cat_categoria,genero)
 values('01','PRODUCTO DE PRUEBA','Es un producto de prueba - esto es la descripción',null,1,1,1,1);
 
+
+
 insert into cat_articulo_sucursal(co_empresa,co_sucursal,cat_articulo,precio,costo_base,cantidad_existencia,stock_minimo,nota_interna,genero)
 values(1,1,(select id from cat_articulo where codigo ='01'),1,1,100,10,'es un producto de prueba',1);
 
 
+
+insert into cat_marca(nombre,descripcion,co_empresa,genero)
+values('REVLON','REVLON',1,1);
+
+insert into cat_categoria(nombre,descripcion,co_empresa,genero)
+values('TINTES','TINTES',1,1);
+
+insert into cat_articulo(codigo,nombre,descripcion,foto,cat_marca,cat_categoria,co_empresa,genero)
+values(	'02'
+		,'Colorsilk Beautiful Color - Tinte permanente para el cabello de alta definición y larga duración, brillo y suavidad sedosa con cobertura del 100 % de las canas, sin amoníaco, rubio sol ultraclaro 003, paquete de 1 unidad'		 
+		,'Tinte permanente con la calidad de la peluquería, pero en tu casa: Práctico kit de teñido del cabello para uso hogareño desarrollado por expertos de peluquería para lograr resultados duraderos.'
+		,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1645130301/paris/articulos/81UlNjOeXJL._SL1500__twn64y.jpg'
+		,(select id from cat_marca where  nombre ='REVLON')
+		,(select id from cat_categoria where  nombre ='TINTES')
+		,1,1);
+insert into cat_articulo_sucursal(co_empresa,co_sucursal,cat_articulo,precio,costo_base,cantidad_existencia,stock_minimo,nota_interna,genero)
+values(1,1,(select id from cat_articulo where codigo ='02'),45,25,100,10,'es un producto de prueba',1);
 ------------------ROLES y OPCION
 
 insert into si_rol(id,si_modulo, nombre,genero)

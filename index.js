@@ -45,6 +45,8 @@ const catMateria = require('./routes/catMateria');
 const corte = require('./routes/corte');
 const cobranza = require('./routes/cobranza');
 const venta = require('./routes/venta');
+const articulo = require('./routes/articuloController');
+const categoriaArticulo = require('./routes/categoriasArticuloController');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -59,6 +61,8 @@ app.use('/materias',catMateria);
 app.use('/reportes',corte);
 app.use('/cobranza',cobranza);
 app.use('/venta',venta);
+app.use('/articulo',articulo);
+app.use('/categoria-articulo',categoriaArticulo);
 
 app.use('/jobs',schedulerJob);
 
