@@ -26,8 +26,8 @@ const getArticulosPorNombre = async (coSucursal,nombre) => {
     console.log("@getArticulosNombre");
     return await genericDao
         .findAll(
-            queryBase(` a.nombre like '%$2%'  and suc.id = $1 `)
-            , [coSucursal,nombre]);
+            queryBase(` lower(a.nombre) like lower('%${nombre}%')  and suc.id = $1 `)
+            , [coSucursal]);
 };
 
 const getArticulosPorCategoria = async (coSucursal,catCategoria) => {
