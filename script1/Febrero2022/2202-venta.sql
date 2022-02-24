@@ -255,3 +255,5 @@ values(125,1,6,1,1),--para admin
 
 insert into cat_cliente(id,co_empresa,co_sucursal,nombre,correo,genero)
 values(1,1,1,'MOSTRADOR','',1);
+
+alter table co_template add column template_ticket_venta text;

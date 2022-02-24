@@ -75,8 +75,7 @@ class VeVentaDetalle {
       genero: this.genero,            
       precio: this.precio,
       importe: this.importe,
-      cantidad: this.cantidad,
-      eliminado: this.eliminado,      
+      cantidad: this.cantidad      
     };
   }
   

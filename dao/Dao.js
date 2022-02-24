@@ -1,6 +1,7 @@
 
 //const genericDao = require('./genericDao');
 const { knex } = require('../db/conexion');
+const { findOne } = require('./genericDao');
 const { isEmptyOrNull } = require('../utils/Utils');
 const { Exception } = require('../exception/exeption');
 
@@ -27,12 +28,24 @@ class Dao{
         };
 
         this.findAll = async () => {
-            console.log("===this.modelName " + this.modelName);
+            console.log("@findAll " + this.modelName);
             return await knex.select('*').from(this.modelName).where('eliminado', false);
         };
 
         this.findById = async (id) => {
-            return await knex.select('*').from(this.modelName).where('id', id).first();
+            console.log("@findById " + this.modelName);
+            
+            return await findOne(`SELECT * FROM ${this.modelName} WHERE  id =$1 AND ELIMINADO = FALSE`,[id]);
+
+            /*const results = await knex.select('*').from(this.modelName).where('id',id);
+
+            console.log("RESULS "+JSON.stringify(results));
+
+            const rowOne = (results != null && resulstresults.lenght > 0) ? results[0]:null;
+
+            return rowOne;*/
+
+            //await findOne(`SELECT * FROM ${this.modelName} WHERE  id =$1 AND ELIMINADO = FALSE`,[id]);
         };
 
         this.getInstanceModel = () => {
@@ -47,9 +60,7 @@ class Dao{
             return knex.raw;
         };
 
-        this.getTransaction = async () => {            
-            return await knex.transaction;
-        };
+        this.getKnex = () => knex;
     }      
 
 }

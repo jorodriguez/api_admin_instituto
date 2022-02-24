@@ -75,9 +75,7 @@ class VeMovimiento {
       genero: this.genero,      
       cantidad: this.cantidad,
       cantidad_posterior: this.cantidad_posterior,
-      cantidad_anterior: this.cantidad_anterior,      
-      fecha_modifico: this.fecha_modifico,
-      eliminado: this.eliminado
+      cantidad_anterior: this.cantidad_anterior,            
     };
   }
 }

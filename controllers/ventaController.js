@@ -18,7 +18,7 @@ const createVenta = async (request, response) => {
                    
             const results = await ventaService.createVenta(data);
 
-            console.log("Venta "+JSON.stringify(results));
+            console.log("Venta = "+JSON.stringify(results));
 
             response.status(200).json(results);
             

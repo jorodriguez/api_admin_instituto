@@ -91,8 +91,7 @@ class VeVenta {
       cambio: this.cambio,
       fecha_genero: this.fecha_genero,
       folio: this.folio,      
-      total: this.total,      
-      eliminado: this.eliminado,
+      total: this.total,            
       cantidad_articulos: this.cantidad_articulos,
       recibido: this.recibido
     };

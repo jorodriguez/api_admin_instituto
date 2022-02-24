@@ -3,6 +3,7 @@ const Tables = require('../utils/Tables');
 const {MOVIMIENTO_ENTRADA,MOVIMIENTO_SALIDA} = require('../utils/Movimientos');
 const Dao = require('./Dao');
 const movimientoDao = new Dao(Tables.VE_MOVIMIENTO); 
+const tipoMovimientoDao = new Dao(Tables.CAT_TIPO_MOVIMIENTO); 
 const catArticuloSucursalDao = new Dao(Tables.CAT_ARTICULO_SUCURSAL); 
 const VeMovimiento = require('../models/VeMovimiento');
 
@@ -14,11 +15,18 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
         //co_empresa,co_sucursal,cat_tipo_movimiento,cat_articulo_sucursal,cantidad,cantidad_anterior,cantidad_posterior
         const movimientoData = Object.assign(new VeMovimiento(),data);        
 
-        const articuloSucursal = await catArticuloSucursalDao.finfById(catArticuloSucursal);
+        //console.log("Movimiento data "+JSON.stringify(movimientoData));
+        console.log("catArticuloSucursal "+catArticuloSucursal);
 
-        const tipoMovimiento = await movimientoDao.finfById(movimientoData.cat_tipo_movimiento);                      
+        const articuloSucursal = await catArticuloSucursalDao.findById(catArticuloSucursal);
+        
+        console.log("ArticuloSucursal data "+JSON.stringify(articuloSucursal));
+
+        const tipoMovimiento = await tipoMovimientoDao.findById(movimientoData.cat_tipo_movimiento);                      
+
+        console.log("Tipo de movimiento a actualizar "+tipoMovimiento.nombre)
       
-        const cantidadActualizar = 0;
+        let cantidadActualizar = 0;
         
         if(tipoMovimiento.afectacion == MOVIMIENTO_ENTRADA){
             cantidadActualizar = (articuloSucursal.cantidad_existencia + cantidadAfectacion);
@@ -35,28 +43,35 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
         
         let rowMovimiento;
 
-        if(transaction){
-            
-            rowMovimiento = await movimientoDao.insert(movimientoData).transacting(transaction);                   
+        const movimientoInsert = movimientoData.setCantidad(cantidadActualizar)
+                                                .setCantidadAnterior(cantidadAnteriorActualizar)
+                                                .setCantidadPosterior(cantidadPosteriorActualizar)
+                                                .setFechaModifico(new Date())
+                                                .setModifico(data.genero)
+                                                .build();
 
-            await catArticuloSucursalDao.update(
-                                            catArticuloSucursal,
-                                            {cantidad_existencia:cantidadActualizar,
-                                                cantidad_anterior:cantidadAnteriorActualizar,
-                                                cantidad_posterior:cantidadPosteriorActualizar,
+        if(transaction){            
+          
+            
+            rowMovimiento  =  await transaction(Tables.VE_MOVIMIENTO).insert(movimientoInsert).returning("*");     
+            
+            await transaction(Tables.CAT_ARTICULO_SUCURSAL).update(                                            
+                                            {
+                                                cantidad_existencia:cantidadActualizar,                                                
                                                 fecha_modifico:new Date(),
-                                                modifico:data.genero}
-                                            ).transacting(transaction);
+                                                modifico:data.genero
+                                            }).where('id','=',catArticuloSucursal);
+
         }else{
             
-            rowMovimiento = await movimientoDao.insert(movimientoData);
+            rowMovimiento = await movimientoDao.insert(movimientoInsert);
 
             await catArticuloSucursalDao.update(catArticuloSucursal,
-                                    {cantidad_existencia:cantidadAnteriorActualizar,
-                                    cantidad_anterior:cantidadPosteriorActualizar,
-                                    cantidad_posterior:cantidad_posterior,
-                                    fecha_modifico:new Date(),
-                                    modifico:data.genero});
+                                    {
+                                        cantidad_existencia:cantidadAnteriorActualizar,                                    
+                                        fecha_modifico:new Date(),
+                                        modifico:data.genero
+                                    });
         }        
         
         return rowMovimiento;

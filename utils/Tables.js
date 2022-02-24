@@ -1,8 +1,9 @@
 
 module.exports = {    
-    CAT_ARTICULO:'CAT_ARTICULO',
-    CAT_ARTICULO_SUCURSAL:'CAT_ARTICULO_SUCURSAL',
-    VE_VENTA:'VE_VENTA',
-    VE_VENTA_DETALLE:'VE_VENTA_DETALLE',
-    VE_MOVIMIENTO:'VE_MOVIMIENTO',
+    CAT_ARTICULO:'cat_articulo',
+    CAT_ARTICULO_SUCURSAL:'cat_articulo_sucursal',
+    VE_VENTA:'ve_venta',
+    VE_VENTA_DETALLE:'ve_venta_detalle',
+    VE_MOVIMIENTO:'ve_movimiento',
+    CAT_TIPO_MOVIMIENTO:'cat_tipo_movimiento',
 }
