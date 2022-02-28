@@ -27,7 +27,7 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
                 paramsSend.rfc = template.rfc;                
                 paramsSend.logotipo = template.logotipo;                
 
-                console.log("TIPO_TEMPLATE.RECIBO_PAGO "+tipoTemplate);
+                console.log("TIPO_TEMPLATE - "+tipoTemplate);
 
                 switch(tipoTemplate){
                     case TIPO_TEMPLATE.RECIBO_PAGO:                        
@@ -47,7 +47,8 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
                         }else console.log("TEMPLATE NO ENCONTRADO ");
                     break;
                     case TIPO_TEMPLATE.TICKET_VENTA:
-                            html = mustache.to_html(template.template_ticket_venta, paramsSend);
+                            
+                            html = mustache.to_html(template.template_ticket_venta , paramsSend);
                     break;
                     default:
                         console.log("====================");
@@ -59,7 +60,7 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
         }
         return html;
     } catch (e) {
-        console.log("Error al obtener el template de la BD "+e);
+        console.log("Error al obtener el template de la BD ERROR:"+e);
         throw "error al obtener el template ";
     }      
 };

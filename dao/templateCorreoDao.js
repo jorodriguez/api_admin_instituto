@@ -7,10 +7,10 @@ const getTemplateCorreoEmpresa = async (idEmpresa) => {
             em.direccion as direccion_empresa,
             em.telefono as telefono_empresa,		
             tem.nombre as nombre_template,
-            tem.encabezado as encabezado_template,
+            tem.encabezado as encabezado_template,            
             tem.pie as pie_template,
             tem.anexo_pie_correo,
-            tem.anexo_recibo_pago,
+            tem.anexo_recibo_pago,            
             tem.logo_correo as logotipo,
 			em.pagina_oficial
     from co_empresa em inner join co_template tem on tem.id = em.co_template
@@ -30,6 +30,7 @@ const getTemplateEmpresa = async (idEmpresa) => {
             tem.nombre as nombre_template,
             tem.template_recibo_pago,
             tem.template_corte_dia,
+            tem.template_ticket_venta,
             tem.logo_correo as logotipo,
 			em.pagina_oficial,
             to_char(getDate('') + getHora(''),'dd-mm-yyyy HH24:mi') as fecha_impresion

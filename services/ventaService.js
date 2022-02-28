@@ -5,36 +5,41 @@ const {TIPO_TEMPLATE} = require('../utils/Constantes');
 
 const getTicketData = async(idVenta)=>{
     
-    const ventaRow = ventaDao.getVentaById(idVenta);
+    const ventaRow = await ventaDao.getVentaById(idVenta);
     
     if(!venta){
             console.log("No existe la venta");
             return null;
     }
 
-    const detalleVenta = detalleVentaDao.getListaDetalleVenta(idVenta);
+    const detalleVenta = await detalleVentaDao.getListaDetalleVenta(idVenta);
     
-   return {venta:ventaRow,detalleVenta};
+   return {venta:ventaRow,detalle:detalleVenta};
 
 }
 
 const getHtmlTicket = async (idVenta)=>{
     console.log("@getHtmlTicket");
     
-    const ventaData = await getTicketData(idVenta);
+    const ticketData = await getTicketData(idVenta);
+
+    const {venta,detalle} = ticketData;
+
+    console.log("--"+JSON.stringify(ticketData));
 
     const params = {
-        
-        nombre_sucursal:ventaData.nombre_sucursal,
-        direccion_sucursal:ventaData.direccion_sucursal,
-        telefono_sucursal:ventaData.telefono_sucursal
+        ...venta,
+        detalle:detalle,
+        nombre_sucursal:venta.nombre_sucursal,
+        direccion_sucursal:venta.direccion_sucursal,
+        telefono_sucursal:venta.telefono_sucursal
    };
 
    const html = await  templateService
    .loadTemplateEmpresa({
            params,
-           idEmpresa: ventaData.co_empresa,
-           idUsuario,
+           idEmpresa: venta.co_empresa,
+           idUsuario:venta.genero,
            tipoTemplate:TIPO_TEMPLATE.TICKET_VENTA
     });
 
@@ -43,6 +48,10 @@ const getHtmlTicket = async (idVenta)=>{
     return html;
 };
 
+
+
 module.exports = { 
-                    getTicketData
+                    getHtmlTicket,
+                    createVenta:ventaDao.createVenta,
+                    getVentasSucursal: ventaDao.getVentasSucursal
                  };

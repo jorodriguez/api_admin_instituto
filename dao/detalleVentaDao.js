@@ -11,7 +11,7 @@ const genericDao = require('./genericDao');
 
 //getDetalleTicket
 const getListaDetalleVenta =async (idVenta)=>{
-    return await genericDao.findOne(`
+    return await genericDao.findAll(`
     select det.id,
     det.cantidad,
     det.precio,

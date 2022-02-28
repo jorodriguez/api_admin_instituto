@@ -221,8 +221,10 @@ values(	'02'
 		,(select id from cat_marca where  nombre ='REVLON')
 		,(select id from cat_categoria where  nombre ='TINTES')
 		,1,1);
+
 insert into cat_articulo_sucursal(co_empresa,co_sucursal,cat_articulo,precio,costo_base,cantidad_existencia,stock_minimo,nota_interna,genero)
 values(1,1,(select id from cat_articulo where codigo ='02'),45,25,100,10,'es un producto de prueba',1);
+
 ------------------ROLES y OPCION
 
 insert into si_rol(id,si_modulo, nombre,genero)
@@ -257,3 +259,159 @@ insert into cat_cliente(id,co_empresa,co_sucursal,nombre,correo,genero)
 values(1,1,1,'MOSTRADOR','',1);
 
 alter table co_template add column template_ticket_venta text;
+
+
+insert into co_consecutivo(nombre,identificador,anio,co_empresa,co_sucursal,valor,genero)
+ values('TICKET_VENTA','TICKET_VENTA',22,1,1,0,1);
+
+
+update co_template 
+set template_ticket_venta='
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+<style type="text/css" media="print">
+#print {
+ height: auto;
+ width: 310px;
+ margin: 0px 0px 10px 0px;
+ padding: 10px;     
+  font-size:.25em !important;
+ /*float: left;
+ font-family: Arial, Helvetica, sans-serif;
+ font-size: 7px;
+ font-style: normal;
+ line-height: normal;
+ font-weight: normal;
+ font-variant: normal;
+ text-transform: none;
+ color: #000;*/
+}
+@page{
+   margin: 10;
+}
+</style>
+</head>
+<body>
+<table id="print" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+        <td style="border-bottom: 1px solid gray;">
+        	<table width="100%" border="0" cellspacing="3" cellpadding="3">
+            	<tr>
+                	<td>
+                    	 <img style="height:70px;" src="{{& logotipo}}" />
+                    </td>
+                    <td  width="30%"  align="right">
+                    	<table width="100%" style="height: 70px;border: 1px solid black;text-align: center; border-radius: 5px;"  cellspacing="1">
+                        	<tr >
+                            <td style="border-bottom: 0px solid gray;text-align: center;">
+                    				<strong>Venta</strong>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td>
+                    			<strong>{{folio}}</strong>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>                    
+                </tr>
+            </table>            
+        </td>        
+    </tr>
+    <tr>
+        <td style="border-bottom: 1px solid gray;">          
+         <table width="100%"  style="height: 70px;border: 0px solid black;text-align: left;"  border="0" cellspacing="0" cellpadding="0">
+            	<tr><td><small>{{nombre_empresa}}</small></td></tr>
+                <tr><td>{{rfc}}<tr><td>
+                <tr><td>{{nombre_sucursal}}<tr><td>
+                <tr><td>{{direccion_sucursal}}<tr><td>
+                <tr><td>{{telefono_sucursal}}<tr><td>               
+            </table>                          
+        </td>
+    </tr>       
+    <tr>
+        <td style="border-bottom: 1px solid gray;">
+            <br/>
+            <table width="100%" style="background-color:white">
+                <tr>
+                    <td  width="20%"><strong>Fecha</strong></td>
+                    <td>{{fecha}}</td>
+                </tr>                
+            </table>
+            <br/>
+            <table width="100%" border="0" cellspacing="2" cellpadding="2">
+                <tr>
+                    <th width="55%" style="border-bottom:1pt solid #57A8B6;text-align: left;" >Artículo</th>                    
+                    <th width="15%" style="border-bottom:1pt solid #57A8B6;" width="10%">Cant.</th>
+                    <th style="border-bottom:1pt solid #57A8B6;text-align:right" width="15%" align="right">Precio</th>                                       
+                    <th style="border-bottom:1pt solid #57A8B6;text-align:right" width="15%" align="right">Importe</th>                   
+                </tr>                
+                {{#detalle}}
+                <!-- IF -->
+                <tr style="text-align:left">
+                    <td colspan="4">{{articulo}} {{codigo}}                                                        </td>
+                 </tr>
+                 <tr style="text-align:right">
+                    <td colspan="2" style="border-bottom:1pt solid #57A8B6;">{{cantidad}}</td>
+                    <td style="border-bottom:1pt solid #57A8B6;text-align:right" align="right">${{precio}}</td>                                        
+                    <td style="border-bottom:1px solid #57A8B6;text-align:right" align="right">${{importe}}</td>
+                    <!--<td>{{nota}}</td>-->
+                </tr>
+                {{/detalle}}
+                <tr>                	
+                    <td colspan="3" style="text-align:right">
+                        <strong>Total:</strong>
+                    </td>
+                    <td style="text-align:right;" valign="center" align="right">
+                        <strong> ${{total}}</strong> 
+                    </td>
+            </tr>
+            <tr>                	
+                    <td colspan="3" style="text-align:right">
+                        <strong>Recibido:</strong>
+                    </td>
+                    <td style="text-align:right;" valign="center" align="right">
+                        <strong> ${{recibido}}</strong> 
+                    </td>
+            </tr>
+             <tr>                	
+                    <td colspan="3" style="text-align:right">
+                        <strong>Cambio:</strong>
+                    </td>
+                    <td style="border-bottom:2pt solid #57A8B6;text-align:right;background-color:#F7F7F7" valign="center" align="right">
+                        <strong> ${{cambio}}</strong> 
+                    </td>
+            </tr>
+          </table>
+        </td>
+      </tr>   
+      <!-- mensaje final -->
+       <tr>
+        <td >      
+        	<br/>
+        	<table width="100%" style="text-align: center;"   border="0" >
+            	<tr>
+                	<td>
+                    	<p>Atendió {{nombre_usuario}}</p> 
+                        <p><strong>¡Gracias por su confianza¡</strong></p> 
+                        <small>{{fecha_impresion}}</small> 
+                	</td>
+                </tr>                                                                       
+         	</table>              
+         	<br/>
+         	<br/>
+         	<br/>
+        </td>
+    </tr>    
+      <!-- fin mensaje final-->                
+</table>
+</body>
+</html>
+'
+where id = 2;
+
+ALTER TABLE cat_articulo ADD CONSTRAINT constraint_unik UNIQUE (codigo);
+
+ALTER TABLE cat_articulo_sucursal ADD CONSTRAINT constraint_unik_em UNIQUE (cat_articulo,co_empresa,co_sucursal);
