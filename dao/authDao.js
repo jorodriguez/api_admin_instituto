@@ -9,7 +9,7 @@ const getQueryBase = (condicion) => {
             u.correo,
             u.password,
             u.co_sucursal,
-            u.permiso_gerente,
+            su.enviar_recibo_correo,
             su.nombre AS nombre_sucursal,
             su.foto AS foto_sucursal,
             em.id AS id_empresa,

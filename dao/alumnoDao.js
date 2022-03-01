@@ -37,18 +37,18 @@ const getCorreosTokensAlumno = (idAlumno) => {
 
 const guardarAlumno = async (alumnoData) => {
     console.log("@guardarAlumno " + JSON.stringify(alumnoData));
-    const { co_sucursal, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, co_empresa, genero } = alumnoData;
+    const { co_sucursal, cat_genero, nombre, apellidos, direccion, telefono,correo, fecha_nacimiento, nota, foto, co_empresa, genero } = alumnoData;
 
     return await genericDao.execute(`        
-            INSERT INTO CO_ALUMNO(matricula,co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,fecha_nacimiento,nota,foto,co_empresa,genero)
-            VALUES((select (prefijo||''||anio||'-'||valor::text) from obtener_consecutivo('MATRICULA',$1)),$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING ID;
-    `, [co_sucursal, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, co_empresa, genero]);
+            INSERT INTO CO_ALUMNO(matricula,co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,correo,fecha_nacimiento,nota,foto,co_empresa,genero)
+            VALUES((select (prefijo||''||anio||'-'||valor::text) from obtener_consecutivo('MATRICULA',$1)),$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING ID;
+    `, [co_sucursal, cat_genero, nombre, apellidos, direccion, telefono, correo,fecha_nacimiento, nota, foto, co_empresa, genero]);
 
 }
 
 const modificarAlumno = async (id, alumnoData) => {
     console.log("@modificarAlumno " + JSON.stringify(alumnoData));
-    const { cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, cat_escolaridad, ocupacion, originario, tutor, telefono_tutor, genero } = alumnoData;
+    const { cat_genero, nombre, apellidos, direccion, telefono, correo,fecha_nacimiento, nota, foto, cat_escolaridad, ocupacion, originario, tutor, telefono_tutor, genero } = alumnoData;
 
 
     return await genericDao.execute(`
@@ -66,11 +66,12 @@ const modificarAlumno = async (id, alumnoData) => {
                         originario=$12,
                         tutor=$13,
                         telefono_tutor=$14,
-                        MODIFICO = $15,
+                        correo=$15,
+                        MODIFICO = $16,
                         FECHA_MODIFICO=(getDate('')+getHora(''))
             WHERE ID = $1
             RETURNING ID;
-    `, [id, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, cat_escolaridad, ocupacion, originario, tutor, telefono_tutor, genero]);
+    `, [id, cat_genero, nombre, apellidos, direccion, telefono, fecha_nacimiento, nota, foto, cat_escolaridad, ocupacion, originario, tutor, telefono_tutor, correo,genero]);
 
 }
 
