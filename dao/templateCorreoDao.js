@@ -27,10 +27,13 @@ const getTemplateEmpresa = async (idEmpresa) => {
             em.direccion as direccion_empresa,
             em.telefono as telefono_empresa,		
             em.rfc as rfc,		
+            tem.encabezado,
+            tem.pie,
             tem.nombre as nombre_template,
             tem.template_recibo_pago,
             tem.template_corte_dia,
             tem.template_ticket_venta,
+            tem.template_correo_bienvenida,
             tem.logo_correo as logotipo,
 			em.pagina_oficial,
             to_char(getDate('') + getHora(''),'dd-mm-yyyy HH24:mi') as fecha_impresion

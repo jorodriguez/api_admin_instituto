@@ -132,7 +132,10 @@ const getIncripcionesIniciarCursoHoyPorSucursal =(idSucursal)=>{
   return genericDao.findAll(getQueryBase("  curso.fecha_inicio::date <= getDate('') and a.co_sucursal = $1 and curso.semana_actual = 0  and curso.activo = false "),[idSucursal]);
 }
 
-
+const findById = async (id)=>{
+  console.log("@findById");  
+  return await genericDao.findOne(getQueryBase(" i.id = $1 "),[id]);
+}
 
 const getQueryBase = (criterio) => `               
   select i.id as id_inscripcion,
@@ -157,6 +160,7 @@ const getQueryBase = (criterio) => `
     i.total_pagado,
     i.pagado,
     esp.id as id_especialidad,
+    esp.foto as logo_taller,
     esp.nombre as especialidad,
     esp.color as color_especialidad,     
     to_char(curso.hora_inicio,'HH24:MI')||' - '||to_char(curso.hora_fin,'HH24:MI') as horario,
@@ -166,7 +170,9 @@ const getQueryBase = (criterio) => `
     a.direccion as direccion,
     a.apellidos,
     a.telefono,
+    a.correo,
     a.foto,
+    to_char(a.fecha_nacimiento,'DD-MM-YYYY') as fecha_nacimiento_format,          
     a.uid,    
     curso.foto as foto_curso,
     curso.activo
@@ -195,5 +201,6 @@ module.exports = {
   getInscripcionesConfirmadasCurso,
   getInscripcionesActivasAlumno,
   getInscripcionesSucursalCurso,
-  modificarColegiaturaInscripcion
+  modificarColegiaturaInscripcion,
+  findById
 };

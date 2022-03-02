@@ -33,4 +33,5 @@ const getCorreosTemaPorEmpresa = async(data)=>{
     return await usuarioNotificacionDao.obtenerCorreosPorTema(data);
 }
 
-module.exports = { obtenerCorreosPorTema,getCorreosTemaPorEmpresa };
+
+module.exports = { obtenerCorreosPorTema,getCorreosTemaPorEmpresa,getCorreosPorTemaSucursal:usuarioNotificacionDao.obtenerCorreosPorTemaSucursal };

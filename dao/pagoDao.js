@@ -111,6 +111,7 @@ const getInfoPagoId= async (idPago)=>{
             pago.identificador_pago,
             TO_CHAR(pago.fecha, 'dd-mm-yyyy HH24:mi') as fecha,		            
             al.nombre as nombre_alumno,
+            al.correo as correo_alumno,
             al.apellidos as apellidos_alumno,                                        
             suc.id as id_sucursal,
             suc.nombre as nombre_sucursal,
@@ -118,7 +119,9 @@ const getInfoPagoId= async (idPago)=>{
             suc.telefono as telefono_sucursal,		
             count(cargo.id) as count_cargos,		
             suc.co_empresa,
+            u.id as id_genero,
             u.nombre as nombre_usuario,
+            u.correo_copia as correo_copia_usuario,
             array_to_json(array_agg(to_json(cargo.*))) AS cargos
         from co_pago_balance_alumno pago inner join co_pago_cargo_balance_alumno rel on pago.id = rel.co_pago_balance_alumno
                             inner join relacion_cargos cargo on rel.co_cargo_balance_alumno = cargo.id
@@ -127,7 +130,7 @@ const getInfoPagoId= async (idPago)=>{
                             inner join co_sucursal suc on al.co_sucursal = suc.id									
                             inner join usuario u on u.id = pago.genero
         where pago.id = $1
-        group by pago.id,fpago.permite_factura,fpago.nombre,al.nombre,al.apellidos,suc.id,suc.nombre,suc.direccion,suc.co_empresa,u.nombre
+        group by pago.id,fpago.permite_factura,fpago.nombre,al.nombre,al.apellidos,al.correo,suc.id,suc.nombre,suc.direccion,suc.co_empresa,u.nombre,u.correo_copia,u.id
 
     `,[idPago]);
 

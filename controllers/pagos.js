@@ -1,8 +1,10 @@
 
 const pagoService = require('../services/pagoService');
 const alumnoService = require('../services/alumnoService');
+const usuarioService = require('../services/usuarioService');
 const handle = require('../helpers/handlersErrors');
 const notificacionService = require('../utils/NotificacionService');
+const correoService = require('../utils/CorreoService');
 
 const registrarPago = async (request, response) => {
     console.log("@registrarPago");
@@ -31,18 +33,14 @@ const registrarPago = async (request, response) => {
         console.log("v "+JSON.stringify(pagoData));
 
         const result = await pagoService.registrarPago({id_alumno:alumno.id,...pagoData});
+
+        //enviar el correo con el comprobante         
+
+        const { agregar_pago_alumno } = result;       
+          
+        await enviarComprobantePago({id_pago:agregar_pago_alumno});
         
         response.status(200).json(result);
-/*        pagoService
-            .registrarPago(pagoData)
-            .then(results => {
-                //notificacionService.notificarReciboPago(id_alumno, results.agregar_pago_alumno,false);                
-                response.status(200).json(results);
-            }).catch(error => {
-                console.log("No se guardo el pago " + error);
-                handle.callbackError(error, response);
-            });
-            */
 
     } catch (e) {
         console.log(e);
@@ -50,27 +48,39 @@ const registrarPago = async (request, response) => {
     }
 };
 
+const enviarComprobantePago = async (data = {id_pago}) => {
+    
+    const {id_pago } = data;
 
-const reenviarComprobantePago = (request, response) => {
+    //const usuario = await usuarioService.buscarPorId(id_usuario);
+
+    const pagoInfo = await pagoService.getInfoPagoId(id_pago);
+
+    const html = await pagoService.obtenerPreviewComprobantePago(id_pago,pagoInfo.id_genero);       
+    
+    const asunto = `Comprobante de pago ${pagoInfo.folio}.`;    
+    const para = (pagoInfo.correo_alumno || "");
+    const cc = (pagoInfo.correo_copia_usuario || "");
+    //falta ver a quien copiar
+
+    await correoService.enviarCorreoAsync({para, cc, asunto, html,idEmpresa:pagoInfo.co_empresa});
+}
+
+
+const reenviarComprobantePago = async (request, response) => {
     console.log("@reenviar comprobante de Pago");
     try {
-        const pagoData =
-            {
-                id_alumno,
-                id_pago
+
+        const {
+                id_pago                
             } = request.body;
 
-        notificacionService
-            .notificarReciboPago(id_alumno, id_pago,true)
-            .then(result => {
-                response.status(200).json(result);
-            }).catch(error => {
-                console.log("No se guardo el pago " + error);
-                response.status(200).json(error);
-               // handle.callbackError(error, response);
-            });
+            await enviarComprobantePago({id_pago});
+
+            response.status(200).json({envio:true,error:false});
 
     } catch (e) {
+        console.log("Error"+e);
         handle.callbackErrorNoControlado(e, response);
     }
 };

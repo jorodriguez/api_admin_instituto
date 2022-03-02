@@ -22,6 +22,8 @@ function obtenerCorreosPorTema(co_sucursal, id_tema) {
 `, [co_sucursal, id_tema]);
 }
 
+
+
 const getUsuarioPorSucursal = (idSucursal, idTipoUsario) => {
     return genericDao.findAll(` 
     SELECT U.ID,

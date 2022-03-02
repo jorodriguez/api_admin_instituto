@@ -46,9 +46,11 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
                             console.log("html mustache"+ html);
                         }else console.log("TEMPLATE NO ENCONTRADO ");
                     break;
-                    case TIPO_TEMPLATE.TICKET_VENTA:
-                            
-                            html = mustache.to_html(template.template_ticket_venta , paramsSend);
+                    case TIPO_TEMPLATE.TICKET_VENTA:                            
+                            html = mustache.to_html(template.template_ticket_venta || '' , paramsSend);
+                        break;
+                    case TIPO_TEMPLATE.BIENVENIDA_ALUMNO:                            
+                            html = mustache.to_html((template.encabezado || '') + (template.template_correo_bienvenida || '')+ (template.pie || ''), paramsSend);
                     break;
                     default:
                         console.log("====================");

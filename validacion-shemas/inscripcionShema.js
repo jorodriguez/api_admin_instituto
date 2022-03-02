@@ -26,6 +26,7 @@ const schemaInscripcion =
     apellidos:Joi.string().required(),
     direccion:Joi.string().allow('').optional(),
     telefono:Joi.string().required(),
+    correo:Joi.string().required(),
     foto:Joi.string().allow('').optional(),    
     fecha_nacimiento:Joi.date().required(),        
     nota:Joi.string().optional().allow('').allow(null),

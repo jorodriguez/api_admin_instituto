@@ -117,10 +117,10 @@ app.post('/pagos/registrar',checkAuth, pagos.registrarPago);
 //app.post('/pagos/:id_alumno',checkAuth, pagos.go);
 app.get('/pagos/:id_cargo_balance_alumno',checkAuth, pagos.getPagosByCargoId);
 //app.get('/pagos/printing/:id_pago',checkAuth, cargos.obtenerHtmlPreviewEstadoCuenta);
+app.put('/pagos/reenviar_comprobante',checkAuth, pagos.reenviarComprobantePago);//Reenviar correo
 
 
-//Reenviar correo
-//app.put('/pagos/reenviar_comprobante',checkAuth, pagos.reenviarComprobantePago);
+
 
 //imprimir - obtiene html
 app.get('/pagos/imprimir/:id_pago/:id_usuario',checkAuth, pagos.imprimirComprobantePago);

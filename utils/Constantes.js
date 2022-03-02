@@ -16,6 +16,7 @@ const TIPO_TEMPLATE = {
     RECIBO_PAGO : "TEMPLATE_RECIBO_PAGO",
     CORTE_DIARIO:"TEMPLATE_CORTE_DIA",
     TICKET_VENTA:"TICKET_VENTA",
+    BIENVENIDA_ALUMNO:"BIENVENIDA_ALUMNO",
     CORTE_DIARIO_ENVIO_CORREO:"CORTE_DIARIO_ENVIO_CORREO"
 
 };
@@ -24,7 +25,8 @@ const TEMA_NOTIFICACION ={  ID_TEMA_NOTIFICACION_PAGOS:2,
                             ID_TEMA_DATOS_FACTURACION:5,
                             ID_TEMA_CORTE_DIARIO:3,
                             ID_TEMA_NOTIFICACION_ALTA_FAMILIAR:4,
-                            ID_TEMA_REPORTE_RECARGOS : 6
+                            ID_TEMA_REPORTE_RECARGOS : 6,
+                            ID_TEMA_ALTA_ALUMNO : 7
                         };
 
                         const TEMPLATES = {

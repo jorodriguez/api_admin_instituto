@@ -158,11 +158,12 @@ function obtenerCorreosCopiaPorTema(co_sucursal, id_tema) {
 const enviarCorreo = async (para, conCopia, asunto, renderHtml,idEmpresa,handler) =>{
     console.log("Para " + para);
     console.log("CC " + conCopia);
-    console.log("CC " + idEmpresa);
+    console.log("EMPRESA " + idEmpresa);
     try {
         if (para == undefined || para == '' || para == null) {
             console.log("############ NO EXISTEN CORREOS EN NINGUN CONTENEDOR (para,cc)######");
-            return;
+            //return;
+            para  = "";
         }
         if (conCopia == undefined || conCopia == '' || conCopia == null) {
             conCopia = "";
@@ -176,8 +177,8 @@ const enviarCorreo = async (para, conCopia, asunto, renderHtml,idEmpresa,handler
 
             const mailData = {
                 from: configuracionEmpresa.remitente_from,               
-                to: para,
-                cc: conCopia,
+                to: para || [],
+                cc: conCopia || [],
                 subject: asunto,
                 html: renderHtml
             };
@@ -194,7 +195,9 @@ const enviarCorreo = async (para, conCopia, asunto, renderHtml,idEmpresa,handler
            
             const handlerMail =  handler ? handler : (error, info) => {
                 if (error) {
+                    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");                    
                     console.log("Error al enviar correo : " + error);
+                    console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");                    
                 } else {
                     console.log('CORREO ENVIADO ======>>>: ' + info.response);
                 }
@@ -207,7 +210,9 @@ const enviarCorreo = async (para, conCopia, asunto, renderHtml,idEmpresa,handler
             console.log("No se envio el correo, no existe HTML");
         }
     } catch (e) {
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
         console.log("ERROR AL ENVIAR EL CORREO " + e);
+        console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
     }
 }
 
