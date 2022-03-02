@@ -76,7 +76,13 @@
                     <td style="border-bottom:1pt solid #57A8B6;" width="15%">
                         {{fecha_format}}
                     </td>
-                    <td style="border-bottom:1pt solid #57A8B6;" width="35%">{{nombre_cargo}} {{texto_ayuda}}
+                    <td style="border-bottom:1pt solid #57A8B6;" width="35%">{{nombre_cargo}}  
+                        {{#especialidad}}             
+                            <span >{{especialidad}}</span>
+                         {{/especialidad}}
+                         {{#numero_semana_curso}}             
+                            <span >sem -- {{numero_semana_curso}}</span>
+                         {{/numero_semana_curso}}          
                        
                         {{#mostrar_nota}}
                         <p><small style="color:gray;"> {{nota}} </small></p>

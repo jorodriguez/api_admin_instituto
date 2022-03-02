@@ -308,16 +308,18 @@ const enviarCorreoCorteDiario = async (correoData) => {
 };
 
 
-const enviarEstadoCuenta = async (idAlumno) => {
+const enviarEstadoCuenta = async (idAlumno,correoAnexo) => {
 
     const estadoCuenta = await obtenerEstadoCuentaAlumno(idAlumno);
+
+    const para = correoAnexo ? [correoAnexo].concat(estadoCuenta.correo) : estadoCuenta.correo;
 
     if (!estadoCuenta) {
         console.log("No hay estado de cuenta");
     } else {
         correoService.enviarCorreoConCopiaTemaNotificacion(
             `Estado de cuenta de ${estadoCuenta.alumno.nombre_alumno}`,
-            estadoCuenta.alumno.correo || '',
+            (para|| ''),
             estadoCuenta.alumno.co_sucursal,
             TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS,
             estadoCuenta,
@@ -331,5 +333,6 @@ module.exports = {
     /*notificarReciboPago,    
     enviarEstadoCuenta,
     notificarCargo,*/
+    enviarEstadoCuenta,
     enviarCorreoCorteDiario
 };

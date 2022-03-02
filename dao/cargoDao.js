@@ -5,71 +5,6 @@ const { ExceptionDatosFaltantes, ExceptionBD } = require('../exception/exeption'
 const { isEmptyOrNull } = require('../utils/Utils');
 
 
-//registrar pagos
-/*const registrarCargo = (cargoData) => {
-    console.log("@registrarCargo");
-
-    return new Promise((resolve, reject) => {
-        const { fecha_cargo, id_alumno, cat_cargo, cantidad, monto, nota, genero } = cargoData;
-
-        let parametros = [];
-        let sql = "";
-
-        let respuesta = {
-            id_alumno: id_alumno,
-            id_cargo: -1,
-            resultado: Boolean,
-            mensaje: ""
-        };
-
-        console.log("CARGOS.ID_CARGO_MENSUALIDAD " + JSON.stringify(cat_cargo));
-
-        if (cat_cargo.id == CARGOS.ID_CARGO_MENSUALIDAD) {
-            if ((fecha_cargo == undefined || fecha_cargo == null || fecha_cargo.fecha_mes == undefined || fecha_cargo.fecha_mes == null)) {
-                respuesta.resultado = false;
-                respuesta.mensaje = "Se requiere la fecha del cargo.";
-                reject(new ExceptionDatosFaltantes(respuesta));
-                return;
-            }
-            console.log("cat_cargo.cat_cargo  " + fecha_cargo.fecha_mes);
-            //parametros para mensualidad
-            sql = "select agregar_cargo_alumno($1,$2,$3,$4,$5,$6,$7) as id_cargo_generado;";
-            parametros = [new Date(fecha_cargo.fecha_mes), id_alumno, cat_cargo.id, cantidad, monto, nota, genero];
-        } else {
-            //no es mensualidad            
-            sql = "select agregar_cargo_alumno(getDate(''),$1,$2,$3,$4,$5,$6) as id_cargo_generado;";
-            parametros = [id_alumno, cat_cargo.id, cantidad, monto, nota, genero];
-
-        }
-
-        //fecha_cargo date,id_alumno integer, id_cargo integer, cantidad integer,monto numeric,nota text, id_genero integer                             
-        genericDao.executeProcedureWithParameters(sql, parametros)
-            .then(results => {
-                if (results.rowCount > 0) {
-                    var id_cargo_generado = results.rows[0].id_cargo_generado;
-                    console.log("IDE CARGO GENERADO RESULT " + JSON.stringify(results.rows));
-                    respuesta.id_cargo = id_cargo_generado;
-                    respuesta.resultado = (id_cargo_generado != null);
-                    respuesta.mensaje = `${results.rowCount} fila afectada`;
-                    //notificacionService.notificarCargo(id_alumno,id_cargo_generado);                   
-                    console.log("Se agrego el cargo correctamente...");
-                    resolve(respuesta);
-                } else {
-                    respuesta.mensaje = "No se guardó el cargo.";
-                    console.log("no se guardo el cargo..");
-                    reject(respuesta);
-                }
-            }).catch(error => {
-                respuesta.resultado = false;
-                respuesta.error = error;
-                console.log("Error al intentar ejecutar el procedimiento de registro de cargo " + error);
-                reject(respuesta);
-            });
-
-    });
-
-};*/
-
 const registrarCargoGeneral =async  (cargoData) => {
 
     console.log("@registrarCargoGeneral");
@@ -450,6 +385,35 @@ const obtenerEstadoCuenta = async (idAlumno) => {
 
 const obtenerDetalleEstadoCuenta = async (idAlumno) => {
     console.log("obtenerDetalleEstadoCuenta")
+/*
+
+SELECT
+b.id as id_cargo_balance_alumno,
+b.fecha,
+to_char(b.fecha,'dd-mm-yyyy HH24:MI') as fecha_format,
+b.cantidad,
+cargo.nombre as nombre_cargo,
+cargo.aplica_descuento,
+b.texto_ayuda,
+cat_cargo as id_cargo,
+cargo.es_facturable,
+b.total as total,
+b.cargo,
+b.total_pagado,
+b.nota,
+b.pagado,               	                                         
+false as checked,
+0 as pago,
+esp.nombre as especialidad,
+semana.numero_semana_curso,
+semana.numero_semana_curso as materia_modulo
+FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
+                            inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
+                            left join co_curso curso on curso.id = b.co_curso
+                            left join cat_especialidad esp on esp.id = curso.cat_especialidad
+                            left join co_curso_semanas semana on semana.id = b.co_curso_semanas                            
+WHERE a.uid = $1 and b.eliminado = false and a.eliminado = false
+ORDER by b.pagado, b.fecha desc*/
 
     return await genericDao.findAll(` SELECT a.co_balance_alumno,
                b.id as id_cargo_balance_alumno,
@@ -468,9 +432,15 @@ const obtenerDetalleEstadoCuenta = async (idAlumno) => {
                b.nota,
                b.pagado,                              
                b.descuento, 
-               cargo.id <> ${CARGOS.ID_CARGO_MENSUALIDAD} as mostrar_nota
+               cargo.id <> ${CARGOS.ID_CARGO_MENSUALIDAD} as mostrar_nota,
+               esp.nombre as especialidad,
+                semana.numero_semana_curso,
+                semana.numero_semana_curso as materia_modulo
              FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id 
                                            inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
+                                           left join co_curso curso on curso.id = b.co_curso
+                                           left join cat_especialidad esp on esp.id = curso.cat_especialidad
+                                           left join co_curso_semanas semana on semana.id = b.co_curso_semanas                            
              WHERE a.id = $1                  
 					and b.pagado = false
 			 		and b.eliminado = false

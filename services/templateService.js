@@ -29,8 +29,13 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
 
                 console.log("TIPO_TEMPLATE - "+tipoTemplate);
 
-                switch(tipoTemplate){
-                    case TIPO_TEMPLATE.RECIBO_PAGO:                        
+                switch(tipoTemplate){                    
+                    case TIPO_TEMPLATE.RECIBO_PAGO:                    
+                            paramsSend.estilo_ticket = true;
+                            html = mustache.to_html(template.template_recibo_pago, paramsSend);
+                    break;
+                    case TIPO_TEMPLATE.RECIBO_PAGO_CORREO:       
+                            paramsSend.estilo_ticket = false;
                             html = mustache.to_html(template.template_recibo_pago, paramsSend);
                     break;
                     case TIPO_TEMPLATE.CORTE_DIARIO:

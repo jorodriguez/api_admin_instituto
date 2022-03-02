@@ -204,9 +204,9 @@ const enviarEstadoCuentaAlumno = async (request, response) => {
     console.log("@enviarEstadoCuentaAlumno");    
     try {
 
-        const { id_alumno } = request.body;
+        const { id_alumno,correo_anexo } = request.body;
 
-        await enviarEstadoCuenta(id_alumno);
+        await enviarEstadoCuenta(id_alumno,correo_anexo);
 
         response.status(200).json({procesado:true});       
 

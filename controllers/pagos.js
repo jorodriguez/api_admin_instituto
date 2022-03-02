@@ -49,21 +49,27 @@ const registrarPago = async (request, response) => {
 };
 
 const enviarComprobantePago = async (data = {id_pago}) => {
+    try{
+        const {id_pago } = data;
+
+        //const usuario = await usuarioService.buscarPorId(id_usuario);
+
+        const pagoInfo = await pagoService.getInfoPagoId(id_pago);
+
+        const html = await pagoService.obtenerPreviewComprobantePago(id_pago,pagoInfo.id_genero,true);       
     
-    const {id_pago } = data;
+        const asunto = `Comprobante de pago ${pagoInfo.folio}.`;    
+        const para = (pagoInfo.correo_alumno || "");
+        const cc = (pagoInfo.correo_copia_usuario || "");
+        //falta ver a quien copiar
 
-    //const usuario = await usuarioService.buscarPorId(id_usuario);
+        await correoService.enviarCorreoAsync({para, cc, asunto, html,idEmpresa:pagoInfo.co_empresa});
 
-    const pagoInfo = await pagoService.getInfoPagoId(id_pago);
-
-    const html = await pagoService.obtenerPreviewComprobantePago(id_pago,pagoInfo.id_genero);       
-    
-    const asunto = `Comprobante de pago ${pagoInfo.folio}.`;    
-    const para = (pagoInfo.correo_alumno || "");
-    const cc = (pagoInfo.correo_copia_usuario || "");
-    //falta ver a quien copiar
-
-    await correoService.enviarCorreoAsync({para, cc, asunto, html,idEmpresa:pagoInfo.co_empresa});
+    }catch(error){
+        console.log(`x x x x x x x x x x x x x x x x x x x `);
+        console.log("Error al enviar el correo "+ JSON.stringify(error));
+        console.log(`x x x x x x x x x x x x x x x x x x x `);
+    }
 }
 
 
@@ -102,8 +108,6 @@ const getPagosByCargoId = (request, response) => {
         handle.callbackErrorNoControlado(e, response);
     }
 };
-
-
 
 
 const imprimirComprobantePago = async (request, response) => {
