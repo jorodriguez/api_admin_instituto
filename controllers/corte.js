@@ -10,21 +10,22 @@ const getCorteDiaSucursal = async (request, response) => {
 
         const id_sucursal = request.params.id_sucursal;
         
-        const {fecha,id_usuario} = request.body;        
+        const {fechaInicio,fechaFin,id_usuario} = request.body;        
         
         console.log("-----------"+JSON.stringify(request.body));
                
         
-        if (!id_sucursal || !fecha ) {
+        if (!id_sucursal || !fechaInicio ||!fechaFin ) {
             handle.callbackError("parametros incompletos", response);
             return;
         }
 
-        const _fecha = moment(fecha).format('YYYY-MM-DD');
+        const _fechaInicio = moment(fechaInicio).format('YYYY-MM-DD');
+        const _fechaFin = moment(fechaFin).format('YYYY-MM-DD');
         
-        console.log("fecha format "+_fecha);
+        console.log("fecha format "+_fechaInicio+" f fin "+_fechaFin);
 
-        const results = await corteService.getCorteDiaSucursal({idSucursal:id_sucursal,fecha:_fecha});
+        const results = await corteService.getCorteDiaSucursal({idSucursal:id_sucursal,fechaInicio:_fechaInicio,fechaFin:_fechaFin});
              
 
        response.status(200).json(results);
@@ -59,16 +60,24 @@ const getHtmlCorteDiaSucursal = async (request, response) => {
 
         const id_sucursal = request.params.id_sucursal;
         
-        const {fecha,id_usuario} = request.body;        
+        const {fechaInicio,fechaFin,id_usuario} = request.body;        
 
-        if (!id_sucursal || !fecha ) {
+        if (!id_sucursal || !fechaInicio ||!fechaFin ) {
             handle.callbackError("parametros incompletos", response);
             return;
         }
 
-        const _fecha = moment(fecha).format('YYYY-MM-DD');
+        const _fechaInicio = moment(fechaInicio).format('YYYY-MM-DD');
+        const _fechaFin = moment(fechaFin).format('YYYY-MM-DD');
         
-        const html = await corteService.getHtmlCorteDiaSucursal({idSucursal:id_sucursal,idUsuario:id_usuario, fecha:_fecha,tipoTemplate:TIPO_TEMPLATE.CORTE_DIARIO});
+        const html = await corteService.getHtmlCorteDiaSucursal(
+                    {
+                        idSucursal:id_sucursal,
+                        idUsuario:id_usuario,
+                        fechaInicio:_fechaInicio,
+                        fechaFin:_fechaFin,
+                        tipoTemplate:TIPO_TEMPLATE.CORTE_DIARIO}
+            );
                 
         response.status(200).send(html);
 

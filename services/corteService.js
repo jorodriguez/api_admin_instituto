@@ -10,23 +10,24 @@ const {TEMPLATES,TEMA_NOTIFICACION,USUARIO_DEFAULT, TIPO_TEMPLATE} = require('..
 const getCorteDiaSucursal = async (corteData) => {
     console.log("@getCorteDiaSucursal");
     
-    const {idSucursal,fecha,idUsuario} = corteData;
+    const {idSucursal,fechaInicio,fechaFin,idUsuario} = corteData;
         
-    const sumaIngreso = await cortesDao.getSumaPagosPorRango({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
+    const sumaIngreso = await cortesDao.getSumaPagosPorRango({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
 
-    const resultsIngreso = await cortesDao.getDetallePagos({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
+    const resultsIngreso = await cortesDao.getDetallePagos({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
 
-    const sumaGastos = await gastoDao.getGastosSumaCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
+    const sumaGastos = await gastoDao.getGastosSumaCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
 
-    const resultsGastos = await gastoDao.getGastosCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fecha,fechaFin:fecha});
+    const resultsGastos = await gastoDao.getGastosCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
 
-    console.log("Fecha "+fecha);
+    console.log("Fecha "+fechaInicio+"  fecha fin"+fechaFin );
     console.log("suc "+idSucursal);
     console.log("sumaIngreso "+sumaIngreso.total);
     console.log("sumaGastos "+sumaGastos.total);
     
     return {
-            fecha:fecha,
+            fecha:fechaInicio,
+            fechaFin:fechaFin,
             totalIngreso: (sumaIngreso ? sumaIngreso.total : 0),detalleIngreso:resultsIngreso,
             totalGasto:(sumaGastos ? sumaGastos.total : 0), detalleGasto:resultsGastos
            };
@@ -43,7 +44,8 @@ const getHtmlCorteDiaSucursal = async (corteData)=>{
 
    //leer el template
    const params = {
-        dia_corte:corte.fecha,
+        dia_corte_inicio:corte.fecha,
+        dia_corte_fin:corte.fechaFin,
         total_ingreso:corte.totalIngreso ,
         total_gasto:corte.totalGasto ,
         total_caja: (corte.totalIngreso-corte.totalGasto),

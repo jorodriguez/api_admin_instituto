@@ -353,7 +353,9 @@ const obtenerEstadoCuenta = async (idAlumno) => {
     console.log("ID alumno " + idAlumno);
 
     const alumno = await genericDao.findOne(`
-    SELECT al.nombre as nombre_alumno,
+    SELECT 
+        
+        al.nombre as nombre_alumno,
     al.apellidos as apellidos_alumno,            	
     al.correo,			
     al.total_adeudo,			

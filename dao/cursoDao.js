@@ -229,7 +229,7 @@ curso.foto as foto_curso,
 (curso.fecha_genero::date = getDate('')) as es_nuevo,
 curso.fecha_inicio_previsto >= getDate('') as fecha_inicio_previsto_pasada,
 (curso.fecha_inicio_previsto = getDate('')+1) as inicia_manana,
-(select count(*) from co_inscripcion where co_curso = curso.id and eliminado = false) as inscripciones
+(select count(i.*) from co_inscripcion i inner join co_alumno a on a.id = i.co_alumno where i.co_curso = curso.id and i.eliminado = false and a.eliminado=false) as inscripciones
 from co_curso curso inner join cat_especialidad esp on esp.id = curso.cat_especialidad  
 inner join cat_dia dia on dia.id = curso.cat_dia
   inner join co_sucursal suc on suc.id = curso.co_sucursal

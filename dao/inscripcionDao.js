@@ -184,6 +184,7 @@ from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
 where ${criterio}
   and i.eliminado = false
   and curso.eliminado = false
+  and a.eliminado =false
 order by i.fecha_genero desc
 `;
 
