@@ -415,3 +415,27 @@ where id = 2;
 ALTER TABLE cat_articulo ADD CONSTRAINT constraint_unik UNIQUE (codigo);
 
 ALTER TABLE cat_articulo_sucursal ADD CONSTRAINT constraint_unik_em UNIQUE (cat_articulo,co_empresa,co_sucursal);
+
+
+
+CREATE TABLE si_estatus
+(
+	id serial NOT NULL primary key,		
+	nombre text not null, 
+	descripcion text,
+	fecha_genero timestamp without time zone DEFAULT (getDate('')+getHora('')),
+	fecha_modifico timestamp without time zone,
+	genero integer NOT NULL  references usuario(id),		
+	modifico integer references usuario(id),		
+	eliminado boolean NOT NULL DEFAULT false    
+);
+
+insert into si_estatus(id,nombre,descripcion,genero)
+values(1,'VENTA DIRECTA','estado de venta normal',1),
+	  (2,'CANCELADA','Venta cancelada',1),
+	  (3,'ELIMINADA','Venta eliminada',1);
+
+
+alter table ve_venta add column si_estatus integer not null default 1 references si_estatus(id);
+
+alter table ve_venta add column motivo text;

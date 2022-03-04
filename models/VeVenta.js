@@ -4,6 +4,7 @@ class VeVenta {
     this.co_empresa = null;
     this.co_sucursal = null;
     this.cat_cliente = null;
+    this.si_estatus = null;
     this.genero = null;
     this.modifico = null;
     this.nota_venta = "";
@@ -16,6 +17,7 @@ class VeVenta {
     this.eliminado = null;
     this.cantidad_articulos = null;
     this.recibido = null;
+    this.motivo = null;
   }
   setId(id) {
     this.id = id;
@@ -31,6 +33,10 @@ class VeVenta {
   }
   setCatCliente(catCliente) {
     this.cat_cliente = catCliente;
+    return this;
+  }
+  setSiEstatus(siEstatus) {
+    this.si_estatus = siEstatus;
     return this;
   }
   setGenero(genero) {
@@ -81,6 +87,10 @@ class VeVenta {
     this.recibido = recibido;
     return this;
   }
+  setMotivo(motivo) {
+    this.motivo = motivo;
+    return this;
+  }
   build() {
     return {      
       co_empresa: this.co_empresa,
@@ -94,6 +104,29 @@ class VeVenta {
       total: this.total,            
       cantidad_articulos: this.cantidad_articulos,
       recibido: this.recibido
+    };
+  }
+
+  buildForUpdate() {
+    return {              
+      modifico: this.modifico,            
+      cambio: this.cambio,
+      fecha_genero: this.fecha_genero,
+      folio: this.folio,      
+      total: this.total,            
+      cantidad_articulos: this.cantidad_articulos,
+      recibido: this.recibido,
+      si_estatus:this.si_estatus,
+      motivo:this.motivo
+    };
+  }
+  buildForDelete() {
+    return {                    
+      si_estatus:this.si_estatus,
+      motivo:this.motivo,
+      modifico: this.modifico,            
+      fecha_modifico:this.fecha_modifico,
+      eliminado:true
     };
   }
 }

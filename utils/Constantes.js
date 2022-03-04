@@ -12,6 +12,13 @@ const TIPO_CARGO = {
     SERVICIO : 2
 };
 
+
+const SI_ESTATUS = {
+    VENTA : 1,
+    VENTA_CANCELADA : 2,
+    VENTA_ELIMINADA : 3
+};
+
 const TIPO_TEMPLATE = {
     RECIBO_PAGO : "TEMPLATE_RECIBO_PAGO",
     RECIBO_PAGO_CORREO : "TEMPLATE_RECIBO_PAGO_CORREO",
@@ -89,4 +96,5 @@ module.exports = {
     ID_CARGO_INSCRIPCION,
     TIPO_TEMPLATE,
     TEMPLATES,    
+    SI_ESTATUS
 };

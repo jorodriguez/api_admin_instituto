@@ -1,6 +1,7 @@
 const genericDao = require('./genericDao');
 const {castDateToStr} = require('../utils/UtilsDate');
 const Tables = require('../utils/Tables');
+const {SI_ESTATUS} = require('../utils/Constantes');
 const {ID_TIPO_MOVIMIENTO_VENTA} = require('../utils/TipoMovimientoArticulo');
 const Dao = require('./Dao');
 const ventaDao = new Dao(Tables.VE_VENTA); 
@@ -98,6 +99,49 @@ const createVenta = async (data) => {
         return {venta:null,error:true};
     }
 }
+
+
+//eliminar venta
+const eliminarVenta =async (data = {id_venta,motivo,genero})=>{
+    // buscar las ventas 
+    const {id_venta,motivo,genero} = data;
+
+    //const venta = await getVentaById(id_venta);
+    const ventaEncontrada = await ventaDao.findById(id_venta);
+
+    const venta = Object.assign(new VeVenta(),ventaEncontrada);
+
+    const dataEliminar = venta.setSiEstatus(SI_ESTATUS.VENTA_ELIMINADA)
+            .setMotivo(motivo)
+            .setModifico(genero)
+            .setFechaModifico(new Date())
+            .buildForDelete();
+
+    return await ventaDao.update(id_venta,dataEliminar);
+
+}
+
+
+//cancelar venta
+const cancelarVenta =async (data = {id_venta,motivo,genero})=>{
+    
+    const {id_venta,motivo,genero} = data;
+
+    //const venta = await getVentaById(id_venta);
+    const ventaEncontrada = await ventaDao.findById(id_venta);
+
+    const venta = Object.assign(new VeVenta(),ventaEncontrada);
+
+    const dataCancelar = venta.setSiEstatus(SI_ESTATUS.VENTA_CANCELADA)
+            .setMotivo(motivo)
+            .setModifico(genero)
+            .setFechaModifico(new Date())
+            .buildForDelete();
+
+    return await ventaDao.update(id_venta,dataCancelar);
+
+}
+
 
 //getTicket
 const getVentaById =async (idVenta)=>{
