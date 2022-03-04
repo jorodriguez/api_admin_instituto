@@ -35,7 +35,11 @@ const getFechaHoy = async () => {
                     to_char(getDate(''),'YYYY-MM-DD') as fecha_actual_format,
                     to_char(getDate(''),'DD Mon YYYY') as fecha_actual_asunto,
                     getHora('') as hora_actual,
-                    to_char(getHora(''),'HH24:MI') as hora_actual_format
+                    to_char(getHora(''),'HH24:MI') as hora_actual_format,
+                    (
+                        SELECT array_to_json(array_agg(to_json(to_char(s,'YYYY-MM-DD'))))
+                            FROM generate_series(date_trunc('week', getDate(''))::date,(date_trunc('week', getDate(''))::date + interval '6 days')::date, '1 day') s 
+                    ) as fechas_semana_ocurriendo
             `,[]);
 };
 

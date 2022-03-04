@@ -1,4 +1,11 @@
 
+select * from usuario
+
+
+update  usuario set password = '$2a$08$XOjFNU1bEQ4YjNm0/jfvJO4CVbqYKy/DZV0B1QtWuwWFcnh2bmKOC';
+
+update usuario set correo = '_'||correo where id in (12,14);
+
 
 alter table co_sucursal add column enviar_recibo_correo boolean default false;
 
@@ -7,6 +14,19 @@ update co_sucursal set enviar_recibo_correo = true where id = 1;
 alter table co_template add column template_correo_bienvenida text default '';
 
 alter table co_template add column template_ticket_venta text default '';
+
+alter table usuario add column correo_copia text;
+
+
+insert into co_tema_notificacion(id,nombre,genero) values(7,'ALTA_ALUMNO',1);
+
+
+insert into co_usuario_notificacion(usuario,co_tema_notificacion,co_sucursal,genero) 
+values(14,7,1,1), --LIC CARMELO
+	  (12,7,1,1),--LIC MANUEL
+	  (124,7,1,1), -- LIC LIZ
+	  (125,7,1,1); -- ADMIN
+
 
 
 update co_template set template_correo_bienvenida = '
@@ -87,21 +107,6 @@ update co_template set template_correo_bienvenida = '
 
 '
 where id  =2;
-
-alter table usuario add column correo_copia text;
-
-delete from co_usuario_notificacion;
-
-delete from co_tema_notificacion WHERE ID > 1;
-
-insert into co_tema_notificacion(id,nombre,genero) values(7,'ALTA_ALUMNO',1);
-
-
-insert into co_usuario_notificacion(usuario,co_tema_notificacion,co_sucursal,genero) 
-values(14,7,1,1), --LIC CARMELO
-	  (12,7,1,1),--LIC MANUEL
-	  (124,7,1,1), -- LIC LIZ
-	  (125,7,1,1); -- ADMIN
 
 
 
