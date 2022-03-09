@@ -7,7 +7,7 @@ const getTicketData = async(idVenta)=>{
     
     const ventaRow = await ventaDao.getVentaById(idVenta);
     
-    if(!venta){
+    if(!ventaRow){
             console.log("No existe la venta");
             return null;
     }

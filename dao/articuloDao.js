@@ -34,16 +34,14 @@ const getArticulosPorCategoria = async (coSucursal,catCategoria) => {
     console.log("@getArticulosPorCategoria");
     return await genericDao
         .findAll(
-            queryBase(` c.id = $1 and suc.id = $1 `)
+            queryBase(` c.id = $2 and suc.id = $1 `)
             , [coSucursal,catCategoria]);
 };
 
 const getCategoriaArticulos = async (coSucursal) => {
     console.log("@getCategoriaArticulos");
     return await genericDao
-        .findAll(
-            queryCategoriaArticulos(` art.cat_sucursal = $1 `)
-            , [coSucursal]);
+        .findAll(queryCategoriaArticulos(` art.co_sucursal = $1 `) , [coSucursal]);
 };
 
 const updatePrecio = async (id,data) => {
@@ -138,7 +136,7 @@ where ${criterio ? criterio  : ''}
 
 `;
 
-const queryCategoriaArticulos = (criterio)=>{`
+const queryCategoriaArticulos = (criterio)=>`
 select 
      c.id as cat_categoria,
      c.nombre as categoria,
@@ -147,10 +145,10 @@ from cat_articulo_sucursal art inner join cat_articulo a on a.id = art.cat_artic
                                inner join cat_categoria c on c.id = a.cat_categoria					            
 where ${criterio ? criterio  : ''}
     ${criterio ? ' and '  : ''}    
-	and art.eliminado = false
+	art.eliminado = false
 	and a.eliminado = false
-group by c.id`
-}
+group by c.id`;
+
 
 
 

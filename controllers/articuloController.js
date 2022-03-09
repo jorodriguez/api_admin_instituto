@@ -43,7 +43,7 @@ const getArticulosPorCategoria = async (request, response) => {
     console.log("@getArticulosPorCategoria");
     try {
        
-            const catCategoria = request.params.catCategoria;
+            const catCategoria = parseInt(request.params.catCategoria);
             const coSucursal = parseInt(request.params.coSucursal);
             
             const results = await articuloService.getArticulosPorCategoria(coSucursal,catCategoria);
