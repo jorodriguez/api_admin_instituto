@@ -101,7 +101,7 @@ const createVenta = async (data) => {
 }
 
 
-//eliminar venta
+//eliminar venta por motivo de devolucion 
 const eliminarVenta =async (data = {id_venta,motivo,genero})=>{
     // buscar las ventas 
     const {id_venta,motivo,genero} = data;
@@ -123,16 +123,17 @@ const eliminarVenta =async (data = {id_venta,motivo,genero})=>{
 
 
 //cancelar venta
-const cancelarVenta =async (data = {id_venta,motivo,genero})=>{
+const cancelarVenta =async (data = {id_venta,id_estatus,motivo,genero})=>{
     
-    const {id_venta,motivo,genero} = data;
+    const {id_venta,id_estatus,motivo,genero} = data;
 
     //const venta = await getVentaById(id_venta);
     const ventaEncontrada = await ventaDao.findById(id_venta);
 
     const venta = Object.assign(new VeVenta(),ventaEncontrada);
 
-    const dataCancelar = venta.setSiEstatus(SI_ESTATUS.VENTA_CANCELADA)
+    //const dataCancelar = venta.setSiEstatus(SI_ESTATUS.VENTA_CANCELADA)
+    const dataCancelar = venta.setSiEstatus(id_estatus)
             .setMotivo(motivo)
             .setModifico(genero)
             .setFechaModifico(new Date())
@@ -171,9 +172,12 @@ const getQuery = (criterio,limit)=> `
             suc.telefono as telefono_sucursal,
             ve.co_empresa,
             ve.genero,
-            u.nombre as nombre_usuario
+            u.nombre as nombre_usuario,
+            e.nombre as estatus,
+            e.id as id_estatus
         from ve_venta ve inner join co_sucursal suc on suc.id = ve.co_sucursal
-               inner join usuario u on u.id = ve.genero
+                        inner join usuario u on u.id = ve.genero
+                        inner join si_estatus e on e.id = ve.si_estatus
         where ${criterio && criterio}
             ${criterio && ' AND ve.eliminado = false'}
             ORDER BY ve.folio desc
@@ -185,5 +189,6 @@ const getQuery = (criterio,limit)=> `
 module.exports = {
    createVenta,
    getVentasSucursal,
-   getVentaById
+   getVentaById,
+   cancelarVenta
 };

@@ -6,5 +6,6 @@ const checkAuth = require('./check-auth');
 router.post('/',checkAuth, ventaController.createVenta);
 router.get('/ticket/:id',checkAuth, ventaController.getTicket);
 router.put('/sucursal/:id',checkAuth, ventaController.getVentasSucursal);
+router.put('/cancelar',checkAuth, ventaController.cancelarVenta);
 
 module.exports = router;

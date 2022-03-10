@@ -28,6 +28,30 @@ const createVenta = async (request, response) => {
     }
 };
 
+const cancelarVenta = async (request, response) => {
+    console.log("@cancelarVenta");
+    try {
+       
+            //id_venta,id_estatus,motivo,genero
+           
+            const data =  {id_venta,id_estatus,motivo,genero} = request.body;            
+
+            if(!id_venta || !id_estatus || !motivo || !genero){                
+                handle.callbackError("error de validación faltan datoss",response);
+                return;
+            }
+                   
+            const results = await ventaService.cancelarVenta({id_venta,id_estatus,motivo,genero});
+          
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
 // getTicket
 const getTicket = async (request, response) => {
     console.log("@getTicket");
@@ -36,6 +60,30 @@ const getTicket = async (request, response) => {
        
             //venta,detalleVenta,co_empresa,co_sucursal,genero
 
+            const {id} = request.params;            
+
+            if(!id){
+                console.log(`el id de la venta es requerido `);
+                handle.callbackError("error de validación, el id de venta es requerido",response);
+                return;
+            }
+                   
+            const results = await ventaService.getHtmlTicket(id);
+
+            response.status(200).send(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+const getVentaById = async (request, response) => {
+    console.log("@getVentaById");
+    console.log("Consultando venta");
+    try {
+       
             const {id} = request.params;            
 
             if(!id){
@@ -83,8 +131,11 @@ const getVentasSucursal = async (request, response) => {
     }
 };
 
+
+
 module.exports = {
     createVenta,
+    cancelarVenta,
     getVentasSucursal,
     getTicket
 };

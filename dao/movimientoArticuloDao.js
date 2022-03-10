@@ -43,7 +43,7 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
         
         let rowMovimiento;
 
-        const movimientoInsert = movimientoData.setCantidad(cantidadActualizar)
+        const movimientoInsert = movimientoData.setCantidad(cantidadAfectacion)
                                                 .setCantidadAnterior(cantidadAnteriorActualizar)
                                                 .setCantidadPosterior(cantidadPosteriorActualizar)
                                                 .setFechaModifico(new Date())

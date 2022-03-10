@@ -53,5 +53,6 @@ const getHtmlTicket = async (idVenta)=>{
 module.exports = { 
                     getHtmlTicket,
                     createVenta:ventaDao.createVenta,
+                    cancelarVenta:ventaDao.cancelarVenta,
                     getVentasSucursal: ventaDao.getVentasSucursal
                  };
