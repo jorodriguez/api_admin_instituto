@@ -129,6 +129,14 @@ class VeVenta {
       eliminado:true
     };
   }
+  buildForEstatusChange() {
+    return {                    
+      si_estatus:this.si_estatus,
+      motivo:this.motivo,
+      modifico: this.modifico,            
+      fecha_modifico:this.fecha_modifico,      
+    };
+  }
 }
 
 

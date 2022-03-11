@@ -137,7 +137,7 @@ const cancelarVenta =async (data = {id_venta,id_estatus,motivo,genero})=>{
             .setMotivo(motivo)
             .setModifico(genero)
             .setFechaModifico(new Date())
-            .buildForDelete();
+            .buildForEstatusChange();
 
     return await ventaDao.update(id_venta,dataCancelar);
 

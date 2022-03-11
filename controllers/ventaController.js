@@ -36,8 +36,10 @@ const cancelarVenta = async (request, response) => {
            
             const data =  {id_venta,id_estatus,motivo,genero} = request.body;            
 
+            console.log("id_venta,id_estatus,motivo,genero" + id_venta +" "+ id_estatus +" "+ motivo +" "+ genero);
+
             if(!id_venta || !id_estatus || !motivo || !genero){                
-                handle.callbackError("error de validación faltan datoss",response);
+                handle.callbackError("error de validación faltan datos",response);
                 return;
             }
                    
