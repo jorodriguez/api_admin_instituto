@@ -16,9 +16,9 @@ cloudinary.config({
 });
 */ 
 cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME || 'hjxjcdupm',
-    api_key: process.env.CLOUD_API_KEY || '126569266916488',
-    api_secret: process.env.CLOUD_SECRET || 'Pka9QCcnwfl-gggM0wKJrOs8KcQ'
+    cloud_name: process.env.CLOUD_NAME || 'dyabmkg2p',
+    api_key: process.env.CLOUD_API_KEY || '218132278626194',
+    api_secret: process.env.CLOUD_SECRET || "w2Vl4p_LNrqU3iSo4-fXxKqoESg"
 });
 
 

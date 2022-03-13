@@ -112,6 +112,20 @@ const getAlumnoPorId = (idAlumno) => {
     return genericDao.findOne(`select  to_char(fecha_nacimiento,'mm-dd')=to_char(getDate(''),'mm-dd') as is_cumpleanos,* from co_alumno where id = $1 and eliminado = false;`, [idAlumno]);
 };
 
+const getAlumnoPorIdInfoEmpresaSucursal = (idAlumno) => {
+    console.log("@getAlumnoPorId "+idAlumno);
+    return genericDao.findOne(`
+            select  
+                    em.nombre as nombre_empresa,
+                    em.nombre_folder as nombre_folder_empresa,
+                    suc.nombre as nombre_sucursal,
+                    suc.nombre_folder as nombre_folder_sucursal,
+                    a.* 	
+            from co_alumno a inner join co_empresa em on em.id = a.co_empresa
+                     inner join co_sucursal suc on suc.id = a.co_sucursal
+            where a.id = $1 and a.eliminado = false;`, [idAlumno]);
+};
+
 const activarAlumnoEliminado = (idAlumno, genero) => {
     console.log("@activarAlumnoEliminado");
 
@@ -205,5 +219,6 @@ module.exports = {
     getAlumnoPorId,
     bajaAlumno,
     activarAlumnoEliminado,
-    modificarAlumno
+    modificarAlumno,
+    getAlumnoPorIdInfoEmpresaSucursal
 }

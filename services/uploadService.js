@@ -12,7 +12,7 @@ async function upload(idAlumno, genero, imagen) {
         let imagenEliminada = false;
         let procederUpload = true;
 
-        let alumno = await alumnoDao.getAlumnoPorId(idAlumno);
+        let alumno = await alumnoDao.getAlumnoPorIdInfoEmpresaSucursal(idAlumno);
 
         let tieneFotoModificada = (alumno.public_id_foto != null);
 
@@ -27,7 +27,10 @@ async function upload(idAlumno, genero, imagen) {
 
         if (procederUpload) {
             console.log("se procede a subir la nueva imagen");
-            let resultImagen = await uploadCloudinaryDao.uploadCloud(imagen, CONSTANTES.FOLDER_PERFILES_CLOUDNARY);
+
+            const ruta = `${alumno.nombre_folder_empresa}/${alumno.nombre_folder_sucursal}/${CONSTANTES.FOLDER_PERFILES_CLOUDNARY}`;
+
+            let resultImagen = await uploadCloudinaryDao.uploadCloud(imagen,ruta);
             console.log("ResulT " + JSON.stringify(resultImagen));
 
             if (resultImagen.upload) {
