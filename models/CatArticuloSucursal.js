@@ -72,19 +72,14 @@ class CatArticuloSucursal {
     return this;
   }
   build() {
-    return {
-      id: this.id,
+    return {      
       co_empresa: this.co_empresa,
       co_sucursal: this.co_sucursal,
       cat_articulo: this.cat_articulo,
-      genero: this.genero,
-      modifico: this.modifico,
-      precio: this.precio,
-      fecha_genero: this.fecha_genero,
-      fecha_modifico: this.fecha_modifico,
+      genero: this.genero,      
+      precio: this.precio,            
       cantidad_existencia: this.cantidad_existencia,
-      nota_interna: this.nota_interna,
-      eliminado: this.eliminado,
+      nota_interna: this.nota_interna,      
       costo_base: this.costo_base,
       stock_minimo: this.stock_minimo
     };

@@ -82,6 +82,19 @@ class CatArticulo {
       descripcion: this.descripcion
     };
   }
+  buildForInsert() {
+    return {      
+      co_empresa: this.co_empresa,
+      cat_marca: this.cat_marca,
+      cat_categoria: this.cat_categoria,
+      genero: this.genero,      
+      nombre: this.nombre,
+      codigo: this.codigo,            
+      fecha_genero: this.fecha_genero,
+      descripcion: this.descripcion
+    };
+  }
+
   buildForUpdate() {
     return {            
       cat_marca: this.cat_marca,      

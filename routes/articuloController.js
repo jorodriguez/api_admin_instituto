@@ -6,7 +6,7 @@ router.get('/sucursal/:coSucursal',checkAuth, articuloController.getArticulosSuc
 router.get('/:codigo/:coSucursal',checkAuth, articuloController.getArticuloCodigo);
 router.get('/nombre/:nombre/:coSucursal',checkAuth, articuloController.getArticuloPorNombre);
 router.get('/categoria/:catCategoria/:coSucursal',checkAuth, articuloController.getArticulosPorCategoria);
-
+router.post('/',checkAuth, articuloController.createArticulo);
 
 
 module.exports = router;

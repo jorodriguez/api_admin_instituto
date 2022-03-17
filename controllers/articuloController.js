@@ -90,7 +90,27 @@ const getCategoriaArticulos = async (request, response) => {
     }
 };
 
+const createArticulo = async (request, response) => {
+    console.log("@createArticulo");
+    try {
+                  
+            const data = request.body;
+
+                        
+            
+            const results = await articuloService.createArticulo(data);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
 module.exports = {
+    createArticulo,
     getArticuloCodigo,
     getArticuloPorNombre,
     getArticulosPorCategoria,

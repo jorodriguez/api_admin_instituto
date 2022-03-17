@@ -48,6 +48,7 @@ const venta = require('./routes/venta');
 const articulo = require('./routes/articuloController');
 const categoriaArticulo = require('./routes/categoriasArticuloController');
 const estatus = require('./routes/estatus');
+const marcaArticuloController = require('./routes/marcaArticuloController');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -64,6 +65,7 @@ app.use('/cobranza',cobranza);
 app.use('/venta',venta);
 app.use('/articulo',articulo);
 app.use('/categoria-articulo',categoriaArticulo);
+app.use('/marca-articulo',marcaArticuloController);
 app.use('/estatus',estatus);
 
 app.use('/jobs',schedulerJob);

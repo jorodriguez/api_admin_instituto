@@ -47,16 +47,20 @@ class CatMarca {
     return this;
   }
   build() {
-    return {
-      id: this.id,
+    return {      
       co_empresa: this.co_empresa,
-      genero: this.genero,
-      modifico: this.modifico,
-      fecha_genero: this.fecha_genero,
+      genero: this.genero,      
+      fecha_genero: this.fecha_genero,      
+      descripcion: this.descripcion,
+      nombre: this.nombre      
+    };
+  }
+  buildForUpdate() {
+    return {                  
+      modifico: this.modifico,      
       fecha_modifico: this.fecha_modifico,
       descripcion: this.descripcion,
-      nombre: this.nombre,
-      eliminado: this.eliminado
+      nombre: this.nombre      
     };
   }
 }

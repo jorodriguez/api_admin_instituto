@@ -78,21 +78,44 @@ const createArticulo = async (data) => {
     console.log("@createArticulo");
 
     //const articuloSucursal = new CatArticuloSucursal(); 
+    //https://res.cloudinary.com/dwttlkcmu/image/upload/v1647452466/static/logoproducto_d7cmqg.png
     try {
 
-    const articuloData = Object.assign(new CatArticulo(),data);
+    let returning = {error:false,mensaje:""};
+    
+    console.log(JSON.stringify(data));
+
+     //validar existencia de codigo 
+     const {co_sucursal,codigo} = data;
+
+    const existeCodigo = await  getArticuloCodigo(co_sucursal,codigo);
+
+    if(existeCodigo){
+        returning.error = true;
+        returning.mensaje = "Código repetido";
+        return returning;
+    }
+
+    const articuloData = Object.assign(new CatArticulo(),data);   
+        
+    /*cat_articulo_sucursal {co_empresa,cat_marca,cat_categoria,codigo,nombre,descripcion,foto,}*/ 
     
     const articuloSucursalData = Object.assign(new CatArticuloSucursal(),data);
 
-    
-    articuloDao.getTransaction(async transactionActive =>{
+    /*cat_articulo_sucursal {co_empresa,co_sucursal,cat_articulo,precio,costo_base,cantidad_existencia,stock_minimo,nota_interna}*/ 
+        
+    articuloDao.getKnex().transaction(async transactionActive =>{
+
             //insertar en catalogo de articulos
-            const rowArticulo = await articuloDao.insert(articuloData).transacting(transactionActive);         
+            const resultsArticulo = await transactionActive(Tables.CAT_ARTICULO).insert(articuloData.buildForInsert()).returning('*');
+            const rowArticulo = resultsArticulo.length > 0 ? resultsArticulo[0] : null;
 
             const dataInsertArticuloSucursal = articuloSucursalData.setCatArticulo(rowArticulo.id).build();
 
             //insertar en el precio en relacion con la sucursal
-            await articuloSucursalDao.insert(dataInsertArticuloSucursal).transacting(transactionActive);
+            //await articuloSucursalDao.insert(dataInsertArticuloSucursal).transacting(transactionActive);
+            await transactionActive(Tables.CAT_ARTICULO_SUCURSAL).insert(dataInsertArticuloSucursal).returning('*');
+            console.log("Articulo agregado");
 
      });    
 
