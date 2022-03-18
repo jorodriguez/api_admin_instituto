@@ -147,17 +147,20 @@ select art.id,
 	m.nombre as marca, 
     c.id as cat_categoria,
     c.nombre as categoria,
-	suc.nombre as sucursal
+	suc.nombre as sucursal,
+    um.id as cat_unidad_medida,
+    um.nombre as unidad_medida
 from cat_articulo_sucursal art inner join cat_articulo a on a.id = art.cat_articulo
 					    	inner join cat_marca m on m.id = a.cat_marca
                             inner join cat_categoria c on c.id = a.cat_categoria
 					        inner join co_sucursal suc on suc.id = art.co_sucursal
+                            inner join cat_unidad_medida um on a.cat_unidad_medida = um.id
 where ${criterio ? criterio  : ''}
     ${criterio ? ' and '  : ''}
 	a.eliminado = false
 	and art.eliminado = false    
-
 `;
+
 
 const queryCategoriaArticulos = (criterio)=>`
 select 
@@ -184,5 +187,5 @@ module.exports = {
     getArticulosPorNombre,
     getCategoriaArticulos,
     getArticulosPorCategoria,
-    
+    findById:articuloDao.findById    
 };

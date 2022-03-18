@@ -49,6 +49,7 @@ const articulo = require('./routes/articuloController');
 const categoriaArticulo = require('./routes/categoriasArticuloController');
 const estatus = require('./routes/estatus');
 const marcaArticuloController = require('./routes/marcaArticuloController');
+const unidadMedidaController = require('./routes/unidadMedidaController');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -66,6 +67,7 @@ app.use('/venta',venta);
 app.use('/articulo',articulo);
 app.use('/categoria-articulo',categoriaArticulo);
 app.use('/marca-articulo',marcaArticuloController);
+app.use('/unidad-medida-articulo',unidadMedidaController);
 app.use('/estatus',estatus);
 
 app.use('/jobs',schedulerJob);
@@ -202,53 +204,19 @@ app.post('/foto_perfil',checkAuth, fileUpload.single('image'), (req,res)=>{
 	}
 });
 
+
+//Subir imagen articulo
+/*app.post('/foto_articulo',checkAuth, fileUpload.single('image'), (req,res)=>{
+	let respuesta = validarTokenCompleto(req, res);
+
+	if (!respuesta.tokenValido) {
+		console.log(" ((((( Token invalido  )))))");
+		return req.status(respuesta.status).send(respuesta);
+	} else {
+		console.log(" PASA EL TOKEN ");
+		uploadCloudinary.uploadImagenPerfil(req,res);		
+	}
+});
+*/
 console.log("---------registro de todos los endpoints finalizados -----------------");
 
-
-//app.get('/cargos/meses_adeuda/:id_alumno', pagos.obtenerMesesAdeudaMensualidad);
-//app.get('/cargos_meses_adeuda/:id_alumno', checkAuth,cargos.obtenerMesesAdeudaMensualidad);
-//recargos proximos
-//app.get('/mensualidad/vence_semana_actual/:id_sucursal', recargoService.obtenerPagosVencenSemanaActual);
-//app.get('/mensualidad/vence_semana_actual/:id_sucursal',checkAuth, recargoService.obtenerPagosVencenSemanaActual);
-//recargos de hoy 
-//app.get('/mensualidad/vence_hoy',checkAuth, recargoService.obtenerMensualidadesRecargoHoy);
-
-//app.get('/mensualidad/ejecutar',checkAuth, recargoService.ejecutarRecargosMensualidad);
-//Reporte
-//app.get('/balance_sucursal/:id_usuario',checkAuth, reporteDeudas.getReporteBalancePorSucursal);
-//app.get('/balance_alumnos_sucursal/:id_sucursal/:id_tipo_cargo',checkAuth, reporteDeudas.getReporteBalanceAlumnosSucursal);
-
-//app.get('/balance_crecimiento/:id_usuario', checkAuth,reporteDeudas.getReporteCrecimientoBalancePorSucursal);
-//app.get('/balance_crecimiento_alumnos/:id_sucursal', checkAuth,reporteDeudas.getReporteCrecimientoBalanceAlumnosSucursal);
-
-//app.get('/balance_crecimiento_global/:id_usuario', checkAuth,reporteDeudas.getReporteCrecimientoGlobal);
-//app.get('/balance_crecimiento_mensual/:id_sucursal', checkAuth,reporteDeudas.getReporteCrecimientoMensualSucursal);
-//app.get('/alumnos_balance_crecimiento_mensual_sucursal/:id_sucursal/:mes_anio',checkAuth, reporteDeudas.getReporteAlumnosMensualCrecimiento);
-//reporte de mensualidades facturadas
-/*app.get('/sucursal_usuario/sucursales_asignadas/:id_usuario',checkAuth, usuarioService.getSucursalesUsuario);
-app.get('/reporte_mensualidades/:id_sucursal/:anio',checkAuth, reporte_mensualidades.getMensualidadesAlumnosSucursal);
-app.get('/cargos/filtro_anios/:id_sucursal', checkAuth,cargos.obtenerFiltroAniosCargosSucursal);
-
-app.get('/reporte_mensualidades_mes_actual/:id_usuario', checkAuth,reporte_mensualidades.getReporteContadoresSucursalesMesActual);
-app.get('/reporte_mensualidades/:id_sucursal/:id_usuario', checkAuth,reporte_mensualidades.getReporteContadoresMesesPorSucursal);
-app.get('/reporte_mensualidades/:id_sucursal/:mes', checkAuth,reporte_mensualidades.getReporteMensualidadesPorSucursalMes);
-*/
-//reporte ingresos vs cargos
-//app.get('/reporte_ingreso_menos_gasto_mensual/:id_sucursal/:mes',checkAuth, reporteDeudas.getReporteGastosIngresosSucursalPorMes);
-
-// Reporte de cobranza - para la contadora
-//app.put('/reporte_cobranza',checkAuth, reporteContabilidad.getReporteCobranzaPorFechas);
-//Avisos para ver el la APP
-//app.get('/aviso_familiar/:id_familiar',avisos.getAvisosPorFamiliar);
-
-//Para movil
-//Login Clientes - Papás
-//consultas para App
-//------------------------------------------------
-//app.post('/auth_cliente/login', authClientesController.loginCliente);
-
-//------------------------------------------------
-//app.get('/meses_activos', checkAuth,utilerias.getMesesActivos);
-
-//alumnos crecimiento mes
-//app.get('/alumnos_crecimiento_mes/:anio/:mes/:id_usuario',checkAuth, reporteDeudas.getReporteAlumnosNuevosIngresosGlobal);

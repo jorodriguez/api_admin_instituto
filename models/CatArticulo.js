@@ -4,6 +4,7 @@ class CatArticulo {
     this.co_empresa = null;
     this.cat_marca = null;
     this.cat_categoria = null;
+    this.cat_unidad_medida = null;
     this.genero = null;
     this.modifico = null;
     this.nombre = "";
@@ -28,6 +29,10 @@ class CatArticulo {
   }
   setCatCategoria(catCategoria) {
     this.cat_categoria = catCategoria;
+    return this;
+  }
+  setCatUnidadMedida(catUnidadMedida) {
+    this.cat_unidad_medida = catUnidadMedida;
     return this;
   }
   setGenero(genero) {
@@ -71,6 +76,7 @@ class CatArticulo {
       co_empresa: this.co_empresa,
       cat_marca: this.cat_marca,
       cat_categoria: this.cat_categoria,
+      cat_unidad_medida: this.cat_unidad_medida,
       genero: this.genero,
       modifico: this.modifico,
       nombre: this.nombre,
@@ -86,6 +92,7 @@ class CatArticulo {
     return {      
       co_empresa: this.co_empresa,
       cat_marca: this.cat_marca,
+      cat_unidad_medida: this.cat_unidad_medida,
       cat_categoria: this.cat_categoria,
       genero: this.genero,      
       nombre: this.nombre,
@@ -99,6 +106,7 @@ class CatArticulo {
     return {            
       cat_marca: this.cat_marca,      
       cat_categoria: this.cat_categoria,
+      cat_unidad_medida: this.cat_unidad_medida,
       modifico: this.modifico,
       nombre: this.nombre,
       eliminado: this.eliminado,

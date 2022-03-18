@@ -18,9 +18,13 @@ const getListaDetalleVenta =async (idVenta)=>{
     det.importe,
     art.nombre as articulo,
     art.codigo,
-    det.ve_venta
+    det.ve_venta,
+    marca.nombre as marca,
+    medida.nombre as unidad_medida
 from ve_venta_detalle det inner join cat_articulo_sucursal ars on det.cat_articulo_sucursal = ars.id
-                   inner join cat_articulo art on art.id = ars.cat_articulo
+                            inner join cat_articulo art on art.id = ars.cat_articulo
+                            inner join cat_marca marca on marca.id = art.cat_marca
+                            inner join cat_unidad_medida medida on medida.id = art.cat_unidad_medida
     where det.ve_venta = $1
     `,[idVenta]);
 }

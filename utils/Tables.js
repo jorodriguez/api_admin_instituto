@@ -2,6 +2,7 @@
 module.exports = {    
     CAT_ARTICULO:'cat_articulo',
     CAT_MARCA:'cat_marca',
+    CAT_UNIDAD_MEDIDA:'cat_unidad_medida',
     CAT_CATEGORIA:'cat_categoria',
     CAT_ARTICULO_SUCURSAL:'cat_articulo_sucursal',
     VE_VENTA:'ve_venta',
