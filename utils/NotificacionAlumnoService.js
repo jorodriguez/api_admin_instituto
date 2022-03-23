@@ -34,7 +34,11 @@ try{
     
     const asunto = `Bienvenido ${inscripcion.alumno}`;
     
-    const para = (inscripcion.correo || '' )+(usuarioGenero.correo_copia || '');   
+    const para =  [inscripcion.correo]; //(inscripcion.correo || '' )+(usuarioGenero.correo_copia || '');   
+
+    if(usuarioGenero.correo_copia != null){
+        para.push(usuarioGenero.correo_copia);
+    }
 
     const usuariosTema = await temaNotificacionService.getCorreosPorTemaSucursal(
                        {coSucursal:co_sucursal,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_ALTA_ALUMNO});
