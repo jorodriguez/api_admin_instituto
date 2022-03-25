@@ -128,6 +128,8 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
   
     let cortesSucursal =  new Map();
 
+    console.log("LLENAR EL MAP DE CORTES");
+
     for(let i =0; i< listaSucursales.length;i++){
 
         const sucursal = listaSucursales[i];
@@ -146,7 +148,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
         htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteDiario);               
                
         //corte semanal
-        const htmlCorteSemanalSucursal = await getCorteSemanal(informacionFecha,sucursal);
+        const htmlCorteSemanalSucursal = await getCorteSemanalSucursal(informacionFecha,sucursal);
 
         htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteSemanalSucursal);
        
@@ -155,7 +157,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
                 
     }   
 
-        let infoEnvio = {enviado:'pendiente'};
+    let infoEnvio = {enviado:'pendiente'};
 
 
     //obtener los usuarios con el rol de direccion
@@ -168,6 +170,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
     }
 
     let asunto = `Corte del ${informacionFecha.fecha_actual_asunto}`;
+
     let body = `<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p> 
     <p><small>Enviado ${informacionFecha.fecha_actual_asunto} ${informacionFecha.hora_actual_format}</small></p>` ;
 
@@ -182,10 +185,11 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
 
         console.log(` ENVIADO CORTE A LA SUCS ${sucursalesEnviar} correos ${para}`);       
 
-        //let cc = usuariosEnviar.correos_copia || [];
+        let cc = '';//usuariosEnviar.correos_copia || [];
 
-        //obtener la informacion html ya creada en el mapa
-        let htmlSucursalesEnviar = '';
+        //obtener la informacion html ya creada en el mapa        
+        let htmlSucursalesEnviar = Object.assign('',body);
+
         for(let s=0; s < sucursalesEnviar.length;s++){
             const idSucursal = sucursalesEnviar[s];
             const htmlCorte = cortesSucursal.get(idSucursal);
