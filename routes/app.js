@@ -5,7 +5,7 @@ const { pool } = require('../db/conexion');
 const port = process.env.PORT || 5000;
 
 //version/branch
-const version = "v1/2202-ventas";
+const version = "v1/2202-ventas-hotfix-corte-separado";
 
 
 app.use(bodyParser.json());
