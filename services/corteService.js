@@ -65,8 +65,7 @@ const getHtmlCorteDiaSucursal = async (corteData)=>{
            idUsuario:corteData.idUsuario,
            tipoTemplate:corteData.tipoTemplate //TIPO_TEMPLATE.CORTE_DIARIO
        });
-    console.log(`html Corte ${html}`);
-      
+          
     return html;
 };
 /*
@@ -103,6 +102,176 @@ const getHtmlCorteDiaSucursalEnvioCorreo = async (corteData)=>{
 
 
 const enviarCorteEmpresaCorreo = async (corteData)=>{
+
+    console.log("@enviarCorteEmpresaCorreo");
+   
+    // enviar junto todos los cortes de las sucursales de la empresa por c
+    const {coEmpresa} = corteData;
+
+    const informacionFecha = await utilDao.getFechaHoy();
+
+    console.log(`enviado corte de ${JSON.stringify(informacionFecha)}`)
+
+    const fechaHoy = new Date(`${informacionFecha.fecha_actual_format} 00:00:00`);
+    
+    console.log("FECHA "+fechaHoy)
+
+    
+    //obtener las sucursales de la empresa
+    const listaSucursales = await sucursalDao.getSucursalPorEmpresa(coEmpresa);    
+    
+    if(listaSucursales == null && listaSucursales.length == 0){
+        console.log("CORREO NO ENVIADO -  NO HAY SUCURSALES DE LA EMPRESA "+coEmpresa);
+        return ;
+    }
+    
+  
+    let cortesSucursal =  new Map();
+
+    for(let i =0; i< listaSucursales.length;i++){
+
+        const sucursal = listaSucursales[i];
+        
+        let htmlCorteDiaSucursal = '' ;
+
+        console.log(`===== SUCURSAL ${sucursal.nombre}===== `)
+           
+        const htmlCorteDiario = await getHtmlCorteDiaSucursal(
+                    {   idUsuario:USUARIO_DEFAULT ,
+                        idSucursal:sucursal.id,
+                        fecha:fechaHoy,
+                        tipoTemplate: TIPO_TEMPLATE.CORTE_DIARIO_ENVIO_CORREO
+                    });            
+        
+        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteDiario);               
+               
+        //corte semanal
+        const htmlCorteSemanalSucursal = await getCorteSemanal(informacionFecha,sucursal);
+
+        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteSemanalSucursal);
+       
+               
+        cortesSucursal.set(sucursal.id,htmlCorteDiaSucursal);        
+                
+    }   
+
+        let infoEnvio = {enviado:'pendiente'};
+
+
+    //obtener los usuarios con el rol de direccion
+    //const usuariosEnviar = await temaNotificacionService.getCorreosTemaPorEmpresa({coEmpresa:coEmpresa,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_CORTE_DIARIO})
+    const infoCorreosEnviarCorte = await temaNotificacionService.getUsuariosEnvioCorte(coEmpresa);
+
+    if(!infoCorreosEnviarCorte){
+        console.log("XXXXX NO existen correos del tema para enviar el corte XXXXXX");
+        return;
+    }
+
+    let asunto = `Corte del ${informacionFecha.fecha_actual_asunto}`;
+    let body = `<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p> 
+    <p><small>Enviado ${informacionFecha.fecha_actual_asunto} ${informacionFecha.hora_actual_format}</small></p>` ;
+
+
+    for(let i =0 ; i < infoCorreosEnviarCorte.length; i++){
+
+        const infoCorreosEnviar = infoCorreosEnviarCorte[i];       
+
+        const sucursalesEnviar = JSON.parse(infoCorreosEnviar.sucursales || []);
+
+        const para = infoCorreosEnviar.correos || [];               
+
+        console.log(` ENVIADO CORTE A LA SUCS ${sucursalesEnviar} correos ${para}`);       
+
+        //let cc = usuariosEnviar.correos_copia || [];
+
+        //obtener la informacion html ya creada en el mapa
+        let htmlSucursalesEnviar = '';
+        for(let s=0; s < sucursalesEnviar.length;s++){
+            const idSucursal = sucursalesEnviar[s];
+            const htmlCorte = cortesSucursal.get(idSucursal);
+            htmlSucursalesEnviar = htmlSucursalesEnviar.concat(htmlCorte || '');
+        }
+        
+        const htmlMergeTemplateMain = await templateService.loadAndMergeHtmlTemplateEmpresa({
+                             params:{},
+                             html:htmlSucursalesEnviar,
+                             idEmpresa:coEmpresa            
+         });        
+         
+        infoEnvio = await correoService.enviarCorreoAsync({para:para,cc:cc,asunto:asunto,html:htmlMergeTemplateMain,idEmpresa:coEmpresa});
+
+        console.log("=== ENVIO DE CORTE =="+ JSON.stringify(infoEnvio))
+        console.log("======= ENVIO DE CORREO =====");
+    }
+
+    return infoEnvio;
+
+};
+
+
+
+const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
+
+                   
+    const fechasSemana = informacionFecha.fechas_semana_ocurriendo || [];        
+
+    let table = `<table width="100%" border="1" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: left;"> `;
+    let tdDiasNombre = `<tr tyle="background-color:#DBDBDB;padding:0px 0px 0px 10px ;color:#CC59C5" ><td></td>`;
+    let tdDias = `<tr tyle="background-color:#DBDBDB;padding:0px 0px 0px 10px ;color:#CC59C5" ><td></td>`;
+    let tdValoresIngreso = "<tr><td><strong>Ingreso</strong></td>";
+    let tdValoresGasto = "<tr><td><strong>Gasto</strong></td>";
+    let tdValoresCaja = "<tr><td><strong>Caja</strong></td>";
+
+    for(let f =0; f < fechasSemana.length;f++){
+
+        const fecha = fechasSemana[f];
+        
+        const _fechaFormatNombre = moment(new Date(`${fecha} 00:00:00`)).format('dddd');
+        const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('MMM Do YY');
+
+        tdDiasNombre = tdDiasNombre.concat(`<td><${_fechaFormatNombre}}</td>`)
+        tdDias = tdDias.concat(`<td>${_fechaFormat}</td>`);
+        
+          const corteDiaSemana = await getCorteDiaSucursal({idSucursal:sucursalData.id,
+                                                        fechaInicio:new Date(`${fecha} 00:00:00`),
+                                                        fechaFin:new Date(`${fecha} 00:00:00`),           
+                                                        idUsuario:USUARIO_DEFAULT});
+        //ingreso
+        tdValoresIngreso = tdValoresIngreso.concat(`<td>$${corteDiaSemana.totalIngreso}</td>`);
+        tdValoresGasto = tdValoresGasto.concat(`<td>$${corteDiaSemana.totalGasto}</td>`);            
+        tdValoresCaja = tdValoresCaja.concat(`<td><strong>$${corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto}</strong></td>`);            
+              
+    }
+
+    const corteSemana = await getCorteDiaSucursal({idSucursal:sucursalData.id,
+        fechaInicio:new Date(`${informacionFecha.fecha_inicio_semana_format} 00:00:00`),
+        fechaFin:new Date(`${informacionFecha.fecha_fin_semana_format} 00:00:00`),
+        idUsuario:USUARIO_DEFAULT});
+
+
+    tdDias = tdDias.concat("</tr>");
+    tdValoresIngreso = tdValoresIngreso.concat("</tr>");
+    tdValoresGasto = tdValoresGasto.concat("</tr>");
+    tdValoresCaja = tdValoresCaja.concat("</tr>");
+
+    let totalSemana = `<h4>Ingreso Semana : $${corteSemana.totalIngreso}</h4>`;
+    totalSemana = totalSemana.concat(`<h4>Gasto Semana : $${corteSemana.totalGasto}</h4>`);
+    totalSemana = totalSemana.concat(`<h4>Caja Semana : $${corteSemana.totalIngreso - corteSemana.totalGasto}</h4>`);
+
+    //formateo final
+    let htmlHistorialSemana =  `<br/><h5>Semana de ${informacionFecha.fecha_inicio_semana_format} al ${informacionFecha.fecha_fin_semana_format}</h5>`;            
+    table = htmlHistorialSemana.concat(table).concat(tdDiasNombre).concat(tdDias).concat(tdValoresIngreso).concat(tdValoresGasto).concat(tdValoresCaja).concat("</table>");
+    table = table.concat(`<br/>`).concat(totalSemana);
+
+    return table;
+
+}
+
+
+/*
+--envio completo por sucursal todas las sucursales activas
+const enviarCorteEmpresaCorreo = async (corteData)=>{
+
     console.log("@enviarCorteEmpresaCorreo");
    
     // enviar junto todos los cortes de las sucursales de la empresa por c
@@ -137,6 +306,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
                 <p><small>Enviado ${informacionFecha.fecha_actual_asunto} ${informacionFecha.hora_actual_format}</small></p>` ;
     
     for(let i =0; i< listaSucursales.length;i++){
+
         const sucursal = listaSucursales[i];
 
         console.log(`===== SUCURSAL ${sucursal.nombre}===== `)
@@ -172,9 +342,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
             tdDiasNombre = tdDiasNombre.concat(`<td><${_fechaFormatNombre}}</td>`)
             tdDias = tdDias.concat(`<td>${_fechaFormat}</td>`);
             
-        //    htmlHistorialSemana = htmlHistorialSemana + `<strong>${fecha}</strong> <br/>`;
-
-            const corteDiaSemana = await getCorteDiaSucursal({idSucursal:sucursal.id,
+              const corteDiaSemana = await getCorteDiaSucursal({idSucursal:sucursal.id,
                                                             fechaInicio:new Date(`${fecha} 00:00:00`),
                                                             fechaFin:new Date(`${fecha} 00:00:00`),           
                                                             idUsuario:USUARIO_DEFAULT});
@@ -182,21 +350,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
             tdValoresIngreso = tdValoresIngreso.concat(`<td>$${corteDiaSemana.totalIngreso}</td>`);
             tdValoresGasto = tdValoresGasto.concat(`<td>$${corteDiaSemana.totalGasto}</td>`);            
             tdValoresCaja = tdValoresCaja.concat(`<td><strong>$${corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto}</strong></td>`);            
-
-           /*
-              fecha:fechaInicio,
-            fechaFin:fechaFin,
-            totalIngreso: (sumaIngreso ? sumaIngreso.total : 0),detalleIngreso:resultsIngreso,
-            totalGasto:(sumaGastos ? sumaGastos.total : 0), detalleGasto:resultsGastos
-           */
-            /*let htmlDiaSemana = await getHtmlCorteDiaSucursal(
-            {   idUsuario:USUARIO_DEFAULT ,
-                idSucursal:sucursal.id,
-                fecha: new Date(`${fecha} 00:00:00`),
-                tipoTemplate: TIPO_TEMPLATE.CORTE_DIARIO_ENVIO_CORREO
-            });            */
-
-            //htmlHistorialSemana = htmlHistorialSemana.concat(htmlDiaSemana).concat("<br/>");            
+                  
         }
 
         const corteSemana = await getCorteDiaSucursal({idSucursal:sucursal.id,
@@ -219,14 +373,15 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
 
         html = html.concat(table);
                 
-//        corteSucursales.push({sucursal,html});
-
     }   
+
     console.log("=================")
     console.log(`${html}`)
     console.log("=================")
 
     let infoEnvio = {enviado:'pendiente'};
+
+
     //enviar correo
     //if(html){
         let asunto = `Corte del ${informacionFecha.fecha_actual_asunto}`;
@@ -253,6 +408,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
 
 };
 
+*/
 
 
 module.exports = {

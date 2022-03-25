@@ -1,5 +1,5 @@
 const genericDao = require('./genericDao');
-const { TIPO_USUARIO } = require('../utils/Constantes');
+const { TIPO_USUARIO,TEMA_NOTIFICACION } = require('../utils/Constantes');
 
 const obtenerCorreosPorTema = async (data)=> {
 
@@ -48,8 +48,32 @@ const obtenerCorreosPorTemaSucursal = async (data)=> {
 }
 
 
+const getUsuariosEnvioCorte = async (idEmpresa)=>{
+    
+    return await genericDao.findAll(`
+    with usuario_notificacion as (
+		select  u.nombre,u.correo,suc.id
+		from co_usuario_notificacion un inner join usuario u on u.id = un.usuario
+							  inner join co_sucursal suc on suc.id = un.co_sucursal
+		where un.co_tema_notificacion = ${TEMA_NOTIFICACION.ID_TEMA_CORTE_DIARIO}
+			and suc.co_empresa = $1
+			and un.eliminado = false
+			and suc.eliminado = false
+	), agrupado as( 
+		select 
+			un.nombre,
+			un.correo,
+			array_to_json(array_agg(to_json(un.id)))::text AS sucursales
+	  from usuario_notificacion un
+	  group by un.nombre,un.correo 
+	 ) select array_to_json(array_agg(to_json(correo))) as correos,a.sucursales
+	   from agrupado a
+	   group by sucursales
+`,[idEmpresa]);
+}
+
 
 module.exports = {
-    obtenerCorreosPorTema,obtenerCorreosPorTemaSucursal
+    obtenerCorreosPorTema,obtenerCorreosPorTemaSucursal,getUsuariosEnvioCorte
 };
 
