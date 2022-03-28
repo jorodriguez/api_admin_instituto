@@ -171,7 +171,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
 
     let asunto = `Corte del ${informacionFecha.fecha_actual_asunto}`;
 
-    let body = `<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p> 
+    const body = `<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p> 
     <p><small>Enviado ${informacionFecha.fecha_actual_asunto} ${informacionFecha.hora_actual_format}</small></p>` ;
 
 
@@ -188,11 +188,15 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
         let cc = '';//usuariosEnviar.correos_copia || [];
 
         //obtener la informacion html ya creada en el mapa        
-        let htmlSucursalesEnviar = Object.assign('',body);
+        
+        let htmlSucursalesEnviar = body; //  Object.assign(htmlSucursalesEnviar,body);
 
         for(let s=0; s < sucursalesEnviar.length;s++){
             const idSucursal = sucursalesEnviar[s];
             const htmlCorte = cortesSucursal.get(idSucursal);
+            if(s > 0){
+                htmlSucursalesEnviar = htmlSucursalesEnviar.concat("<br/>"); 
+            } 
             htmlSucursalesEnviar = htmlSucursalesEnviar.concat(htmlCorte || '');
         }
         

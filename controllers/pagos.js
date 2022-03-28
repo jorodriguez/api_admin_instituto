@@ -69,8 +69,13 @@ const enviarComprobantePago = async (data = {id_pago}) => {
         //falta ver a quien copiar
         const correosTema = await usuarioNotificacionService.obtenerCorreosPorTemaSucursal({coSucursal:pagoInfo.id_sucursal,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS});
 
-        para = para.concat(correosTema.correos_usuarios.toString());
-        cc = cc.concat(correosTema.correos_copia.toString());
+        if(correosTema.correos_usuarios.length > 1){
+            para = para.concat(",").concat(correosTema.correos_usuarios.toString());
+        }
+        
+        if(correosTema.correos_copia.length > 1){
+            cc = cc.concat(',').concat(correosTema.correos_copia.toString());
+        }        
 
         await correoService.enviarCorreoAsync({para, cc, asunto, html,idEmpresa:pagoInfo.co_empresa});
 
