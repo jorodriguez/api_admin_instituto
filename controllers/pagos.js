@@ -3,8 +3,10 @@ const pagoService = require('../services/pagoService');
 const alumnoService = require('../services/alumnoService');
 const usuarioService = require('../services/usuarioService');
 const handle = require('../helpers/handlersErrors');
-const notificacionService = require('../utils/NotificacionService');
+//const notificacionService = require('../utils/NotificacionService');
+const usuarioNotificacionService = require('../services/usuarioNotificacionService');
 const correoService = require('../utils/CorreoService');
+const { TEMA_NOTIFICACION } = require('../utils/Constantes');
 
 const registrarPago = async (request, response) => {
     console.log("@registrarPago");
@@ -59,9 +61,16 @@ const enviarComprobantePago = async (data = {id_pago}) => {
         const html = await pagoService.obtenerPreviewComprobantePago(id_pago,pagoInfo.id_genero,true);       
     
         const asunto = `Comprobante de pago ${pagoInfo.folio}.`;    
-        const para = (pagoInfo.correo_alumno || "");
-        const cc = (pagoInfo.correo_copia_usuario || "");
+        let para = (pagoInfo.correo_alumno || "");
+        let cc = (pagoInfo.correo_copia_usuario || "");
+        
+        console.log("obtneer correos del tema");
+        console.log("Suc "+pagoInfo.id_sucursal+" TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS "+TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS);
         //falta ver a quien copiar
+        const correosTema = await usuarioNotificacionService.obtenerCorreosPorTemaSucursal({coSucursal:pagoInfo.id_sucursal,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS});
+
+        para = para.concat(correosTema.correos_usuarios.toString());
+        cc = cc.concat(correosTema.correos_copia.toString());
 
         await correoService.enviarCorreoAsync({para, cc, asunto, html,idEmpresa:pagoInfo.co_empresa});
 
