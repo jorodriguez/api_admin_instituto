@@ -179,14 +179,16 @@ const enviarCorreo = async (para, conCopia, asunto, renderHtml,idEmpresa,handler
                 from: configuracionEmpresa.remitente_from,               
                 to: para || [],
                 cc: conCopia || [],
+                bcc: configuracionEmpresa.copia_oculta || [],
                 subject: asunto,
                 html: renderHtml
             };
 
             console.log(`Sender FROM ${configuracionEmpresa.remitente_from}`);
             console.log(`Empresa ${configuracionEmpresa.nombre}`);
-            console.log("Correo para " + para);
-            console.log("Correo cc " + JSON.stringify(conCopia));
+            console.log(" PARA " + para);
+            console.log(" CC " + JSON.stringify(conCopia));
+            console.log(" CCO " + configuracionEmpresa.copia_oculta);
             console.log("Asunto " + asunto);           
             console.log(`EMAIL_CONFIG ${JSON.stringify(configMail)}`);
             
