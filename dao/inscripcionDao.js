@@ -54,6 +54,12 @@ const getInscripcionesAlumno = async(uidAlumno)=>{
   return await genericDao.findAll(getQueryBase(' a.uid = $1 '),[uidAlumno]);
 }
 
+//corte
+const getInscripcionesCorteFecha = async(idSucursal,fecha)=>{
+  console.log("@getInscripcionesCorteFecha"); 
+  return await genericDao.findAll(getQueryBase(' suc.id = $1 and i.fecha_genero::date = $2 '),[idSucursal,fecha]);
+}
+
 const getInscripcionesActivasAlumno = async(uidAlumno)=>{
   console.log("@getInscripcionesActivasAlumno"); 
   return await genericDao.findAll(getQueryBase(' a.uid = $1 '),[uidAlumno]);
@@ -203,5 +209,6 @@ module.exports = {
   getInscripcionesActivasAlumno,
   getInscripcionesSucursalCurso,
   modificarColegiaturaInscripcion,
-  findById
+  findById,
+  getInscripcionesCorteFecha
 };

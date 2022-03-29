@@ -4,6 +4,7 @@ require('moment/locale/es');  // without this line it didn't work
 moment.locale('es');
 const gastoDao = require('../dao/gastoDao');
 const cortesDao = require('../dao/cortesDao');
+const inscripcionDao = require('../dao/inscripcionDao');
 const utilDao = require('../dao/utilDao');
 const sucursalDao = require('../dao/sucursalDao');
 const templateService = require('./templateService');
@@ -115,7 +116,6 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
     const fechaHoy = new Date(`${informacionFecha.fecha_actual_format} 00:00:00`);
     
     console.log("FECHA "+fechaHoy)
-
     
     //obtener las sucursales de la empresa
     const listaSucursales = await sucursalDao.getSucursalPorEmpresa(coEmpresa);    
@@ -148,10 +148,12 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
         htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteDiario);               
                
         //corte semanal
-        const htmlCorteSemanalSucursal = await getCorteSemanalSucursal(informacionFecha,sucursal);
+        const htmlCorteSemanalSucursal = await getCorteSemanalSucursal(informacionFecha,sucursal);       
 
-        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteSemanalSucursal);
-       
+        //Contador de inscripciones
+        const htmlCorteInscripciones = await getCorteInscripcionesSucursal(informacionFecha.fecha_actual_format,sucursal);
+        
+        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteSemanalSucursal).concat(htmlCorteInscripciones);
                
         cortesSucursal.set(sucursal.id,htmlCorteDiaSucursal);        
                 
@@ -207,7 +209,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
          });        
          
          console.log("=========================");
-        // console.log(htmlMergeTemplateMain);
+         console.log(htmlMergeTemplateMain);
          console.log("=========================")
 
         infoEnvio = await correoService.enviarCorreoAsync({para:para,cc:cc,asunto:asunto,html:htmlMergeTemplateMain,idEmpresa:coEmpresa});
@@ -311,6 +313,67 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
 
 }
 
+
+const getCorteInscripcionesSucursal = async(fecha,sucursalData)=>{
+                   
+    //const fechasSemana = informacionFecha.fechas_semana_ocurriendo || [];        
+
+    let html ="";
+
+    const _fechaFormatNombre = moment(new Date(`${fecha} 00:00:00`)).format('dddd');      
+
+    const inscripciones = await inscripcionDao.getInscripcionesCorteFecha(sucursalData.id,new Date(`${fecha} 00:00:00`));
+
+    html = `<br/><table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: left;border:1px solid #C5C5C5"> `;
+    
+    if(inscripciones != null && inscripciones.length > 0){           
+       
+        html =html.concat(`<tr> <td colspan="4" style="vertical-align: middle;text-align: center;"><strong>(${inscripciones.length}) Inscripciones hoy ${_fechaFormatNombre} </strong></td></tr>`);
+        
+        let head =` <tr>                        
+                        <td>Inscripción</td>
+                        <td style="vertical-align: middle;text-align: center;">Cole.</td>
+                        <td style="vertical-align: middle;text-align: center;">Inscr.</td>
+                   </tr>`;
+        
+                   html = html.concat(head);
+
+        let intercalar = false;
+        for(let f =0; f < inscripciones.length;f++){   
+            const inscripcion = inscripciones[f];
+            let fila =`<tr style="background-color: ${intercalar ? '#A1CBE6':'#fff'} " >                       
+                       <td width="50%">
+                            <p style="margin:0px; padding: 0px;"><strong>${inscripcion.matricula}</strong></p>
+                            <p style="margin:0px; padding: 0px;">${inscripcion.alumno} ${inscripcion.apellidos}</p>
+                            <small>${inscripcion.especialidad} ${inscripcion.dias} horario ${inscripcion.horario}</small>
+                            <small>Inicia ${inscripcion.fecha_inicio_previsto} <small>
+                       </td>
+                       <td style="vertical-align: middle;text-align: center;" width="20%">
+                            $${inscripcion.costo_colegiatura}
+                       </td>
+                       <td style="vertical-align: middle;text-align: center;" width="20%">
+                            $${inscripcion.costo_inscripcion}
+                       </td>
+                    </tr>
+                    <tr style="background-color: ${intercalar ? '#A1CBE6':'#fff'} ">
+                        <td colspan="3">
+                            Nota: ${inscripcion.nota_inscripcion}
+                        </td>
+                    </tr>
+             `;              
+            html = html.concat(fila);
+            intercalar = !intercalar;
+        }            
+
+    }else{
+        html =html.concat(`<tr> <td>(0)Inscripciones hoy ${_fechaFormatNombre} </td></tr>`);
+    }
+
+    html = html.concat(`</table>`);
+
+    return html;
+
+}
 
 /*
 --envio completo por sucursal todas las sucursales activas
