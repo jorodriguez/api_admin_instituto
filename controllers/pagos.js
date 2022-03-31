@@ -60,12 +60,13 @@ const enviarComprobantePago = async (data = {id_pago}) => {
 
         const html = await pagoService.obtenerPreviewComprobantePago(id_pago,pagoInfo.id_genero,true);       
     
-        const asunto = `Comprobante de pago ${pagoInfo.folio}.`;    
+        const asunto = `Comprobante de pago ${pagoInfo.folio} ${pagoInfo.nombre_sucursal} .`;    
         let para = (pagoInfo.correo_alumno || "");
         let cc = (pagoInfo.correo_copia_usuario || "");
         
         console.log("obtneer correos del tema");
         console.log("Suc "+pagoInfo.id_sucursal+" TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS "+TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS);
+        
         //falta ver a quien copiar
         const correosTema = await usuarioNotificacionService.obtenerCorreosPorTemaSucursal({coSucursal:pagoInfo.id_sucursal,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS});
 

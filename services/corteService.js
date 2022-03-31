@@ -239,7 +239,7 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
     for(let f =0; f < fechasSemana.length;f++){
 
         const fecha = fechasSemana[f];
-        const esHoy =  fecha == (informacionFecha.fecha_actual_format);
+        const fechaIguanMenorHoy =  moment(fecha).isSameOrAfter(moment(informacionFecha.fecha_actual_format));
         
         const _fechaFormatNombre = moment(new Date(`${fecha} 00:00:00`)).format('dddd');
         //const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('MMM dd YY');
@@ -257,9 +257,9 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
         //ingreso
         
 
-        tdValoresIngreso = tdValoresIngreso.concat(`<td style="${estiloValores}"> ${esHoy ? '$'+corteDiaSemana.totalIngreso : ''}</td>`);
-        tdValoresGasto = tdValoresGasto.concat(`<td style="${estiloValores}">${esHoy ? '$'+corteDiaSemana.totalGasto : ''}</td>`);            
-        tdValoresCaja = tdValoresCaja.concat(`<td class="borderbottomTotal borderbottom" style="${estiloValores}" ><strong>${ esHoy ? '$'+(corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto) : ''}</strong></td>`);            
+        tdValoresIngreso = tdValoresIngreso.concat(`<td style="${estiloValores}"> ${fechaIguanMenorHoy ? '$'+corteDiaSemana.totalIngreso : ''}</td>`);
+        tdValoresGasto = tdValoresGasto.concat(`<td style="${estiloValores}">${fechaIguanMenorHoy ? '$'+corteDiaSemana.totalGasto : ''}</td>`);            
+        tdValoresCaja = tdValoresCaja.concat(`<td class="borderbottomTotal borderbottom" style="${estiloValores}" ><strong>${ fechaIguanMenorHoy ? '$'+(corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto) : ''}</strong></td>`);            
               
     }
 
