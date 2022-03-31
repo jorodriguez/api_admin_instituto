@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 
 //version/branch
 //const version = "v1/2202-ventas-hotfix-corte-separado";
-const version = "v1/220328-hotfix";
+const version = "v1/220328-hotfix (fix corte y correo comprobante)";
 
 
 app.use(bodyParser.json());

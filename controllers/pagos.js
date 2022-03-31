@@ -60,7 +60,7 @@ const enviarComprobantePago = async (data = {id_pago}) => {
 
         const html = await pagoService.obtenerPreviewComprobantePago(id_pago,pagoInfo.id_genero,true);       
     
-        const asunto = `Comprobante de pago ${pagoInfo.folio}.`;    
+        const asunto = `Comprobante de pago ${pagoInfo.folio} - ${pagoInfo.nombre_sucursal}.`;    
         let para = (pagoInfo.correo_alumno || "");
         let cc = (pagoInfo.correo_copia_usuario || "");
         
@@ -69,12 +69,20 @@ const enviarComprobantePago = async (data = {id_pago}) => {
         //falta ver a quien copiar
         const correosTema = await usuarioNotificacionService.obtenerCorreosPorTemaSucursal({coSucursal:pagoInfo.id_sucursal,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_NOTIFICACION_PAGOS});
 
-        if(correosTema.correos_usuarios.length > 1){
-            para = para.concat(",").concat(correosTema.correos_usuarios.toString());
+        console.log(" correos del tema "+JSON.stringify(correosTema));
+
+        if(correosTema.correos_usuarios.length > 0){            
+            //para = para ? para.concat(",").concat(correosTema.correos_usuarios.toString()) : correosTema.correos_usuarios.toString();
+            //Se envia en copias el comprobante de pago
+            cc = cc ? cc.concat(",").concat(correosTema.correos_usuarios.toString()) : correosTema.correos_usuarios.toString();
+            console.log("%% correosTema.tostr "+correosTema.correos_usuarios.toString());
+            console.log("%% PARA "+para);
         }
         
-        if(correosTema.correos_copia.length > 1){
-            cc = cc.concat(',').concat(correosTema.correos_copia.toString());
+        if(correosTema.correos_copia.length > 0){
+            cc = cc ? cc.concat(',').concat(correosTema.correos_copia.toString()) : correosTema.correos_copia.toString();
+            console.log("%% correosTema.tostr "+correosTema.correos_copia.toString());
+            console.log("%% CC "+cc);
         }        
 
         await correoService.enviarCorreoAsync({para, cc, asunto, html,idEmpresa:pagoInfo.co_empresa});
