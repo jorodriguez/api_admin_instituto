@@ -5,8 +5,8 @@ const { pool } = require('../db/conexion');
 const port = process.env.PORT || 5000;
 
 //version/branch
-//const version = "v1/2202-ventas-hotfix-corte-separado";
-const version = "v1/220328-hotfix (fix corte y correo comprobante)";
+
+const version = "v1/2203-productos (fix corte y correo comprobante) ";
 
 
 app.use(bodyParser.json());
@@ -29,7 +29,6 @@ app.get('/', (request, response) => {
 	console.log("=====================");
 	//console.log(JSON.stringify(pool));
 	response.json({ info: `Instituto paris ${version} (env:${process.env.ENV})` });
-
 });
 
 app.listen(port, () => {
