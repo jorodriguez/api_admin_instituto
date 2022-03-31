@@ -1,5 +1,5 @@
-const catMarcaDao = require('../dao/cat');
+const catCategoriaDao = require('../dao/catCategoriaDao');
 
-module.exports = catMarcaDao; 
+module.exports = catCategoriaDao; 
                     
                  

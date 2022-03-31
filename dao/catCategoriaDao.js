@@ -4,31 +4,31 @@ const Dao = require('./Dao');
 const categoriaDao = new Dao(Tables.CAT_CATEGORIA); 
 const  CatCategoria = require('../models/CatCategoria');
 
-aqui voy haciendo el catalogo de categoriaDao
 const getAll = async (coEmpresa) => {
     console.log("@getAllCategoria");
     return await genericDao.findAll(queryBase(), [coEmpresa]);
 };
 
 const updateCategoria = async (id,data) => {
-    console.log("@updateCategoria");  
+    console.log("@updateCategoria id = "+id);  
+    console.log(JSON.stringify(data));
     
-    const data = Object.assign(new CatCategoria(),data);
+    const dataUpdate = Object.assign(new CatCategoria(),data);
 
-    const dataWillUpdate = data.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
+    const dataWillUpdate = dataUpdate.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
 
     const row = await categoriaDao.update(id,dataWillUpdate);
-
-    return row;
+    
+    return row ? row[0]:null;
 }
 
 const createCategoria = async (data) => {
     console.log("@createCategoria");
     try {
 
-        const data = Object.assign(new CatCategoria(),data);
+        const dataCreate = Object.assign(new CatCategoria(),data);
         
-        return await marcaDao.insert(marcaData.build());        
+        return await categoriaDao.insert(dataCreate.build());        
         
     }catch(error){
         console.log(error);
@@ -37,9 +37,28 @@ const createCategoria = async (data) => {
 }
 
 
+
+const deleteCategoria = async (id,data) => {
+    console.log("@deletecategoria");
+    try {
+
+        const dataDel = Object.assign(new CatCategoria(),data);
+
+        const dataWillDelete = dataDel.setFechaModifico(new Date()).setModifico(data.genero).buildForDelete();
+    
+        const row = await categoriaDao.update(id,dataWillDelete);
+        
+        return row ;
+        
+    }catch(error){
+        console.log(error);
+        return false;
+    }
+}
+
 const queryBase = ()=>`
         select * 
-        from cat_marca 
+        from cat_categoria
             where co_empresa = $1 
             and eliminado = false
 `;
@@ -47,10 +66,9 @@ const queryBase = ()=>`
 
 
 
-module.exports = {
-    createMarca,
-    updateMarca,
-    getAll,
-    marcaDao   
-    
+module.exports = {    
+    createCategoria,
+    updateCategoria,
+    deleteCategoria,
+    getAll   
 };

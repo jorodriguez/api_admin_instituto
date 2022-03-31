@@ -120,8 +120,8 @@ const getInfoPagoId= async (idPago)=>{
             count(cargo.id) as count_cargos,		
             suc.co_empresa,
             u.id as id_genero,
-            u.nombre as nombre_usuario,
-            u.correo_copia as correo_copia_usuario,
+            u.nombre as nombre_usuario,            
+            case when u.correo_copia is not null then u.correo||','||u.correo_copia else u.correo end as correo_copia_usuario,
             array_to_json(array_agg(to_json(cargo.*))) AS cargos
         from co_pago_balance_alumno pago inner join co_pago_cargo_balance_alumno rel on pago.id = rel.co_pago_balance_alumno
                             inner join relacion_cargos cargo on rel.co_cargo_balance_alumno = cargo.id

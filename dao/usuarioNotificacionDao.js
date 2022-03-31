@@ -1,7 +1,7 @@
 const genericDao = require('./genericDao');
 const { TIPO_USUARIO,TEMA_NOTIFICACION } = require('../utils/Constantes');
 
-const obtenerCorreosPorTema = async (data)=> {
+const obtenerCorreosPorTema = async (data = {coEmpresa,coTemaNotificacion})=> {
 
     const {coEmpresa,coTemaNotificacion} = data;
 
@@ -24,8 +24,8 @@ const obtenerCorreosPorTema = async (data)=> {
 `, [coEmpresa,coTemaNotificacion]);
 }
 
-const obtenerCorreosPorTemaSucursal = async (data)=> {
-
+const obtenerCorreosPorTemaSucursal = async (data = {coSucursal,coTemaNotificacion})=> {
+    console.log("@obtenerCorreosPorTemaSucursal");
     const {coSucursal,coTemaNotificacion} = data;
 
     return await genericDao.findOne(`

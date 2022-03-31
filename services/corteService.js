@@ -4,6 +4,7 @@ require('moment/locale/es');  // without this line it didn't work
 moment.locale('es');
 const gastoDao = require('../dao/gastoDao');
 const cortesDao = require('../dao/cortesDao');
+const inscripcionDao = require('../dao/inscripcionDao');
 const utilDao = require('../dao/utilDao');
 const sucursalDao = require('../dao/sucursalDao');
 const templateService = require('./templateService');
@@ -115,7 +116,6 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
     const fechaHoy = new Date(`${informacionFecha.fecha_actual_format} 00:00:00`);
     
     console.log("FECHA "+fechaHoy)
-
     
     //obtener las sucursales de la empresa
     const listaSucursales = await sucursalDao.getSucursalPorEmpresa(coEmpresa);    
@@ -148,10 +148,12 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
         htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteDiario);               
                
         //corte semanal
-        const htmlCorteSemanalSucursal = await getCorteSemanalSucursal(informacionFecha,sucursal);
+        const htmlCorteSemanalSucursal = await getCorteSemanalSucursal(informacionFecha,sucursal);       
 
-        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteSemanalSucursal);
-       
+        //Contador de inscripciones
+        const htmlCorteInscripciones = await getCorteInscripcionesSucursal(informacionFecha.fecha_actual_format,sucursal);
+        
+        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteSemanalSucursal).concat(htmlCorteInscripciones);
                
         cortesSucursal.set(sucursal.id,htmlCorteDiaSucursal);        
                 
@@ -171,7 +173,7 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
 
     let asunto = `Corte del ${informacionFecha.fecha_actual_asunto}`;
 
-    let body = `<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p> 
+    const body = `<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p> 
     <p><small>Enviado ${informacionFecha.fecha_actual_asunto} ${informacionFecha.hora_actual_format}</small></p>` ;
 
 
@@ -188,11 +190,15 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
         let cc = '';//usuariosEnviar.correos_copia || [];
 
         //obtener la informacion html ya creada en el mapa        
-        let htmlSucursalesEnviar = Object.assign('',body);
+        
+        let htmlSucursalesEnviar = body; //  Object.assign(htmlSucursalesEnviar,body);
 
         for(let s=0; s < sucursalesEnviar.length;s++){
             const idSucursal = sucursalesEnviar[s];
             const htmlCorte = cortesSucursal.get(idSucursal);
+            if(s > 0){
+                htmlSucursalesEnviar = htmlSucursalesEnviar.concat("<br/>"); 
+            } 
             htmlSucursalesEnviar = htmlSucursalesEnviar.concat(htmlCorte || '');
         }
         
@@ -202,9 +208,13 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
                              idEmpresa:coEmpresa            
          });        
          
-        infoEnvio = await correoService.enviarCorreoAsync({para:para,cc:cc,asunto:asunto,html:htmlMergeTemplateMain,idEmpresa:coEmpresa});
+         console.log("=========================");
+         console.log(htmlMergeTemplateMain);
+         console.log("=========================")
 
+        infoEnvio = await correoService.enviarCorreoAsync({para:para,cc:cc,asunto:asunto,html:htmlMergeTemplateMain,idEmpresa:coEmpresa});
         console.log("=== ENVIO DE CORTE =="+ JSON.stringify(infoEnvio))
+
         console.log("======= ENVIO DE CORREO =====");
     }
 
@@ -219,31 +229,37 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
                    
     const fechasSemana = informacionFecha.fechas_semana_ocurriendo || [];        
 
-    let table = `<table width="100%" border="1" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: left;"> `;
-    let tdDiasNombre = `<tr tyle="background-color:#DBDBDB;padding:0px 0px 0px 10px ;color:#CC59C5" ><td></td>`;
-    let tdDias = `<tr tyle="background-color:#DBDBDB;padding:0px 0px 0px 10px ;color:#CC59C5" ><td></td>`;
-    let tdValoresIngreso = "<tr><td><strong>Ingreso</strong></td>";
-    let tdValoresGasto = "<tr><td><strong>Gasto</strong></td>";
-    let tdValoresCaja = "<tr><td><strong>Caja</strong></td>";
+    let table = `<br/><table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: center;"> `;
+    let tdDiasNombre = `<tr style="background-color:#DBDBDB;padding:0px 0px 0px 10px;" ><td></td>`;
+    let tdDias = `<tr style="background-color:#DBDBDB;padding:0px 0px 0px 10px;" ><td></td>`;
+    let tdValoresIngreso = `<tr><td style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;" ><span class="h2"> <strong> Ingreso</strong></span></td>`;
+    let tdValoresGasto = `<tr><td style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;"><span class="h2"><strong>Gasto</strong></span></td>`;
+    let tdValoresCaja = `<tr><td class="borderbottomTotal borderbottom"  style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;"><span class="h2"><strong>Caja</strong></span></td>`;
 
     for(let f =0; f < fechasSemana.length;f++){
 
         const fecha = fechasSemana[f];
+        const esHoy =  fecha == (informacionFecha.fecha_actual_format);
         
         const _fechaFormatNombre = moment(new Date(`${fecha} 00:00:00`)).format('dddd');
-        const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('MMM Do YY');
+        //const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('MMM dd YY');
+        const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('D MMM');
 
-        tdDiasNombre = tdDiasNombre.concat(`<td><${_fechaFormatNombre}}</td>`)
-        tdDias = tdDias.concat(`<td>${_fechaFormat}</td>`);
+        const estiloValores=`${esHoy ? 'border-left: 2px solid #3CA473;border-right: 2px solid #3CA473;background-color:#BAE1CF':'border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;'}`;
+
+        tdDiasNombre = tdDiasNombre.concat(`<td style="font-size:12px;${estiloValores}" >${_fechaFormatNombre}</td>`)
+        tdDias = tdDias.concat(`<td style="font-size:11px;${estiloValores}">${_fechaFormat}</td>`);
         
           const corteDiaSemana = await getCorteDiaSucursal({idSucursal:sucursalData.id,
                                                         fechaInicio:new Date(`${fecha} 00:00:00`),
                                                         fechaFin:new Date(`${fecha} 00:00:00`),           
                                                         idUsuario:USUARIO_DEFAULT});
         //ingreso
-        tdValoresIngreso = tdValoresIngreso.concat(`<td>$${corteDiaSemana.totalIngreso}</td>`);
-        tdValoresGasto = tdValoresGasto.concat(`<td>$${corteDiaSemana.totalGasto}</td>`);            
-        tdValoresCaja = tdValoresCaja.concat(`<td><strong>$${corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto}</strong></td>`);            
+        
+
+        tdValoresIngreso = tdValoresIngreso.concat(`<td style="${estiloValores}"> ${esHoy ? '$'+corteDiaSemana.totalIngreso : ''}</td>`);
+        tdValoresGasto = tdValoresGasto.concat(`<td style="${estiloValores}">${esHoy ? '$'+corteDiaSemana.totalGasto : ''}</td>`);            
+        tdValoresCaja = tdValoresCaja.concat(`<td class="borderbottomTotal borderbottom" style="${estiloValores}" ><strong>${ esHoy ? '$'+(corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto) : ''}</strong></td>`);            
               
     }
 
@@ -258,19 +274,106 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
     tdValoresGasto = tdValoresGasto.concat("</tr>");
     tdValoresCaja = tdValoresCaja.concat("</tr>");
 
-    let totalSemana = `<h4>Ingreso Semana : $${corteSemana.totalIngreso}</h4>`;
-    totalSemana = totalSemana.concat(`<h4>Gasto Semana : $${corteSemana.totalGasto}</h4>`);
-    totalSemana = totalSemana.concat(`<h4>Caja Semana : $${corteSemana.totalIngreso - corteSemana.totalGasto}</h4>`);
+    //let totalSemana = `<h4>Ingreso Semana : $${corteSemana.totalIngreso}</h4>`;
+    //totalSemana = totalSemana.concat(`<h4>Gasto Semana : $${corteSemana.totalGasto}</h4>`);
+    //totalSemana = totalSemana.concat(`<h4>Caja Semana : $${corteSemana.totalIngreso - corteSemana.totalGasto}</h4>`);
+
+    let totalSemana = `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: left;"> 
+                        <tr >
+                            <td width="80%"><span > + Ingreso Semanal</span></td>
+                            <td><span ><strong>$${corteSemana.totalIngreso}<strong></span></td>
+                        </tr>
+                        <tr >
+                            <td width="80%">
+                                <span>- Gasto Semanal</span>
+                            </td>
+                            <td >
+                                <span ><strong>$${corteSemana.totalGasto}</strong></span>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td  class="borderbottomTotal" style="background-color:#BAE1CF" width="80%">
+                                <span ><strong> En caja (Semanal en ${sucursalData.nombre ||''}) </strong></span>
+                            </td>
+                            <td class="borderbottomTotal borderbottom" style="background-color:#BAE1CF">
+                                <span><strong>$${corteSemana.totalIngreso - corteSemana.totalGasto}</strong></span>
+                            </td>
+                        </tr>
+                       </table>
+
+                       `;
 
     //formateo final
-    let htmlHistorialSemana =  `<br/><h5>Semana de ${informacionFecha.fecha_inicio_semana_format} al ${informacionFecha.fecha_fin_semana_format}</h5>`;            
-    table = htmlHistorialSemana.concat(table).concat(tdDiasNombre).concat(tdDias).concat(tdValoresIngreso).concat(tdValoresGasto).concat(tdValoresCaja).concat("</table>");
+    //let htmlHistorialSemana =  `<br/><h5>Semana del ${moment(new Date(`${informacionFecha.fecha_inicio_semana_format} 00:00:00`)).format('D MMM')} al ${moment(new Date(`${informacionFecha.fecha_fin_semana_format} 00:00:00`)).format('D MMM')}</h5>`;            
+    table = table.concat(`<tr><td colspan="8"> <span class="h2"> Semana del ${moment(new Date(`${informacionFecha.fecha_inicio_semana_format} 00:00:00`)).format('D MMMM')} al ${moment(new Date(`${informacionFecha.fecha_fin_semana_format} 00:00:00`)).format('D MMM')} </span></td></tr>`);
+    table = table.concat(tdDiasNombre).concat(tdDias).concat(tdValoresIngreso).concat(tdValoresGasto).concat(tdValoresCaja).concat("</table>");
     table = table.concat(`<br/>`).concat(totalSemana);
 
     return table;
 
 }
 
+
+const getCorteInscripcionesSucursal = async(fecha,sucursalData)=>{
+                   
+    //const fechasSemana = informacionFecha.fechas_semana_ocurriendo || [];        
+
+    let html ="";
+
+    const _fechaFormatNombre = moment(new Date(`${fecha} 00:00:00`)).format('dddd');      
+
+    const inscripciones = await inscripcionDao.getInscripcionesCorteFecha(sucursalData.id,new Date(`${fecha} 00:00:00`));
+
+    html = `<br/><table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: left;border:1px solid #C5C5C5"> `;
+    
+    if(inscripciones != null && inscripciones.length > 0){           
+       
+        html =html.concat(`<tr> <td colspan="4" style="vertical-align: middle;text-align: center;"><strong>(${inscripciones.length}) Inscripciones hoy ${_fechaFormatNombre} </strong></td></tr>`);
+        
+        let head =` <tr>                        
+                        <td>Inscripción</td>
+                        <td style="vertical-align: middle;text-align: center;">Cole.</td>
+                        <td style="vertical-align: middle;text-align: center;">Inscr.</td>
+                   </tr>`;
+        
+                   html = html.concat(head);
+
+        let intercalar = false;
+        for(let f =0; f < inscripciones.length;f++){   
+            const inscripcion = inscripciones[f];
+            let fila =`<tr style="background-color: ${intercalar ? '#A1CBE6':'#fff'} " >                       
+                       <td width="50%">
+                            <p style="margin:0px; padding: 0px;"><strong>${inscripcion.matricula}</strong></p>
+                            <p style="margin:0px; padding: 0px;">${inscripcion.alumno} ${inscripcion.apellidos}</p>
+                            <small>${inscripcion.especialidad} ${inscripcion.dias} horario ${inscripcion.horario}</small>
+                            <small>Inicia ${inscripcion.fecha_inicio_previsto} <small>
+                       </td>
+                       <td style="vertical-align: middle;text-align: center;" width="20%">
+                            $${inscripcion.costo_colegiatura}
+                       </td>
+                       <td style="vertical-align: middle;text-align: center;" width="20%">
+                            $${inscripcion.costo_inscripcion}
+                       </td>
+                    </tr>
+                    <tr style="background-color: ${intercalar ? '#A1CBE6':'#fff'} ">
+                        <td colspan="3">
+                            Nota: ${inscripcion.nota_inscripcion}
+                        </td>
+                    </tr>
+             `;              
+            html = html.concat(fila);
+            intercalar = !intercalar;
+        }            
+
+    }else{
+        html =html.concat(`<tr> <td>(0)Inscripciones hoy ${_fechaFormatNombre} </td></tr>`);
+    }
+
+    html = html.concat(`</table>`);
+
+    return html;
+
+}
 
 /*
 --envio completo por sucursal todas las sucursales activas

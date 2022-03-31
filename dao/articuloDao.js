@@ -171,7 +171,7 @@ from cat_articulo_sucursal art inner join cat_articulo a on a.id = art.cat_artic
                                inner join cat_categoria c on c.id = a.cat_categoria					            
 where ${criterio ? criterio  : ''}
     ${criterio ? ' and '  : ''}    
-	art.eliminado = false
+	art.eliminado = false    
 	and a.eliminado = false
 group by c.id`;
 

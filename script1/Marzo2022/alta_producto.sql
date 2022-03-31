@@ -164,4 +164,48 @@ set template_ticket_venta ='
 </body>
 </html>
 
-'
+';
+
+
+--- para nueva opcion
+
+insert into si_rol(id,si_modulo, nombre,genero)
+values(7,1,'ADMIN INVENTARIO',1);
+
+--registro de opcion
+select * from si_opcion
+
+insert into si_opcion(id,si_modulo,nombre,ruta,icono_menu,orden,menu_principal,genero)
+values(13,1,'Productos','Productos','fas fa-table',7,true,1);
+
+--agregando opcion para el rol ventas
+insert into si_rol_opcion(si_rol,si_opcion,genero)
+values(7,13,1); -- ventas para rol ventas
+
+
+-- opcion de movimientos ventas
+insert into si_opcion(id,si_modulo,nombre,ruta,icono_menu,orden,menu_principal,genero)
+values(14,1,'Ventas Sucursal','ConsultaVentas','fas fa-ticket',7,true,1);
+
+--agregando opcion para el rol ventas
+insert into si_rol_opcion(si_rol,si_opcion,genero)
+values(7,14,1); -- ventas para rol ventas
+
+
+--- asignacion de ventas a usuarios de monterrey
+insert into si_usuario_sucursal_rol(usuario,co_sucursal,si_rol,co_empresa,genero)
+values(125,1,7,1,1),--para admin	 
+	 (13,1,7,1,1), -- para direccion
+	 (16,1,7,1,1), -- para yesi
+	 (14,1,7,1,1); -- para carmelo
+
+
+--- asignacion de ventas a usuarios de apodaca
+insert into si_usuario_sucursal_rol(usuario,co_sucursal,si_rol,co_empresa,genero)
+values(125,2,7,1,1),--para admin	 
+	 (127,2,7,1,1), -- para direccion
+	 (14,2,7,1,1), -- para carmelo
+	 (12,2,7,1,1); -- para manuek
+
+
+update si_opcion set nombre = 'TPDV' where id = 12;

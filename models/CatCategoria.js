@@ -47,16 +47,11 @@ class CatCategoria {
     return this;
   }
   build() {
-    return {
-      id: this.id,
+    return {      
       co_empresa: this.co_empresa,
-      genero: this.genero,
-      modifico: this.modifico,
-      fecha_genero: this.fecha_genero,
-      fecha_modifico: this.fecha_modifico,
+      genero: this.genero,      
       descripcion: this.descripcion,
-      nombre: this.nombre,
-      eliminado: this.eliminado
+      nombre: this.nombre      
     };
   }
   buildForUpdate() {
@@ -64,6 +59,13 @@ class CatCategoria {
       modifico: this.modifico,      
       fecha_modifico: this.fecha_modifico,      
       nombre: this.nombre      
+    };
+  }
+  buildForDelete() {
+    return {                  
+      modifico: this.modifico,      
+      fecha_modifico: this.fecha_modifico,      
+      eliminado:true
     };
   }
 }
