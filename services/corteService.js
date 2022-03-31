@@ -11,6 +11,7 @@ const templateService = require('./templateService');
 const temaNotificacionService  = require('./temaNotificacionService');
 const correoService = require('../utils/CorreoService');
 const {TEMPLATES,TEMA_NOTIFICACION,USUARIO_DEFAULT, TIPO_TEMPLATE} = require('../utils/Constantes');
+const {formatCurrency} = require('../utils/format');
 
 const getCorteDiaSucursal = async (corteData) => {
     console.log("@getCorteDiaSucursal");
@@ -27,14 +28,16 @@ const getCorteDiaSucursal = async (corteData) => {
 
     console.log("Fecha "+fechaInicio+"  fecha fin"+fechaFin );
     console.log("suc "+idSucursal);
-    console.log("sumaIngreso "+sumaIngreso.total);
-    console.log("sumaGastos "+sumaGastos.total);
+    console.log("sumaIngreso "+ formatCurrency(sumaIngreso.total));
+    console.log("sumaGastos "+ formatCurrency(sumaGastos.total));
     
     return {
             fecha:fechaInicio,
             fechaFin:fechaFin,
-            totalIngreso: (sumaIngreso ? sumaIngreso.total : 0),detalleIngreso:resultsIngreso,
-            totalGasto:(sumaGastos ? sumaGastos.total : 0), detalleGasto:resultsGastos
+            totalIngreso: (sumaIngreso ? sumaIngreso.total : 0),
+            detalleIngreso:resultsIngreso,
+            totalGasto: (sumaGastos ? sumaGastos.total : 0), 
+            detalleGasto:resultsGastos
            };
 };
 
@@ -51,9 +54,9 @@ const getHtmlCorteDiaSucursal = async (corteData)=>{
    const params = {
         dia_corte_inicio:corte.fecha,
         dia_corte_fin:corte.fechaFin,
-        total_ingreso:corte.totalIngreso ,
-        total_gasto:corte.totalGasto ,
-        total_caja: (corte.totalIngreso-corte.totalGasto),
+        total_ingreso: formatCurrency(corte.totalIngreso),
+        total_gasto:formatCurrency(corte.totalGasto),
+        total_caja:formatCurrency(corte.totalIngreso-corte.totalGasto),
         nombre_sucursal:sucursal.nombre,
         direccion_sucursal:sucursal.direccion,
         telefono_sucursal:sucursal.telefono
@@ -239,16 +242,18 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
     for(let f =0; f < fechasSemana.length;f++){
 
         const fecha = fechasSemana[f];
-        const fechaIguanMenorHoy =  moment(fecha).isSameOrAfter(moment(informacionFecha.fecha_actual_format));
+
+        const isFechaDespuesFechaCorte =  moment(fecha).isAfter(informacionFecha.fecha_actual_format);
+        const esHoy =  (informacionFecha.fecha_actual_format==fecha);
         
         const _fechaFormatNombre = moment(new Date(`${fecha} 00:00:00`)).format('dddd');
         //const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('MMM dd YY');
         const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('D MMM');
 
-        const estiloValores=`${esHoy ? 'border-left: 2px solid #3CA473;border-right: 2px solid #3CA473;background-color:#BAE1CF':'border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;'}`;
+        const estiloValores=`${esHoy ? 'font-size:13px;border-left: 2px solid #3CA473;border-right: 2px solid #3CA473;background-color:#BAE1CF':'font-size:13px;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;'}`;
 
-        tdDiasNombre = tdDiasNombre.concat(`<td style="font-size:12px;${estiloValores}" >${_fechaFormatNombre}</td>`)
-        tdDias = tdDias.concat(`<td style="font-size:11px;${estiloValores}">${_fechaFormat}</td>`);
+        tdDiasNombre = tdDiasNombre.concat(`<td style="font-size:11px;${estiloValores}" >${_fechaFormatNombre}</td>`)
+        tdDias = tdDias.concat(`<td style="font-size:12px;${estiloValores}">${_fechaFormat}</td>`);
         
           const corteDiaSemana = await getCorteDiaSucursal({idSucursal:sucursalData.id,
                                                         fechaInicio:new Date(`${fecha} 00:00:00`),
@@ -257,10 +262,11 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
         //ingreso
         
 
-        tdValoresIngreso = tdValoresIngreso.concat(`<td style="${estiloValores}"> ${fechaIguanMenorHoy ? '$'+corteDiaSemana.totalIngreso : ''}</td>`);
-        tdValoresGasto = tdValoresGasto.concat(`<td style="${estiloValores}">${fechaIguanMenorHoy ? '$'+corteDiaSemana.totalGasto : ''}</td>`);            
-        tdValoresCaja = tdValoresCaja.concat(`<td class="borderbottomTotal borderbottom" style="${estiloValores}" ><strong>${ fechaIguanMenorHoy ? '$'+(corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto) : ''}</strong></td>`);            
-              
+       
+        tdValoresIngreso = tdValoresIngreso.concat(`<td style="${estiloValores}">  ${isFechaDespuesFechaCorte ?  '': '$'+  formatCurrency(corteDiaSemana.totalIngreso)}</td>`);
+        tdValoresGasto = tdValoresGasto.concat(`<td style="${estiloValores}">${isFechaDespuesFechaCorte ?  '' : '$'+formatCurrency(corteDiaSemana.totalGasto)}</td>`);            
+        tdValoresCaja = tdValoresCaja.concat(`<td class="borderbottomTotal borderbottom" style="${estiloValores}" ><strong>${ isFechaDespuesFechaCorte ? '' : '$'+formatCurrency(corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto)}</strong></td>`);            
+             
     }
 
     const corteSemana = await getCorteDiaSucursal({idSucursal:sucursalData.id,
@@ -281,14 +287,14 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
     let totalSemana = `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: left;"> 
                         <tr >
                             <td width="80%"><span > + Ingreso Semanal</span></td>
-                            <td><span ><strong>$${corteSemana.totalIngreso}<strong></span></td>
+                            <td><span ><strong>$${formatCurrency(corteSemana.totalIngreso)}<strong></span></td>
                         </tr>
                         <tr >
                             <td width="80%">
                                 <span>- Gasto Semanal</span>
                             </td>
                             <td >
-                                <span ><strong>$${corteSemana.totalGasto}</strong></span>
+                                <span ><strong>$${formatCurrency(corteSemana.totalGasto)}</strong></span>
                             </td>
                         </tr>
                         <tr >
@@ -296,7 +302,7 @@ const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
                                 <span ><strong> En caja (Semanal en ${sucursalData.nombre ||''}) </strong></span>
                             </td>
                             <td class="borderbottomTotal borderbottom" style="background-color:#BAE1CF">
-                                <span><strong>$${corteSemana.totalIngreso - corteSemana.totalGasto}</strong></span>
+                                <span><strong>$${formatCurrency(corteSemana.totalIngreso - corteSemana.totalGasto)}</strong></span>
                             </td>
                         </tr>
                        </table>
