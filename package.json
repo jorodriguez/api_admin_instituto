@@ -1,7 +1,7 @@
 {
-  "name": "node-api-postgres",
+  "name": "softlineas-api",
   "version": "1.0.0",
-  "description": "Api diseñada para atender peticiones de clientes",
+  "description": "Api diseñada para atender peticiones de clientes de softlineas",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

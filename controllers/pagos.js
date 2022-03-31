@@ -60,11 +60,9 @@ const enviarComprobantePago = async (data = {id_pago}) => {
 
         const html = await pagoService.obtenerPreviewComprobantePago(id_pago,pagoInfo.id_genero,true);       
     
-<<<<<<< HEAD
-        const asunto = `Comprobante de pago ${pagoInfo.folio} ${pagoInfo.nombre_sucursal} .`;    
-=======
+
         const asunto = `Comprobante de pago ${pagoInfo.folio} - ${pagoInfo.nombre_sucursal}.`;    
->>>>>>> 220328-hotfix
+
         let para = (pagoInfo.correo_alumno || "");
         let cc = (pagoInfo.correo_copia_usuario || "");
         
