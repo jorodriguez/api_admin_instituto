@@ -63,6 +63,13 @@ class CatMarca {
       nombre: this.nombre      
     };
   }
+  buildForDelete() {
+    return {                  
+      modifico: this.modifico,      
+      fecha_modifico: this.fecha_modifico,      
+      eliminado:true
+    };
+  }
 }
 
 
