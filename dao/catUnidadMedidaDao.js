@@ -17,9 +17,9 @@ const updateUnidadMedida = async (id,data) => {
 
     const dataWillUpdate = unidadMedidaData.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
 
-    const row = await marcaDao.update(id,dataWillUpdate);
+    const row = await unidadMedidaDao.update(id,dataWillUpdate);
 
-    return row;
+    return row ? row[0]:null;
 }
 
 
@@ -27,15 +27,35 @@ const createUnidadMedida = async (data) => {
     console.log("@createUnidadMedida");
     try {
 
-        const marcaData = Object.assign(new CatUnidadMedida(),data);
+        const unidadMedidaData = Object.assign(new CatUnidadMedida(),data);
         
-        return await marcaDao.insert(marcaData.build());        
+        return await unidadMedidaDao.insert(unidadMedidaData.build());        
         
     }catch(error){
         console.log(error);
         return false;
     }
 }
+
+
+const deleteUnidadMedia = async (id,data) => {
+    console.log("@deleteUnidadMedia");
+    try {
+
+        const dataDel = Object.assign(new CatUnidadMedida(),data);
+
+        const dataWillDelete = dataDel.setFechaModifico(new Date()).setModifico(data.genero).buildForDelete();
+    
+        const row = await categoriaDao.update(id,dataWillDelete);
+        
+        return row ;
+        
+    }catch(error){
+        console.log(error);
+        return false;
+    }
+}
+
 
 
 const queryBase = ()=>`
@@ -51,7 +71,7 @@ const queryBase = ()=>`
 module.exports = {
     createUnidadMedida,
     updateUnidadMedida,
-    getAll,
-    unidadMedidaDao
+    deleteUnidadMedia,
+    getAll   
     
 };

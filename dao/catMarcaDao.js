@@ -6,12 +6,12 @@ const  CatMarca = require('../models/CatMarca');
 
 
 const getAll = async (coEmpresa) => {
-    console.log("@getAll");
+    console.log("@getAllMarca");
     return await genericDao.findAll(queryBase(), [coEmpresa]);
 };
 
 const updateMarca = async (id,data) => {
-    console.log("@updateCarca");  
+    console.log("@updateMarca");  
     
     const marcaData = Object.assign(new CatMarca(),data);
 
@@ -19,21 +19,9 @@ const updateMarca = async (id,data) => {
 
     const row = await marcaDao.update(id,dataWillUpdate);
 
-    return row;
+    return row ? row[0]:null;
 }
 
-/*
-const deleteMarca = async (id,data) => {
-    console.log("@deleteMarca");  
-    
-    const marcaData = Object.assign(new CatMarca(),data);
-
-    const dataWillUpdate = marcaData.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
-
-    const row = await marcaDao.getKnex()
-
-    return row;
-}*/
 
 const createMarca = async (data) => {
     console.log("@createMarca");
@@ -50,6 +38,25 @@ const createMarca = async (data) => {
 }
 
 
+
+const deleteMarca = async (id,data) => {
+    console.log("@deleteMarca");
+    try {
+
+        const dataDel = Object.assign(new CatMarca(),data);
+
+        const dataWillDelete = dataDel.setFechaModifico(new Date()).setModifico(data.genero).buildForDelete();
+    
+        const row = await marcaDao.update(id,dataWillDelete);
+        
+        return row ;
+        
+    }catch(error){
+        console.log(error);
+        return false;
+    }
+}
+
 const queryBase = ()=>`
         select * 
         from cat_marca 
@@ -63,7 +70,7 @@ const queryBase = ()=>`
 module.exports = {
     createMarca,
     updateMarca,
-    getAll,
-    marcaDao   
+    deleteMarca,
+    getAll 
     
 };
