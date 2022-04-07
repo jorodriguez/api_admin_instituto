@@ -84,6 +84,23 @@ class CatArticuloSucursal {
       stock_minimo: this.stock_minimo
     };
   }
+  buildForUpdate() {
+    return {                              
+      precio: this.precio,            
+      costo_base: this.costo_base,
+      cantidad_existencia: this.cantidad_existencia,
+      nota_interna: this.nota_interna,            
+      stock_minimo: this.stock_minimo,
+      genero: this.genero
+    };
+  }
+  buildForDelete() {
+    return {                              
+      eliminado:true,
+      fecha_modifico:this.fecha_modifico,
+      modifico: this.genero
+    };
+  }
 }
 
 module.exports = CatArticuloSucursal;

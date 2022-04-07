@@ -108,9 +108,8 @@ class CatArticulo {
       cat_categoria: this.cat_categoria,
       cat_unidad_medida: this.cat_unidad_medida,
       modifico: this.modifico,
-      nombre: this.nombre,
-      eliminado: this.eliminado,
-      codigo: this.codigo,
+      nombre: this.nombre,      
+      //codigo: this.codigo,
       foto: this.foto,
       fecha_modifico: this.fecha_modifico,      
       descripcion: this.descripcion

@@ -2,7 +2,7 @@ const genericDao = require('./genericDao');
 const Tables = require('../utils/Tables');
 const Dao = require('./Dao');
 const articuloDao = new Dao(Tables.CAT_ARTICULO); 
-const articuloSucursalDao = new Dao(Tables.CAT_ARTICULO); 
+const articuloSucursalDao = new Dao(Tables.CAT_ARTICULO_SUCURSAL); 
 const  CatArticuloSucursal = require('../models/CatArticuloSucursal');
 const  CatArticulo = require('../models/CatArticulo');
 
@@ -66,11 +66,34 @@ const updateArticulo = async (id,data) => {
     console.log("@updateArticulo");  
     
     const articuloData = Object.assign(new CatArticulo(),data);
+    const articuloSucursalData = Object.assign(new CatArticuloSucursal(),data);
 
-    const dataWillUpdate = articuloData.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
+    //actualizar el catalogo  - no de modifica el codigo
+    const dataArticuloWillUpdate = articuloData.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
 
-    const row = await articuloDao.update(id,dataWillUpdate);
-    return row;
+    const catArticulo = await articuloDao.update(id,dataArticuloWillUpdate);
+
+    //  actualizar los demas campos
+    const dataArticuloSucursalWillUpdate = articuloSucursalData.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
+
+    const catArticuloSucursal = await articuloSucursalDao.update(id,dataArticuloSucursalWillUpdate);
+    
+    return {catArticulo,catArticuloSucursal};
+}
+
+
+const deleteArticulo = async (id,data) => {
+    console.log("@deleteArticulo");  
+    
+    //const articuloData = Object.assign(new CatArticulo(),data);
+    const articuloSucursalData = Object.assign(new CatArticuloSucursal(),data);
+
+    //  actualizar los demas campos
+    const dataArticuloSucursalWillUpdate = articuloSucursalData.setFechaModifico(new Date()).setModifico(data.genero).buildForDelete();
+
+    const catArticuloSucursal = await articuloSucursalDao.update(id,dataArticuloSucursalWillUpdate);
+    
+    return catArticuloSucursal;
 }
 
 
@@ -149,7 +172,8 @@ select art.id,
     c.nombre as categoria,
 	suc.nombre as sucursal,
     um.id as cat_unidad_medida,
-    um.nombre as unidad_medida
+    um.nombre as unidad_medida,
+    (art.fecha_genero::date = getDate('')) as es_nuevo
 from cat_articulo_sucursal art inner join cat_articulo a on a.id = art.cat_articulo
 					    	inner join cat_marca m on m.id = a.cat_marca
                             inner join cat_categoria c on c.id = a.cat_categoria
@@ -158,7 +182,8 @@ from cat_articulo_sucursal art inner join cat_articulo a on a.id = art.cat_artic
 where ${criterio ? criterio  : ''}
     ${criterio ? ' and '  : ''}
 	a.eliminado = false
-	and art.eliminado = false    
+	and art.eliminado = false   
+    order by a.codigo 
 `;
 
 
@@ -182,6 +207,7 @@ module.exports = {
     getArticuloCodigo,
     getArticulosSucursal,
     updatePrecio,
+    deleteArticulo,
     updateArticulo,
     createArticulo,    
     getArticulosPorNombre,

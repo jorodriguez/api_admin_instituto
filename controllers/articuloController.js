@@ -108,9 +108,55 @@ const createArticulo = async (request, response) => {
     }
 };
 
+const updateArticulo = async (request, response) => {
+    console.log("@updateArticulo");
+    try {
+                  
+            const data = request.body;
+            const id = request.params.id;
+
+            if(!id){
+                handle.callbackError('Error de validación falta el id del producto',response);
+            }
+           
+            const results = await articuloService.updateArticulo(id,data);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+const deleteArticulo = async (request, response) => {
+    console.log("@deleteArticulo");
+    try {
+                  
+            const data = request.body;
+
+            const id = request.params.id;
+
+            if(!id){
+                handle.callbackError('Error de validación falta el id del producto',response);
+            }
+           
+            const results = await articuloService.deleteArticulo(id,data);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
 
 module.exports = {
     createArticulo,
+    updateArticulo,
+    deleteArticulo,
     getArticuloCodigo,
     getArticuloPorNombre,
     getArticulosPorCategoria,

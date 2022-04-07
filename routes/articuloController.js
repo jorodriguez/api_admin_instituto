@@ -7,6 +7,8 @@ router.get('/:codigo/:coSucursal',checkAuth, articuloController.getArticuloCodig
 router.get('/nombre/:nombre/:coSucursal',checkAuth, articuloController.getArticuloPorNombre);
 router.get('/categoria/:catCategoria/:coSucursal',checkAuth, articuloController.getArticulosPorCategoria);
 router.post('/',checkAuth, articuloController.createArticulo);
+router.put('/:id',checkAuth, articuloController.updateArticulo);
+router.patch('/:id',checkAuth, articuloController.deleteArticulo);
 
 
 module.exports = router;

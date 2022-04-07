@@ -9,5 +9,6 @@ module.exports = {
                     getArticulosSucursal:articuloDao.getArticulosSucursal,                    
                     createArticulo:articuloDao.createArticulo,
                     updateArticulo:articuloDao.updateArticulo,
+                    deleteArticulo:articuloDao.deleteArticulo,
                     updatePrecio:articuloDao.updatePrecio                                      
                  };

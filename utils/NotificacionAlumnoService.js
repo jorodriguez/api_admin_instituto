@@ -14,14 +14,14 @@ try{
    const usuarioGenero = await usuarioDao.findById(genero);
    
    const params = {
-       matricula_alumno:inscripcion.matricula,
-       nombre_alumno:inscripcion.alumno,
-       apellidos_alumno:inscripcion.apellidos,
-       direccion_alumno:inscripcion.direccion,
-       correo_alumno:inscripcion.correo,
-       telefono_alumno:inscripcion.telefono,
-       fecha_nacimiento_alumno:inscripcion.fecha_nacimiento_format,
-       logo_taller:inscripcion.logo_taller,
+        matricula_alumno:inscripcion.matricula,
+        nombre_alumno:inscripcion.alumno,
+        apellidos_alumno:inscripcion.apellidos,
+        direccion_alumno:inscripcion.direccion,
+        correo_alumno:inscripcion.correo,
+        telefono_alumno:inscripcion.telefono,
+        fecha_nacimiento_alumno:inscripcion.fecha_nacimiento_format,
+        logo_taller:inscripcion.logo_taller,
         nombre_taller:inscripcion.especialidad,
         horario_taller:inscripcion.horario,
         dia_taller:inscripcion.dias
@@ -41,7 +41,11 @@ try{
     }
 
     const usuariosTema = await temaNotificacionService.getCorreosPorTemaSucursal(
-                       {coSucursal:co_sucursal,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_ALTA_ALUMNO});
+                                {
+                                    coSucursal:co_sucursal,
+                                    coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_ALTA_ALUMNO
+                                }
+                       );
     
     let copia = [].concat(usuariosTema.correos_usuarios || []).concat(usuariosTema.correos_copia || []);
 
