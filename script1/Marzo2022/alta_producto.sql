@@ -15,7 +15,6 @@ update cat_articulo set cat_unidad_medida = 1;
 
 alter table cat_articulo alter column cat_unidad_medida set not null;
 
-
 update co_template 
 set template_ticket_venta ='
 
@@ -209,3 +208,37 @@ values(125,2,7,1,1),--para admin
 
 
 update si_opcion set nombre = 'TPDV' where id = 12;
+
+
+update si_opcion set nombre = 'Productos', ruta='Productos' where id = 13;
+
+
+
+--- opcion para inventarios
+insert into si_opcion(id,si_modulo,nombre,ruta,icono_menu,orden,menu_principal,genero)
+values(15,1,'Inventario','Inventario','fas fa-table',8,true,1);
+
+
+--agregando opcion para el rol ventas
+insert into si_rol_opcion(si_rol,si_opcion,genero)
+values(7,15,1); -- ventas para rol ventas
+
+alter table ve_movimiento add column nota text;
+
+alter table ve_movimiento add column precio numeric not null;
+
+
+--modificar restriccion CHECK
+alter table cat_tipo_movimiento drop constraint cat_tipo_movimiento_afectacion_check;
+
+insert into cat_tipo_movimiento(id,co_empresa,nombre,descripcion,afectacion,sistema,genero)
+values(5,1,'AJUSTE/LIBRE','Ajuste o modificación libre de existencia','AJUSTE_LIBRE',true,1);
+
+
+
+insert into cat_tipo_movimiento(id,co_empresa,nombre,descripcion,afectacion,sistema,genero)
+values(6,1,'DEVOLUCION_VENTA','Entrada por devolución de venta','ENTRADA',true,1);
+
+
+insert into cat_tipo_movimiento(id,co_empresa,nombre,descripcion,afectacion,sistema,genero)
+values(7,1,'CANCELACION_VENTA','Entrada por cancelación de venta','ENTRADA',true,1);

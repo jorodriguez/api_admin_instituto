@@ -1,6 +1,6 @@
 const genericDao = require('./genericDao');
 const Tables = require('../utils/Tables');
-const {MOVIMIENTO_ENTRADA,MOVIMIENTO_SALIDA} = require('../utils/Movimientos');
+const {MOVIMIENTO_ENTRADA,MOVIMIENTO_SALIDA,MOVIMIENTO_AJUSTE_LIBRE} = require('../utils/Movimientos');
 const Dao = require('./Dao');
 const movimientoDao = new Dao(Tables.VE_MOVIMIENTO); 
 const tipoMovimientoDao = new Dao(Tables.CAT_TIPO_MOVIMIENTO); 
@@ -16,24 +16,31 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
         const movimientoData = Object.assign(new VeMovimiento(),data);        
 
         //console.log("Movimiento data "+JSON.stringify(movimientoData));
-        console.log("catArticuloSucursal "+catArticuloSucursal);
+        //console.log("catArticuloSucursal "+catArticuloSucursal);
 
         const articuloSucursal = await catArticuloSucursalDao.findById(catArticuloSucursal);
         
-        console.log("ArticuloSucursal data "+JSON.stringify(articuloSucursal));
+        //console.log("ArticuloSucursal data "+JSON.stringify(articuloSucursal));
 
         const tipoMovimiento = await tipoMovimientoDao.findById(movimientoData.cat_tipo_movimiento);                      
 
-        console.log("Tipo de movimiento a actualizar "+tipoMovimiento.nombre)
+        console.log("Tipo de movimiento a actualizar "+tipoMovimiento.nombre);
       
         let cantidadActualizar = 0;
         
         if(tipoMovimiento.afectacion == MOVIMIENTO_ENTRADA){
+            console.log("MOVIMIENTO_ENTRADA ");
             cantidadActualizar = (articuloSucursal.cantidad_existencia + cantidadAfectacion);
         }
         
         if(tipoMovimiento.afectacion == MOVIMIENTO_SALIDA){
+            console.log("MOVIMIENTO_SALIDA ");
             cantidadActualizar = (articuloSucursal.cantidad_existencia - cantidadAfectacion);
+        }
+
+        if(tipoMovimiento.afectacion == MOVIMIENTO_AJUSTE_LIBRE){
+            console.log("MOVIMIENTO_AJUSTE_LIBRE ");
+            cantidadActualizar =  cantidadAfectacion;
         }
 
         const cantidadAnteriorActualizar = articuloSucursal.cantidad_existencia;
@@ -47,7 +54,7 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
                                                 .setCantidadAnterior(cantidadAnteriorActualizar)
                                                 .setCantidadPosterior(cantidadPosteriorActualizar)
                                                 .setFechaModifico(new Date())
-                                                .setModifico(data.genero)
+                                                .setModifico(data.genero)                                                
                                                 .build();
 
         if(transaction){            
@@ -68,7 +75,7 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
 
             await catArticuloSucursalDao.update(catArticuloSucursal,
                                     {
-                                        cantidad_existencia:cantidadAnteriorActualizar,                                    
+                                        cantidad_existencia:cantidadAfectacion,                                                   
                                         fecha_modifico:new Date(),
                                         modifico:data.genero
                                     });
@@ -81,7 +88,6 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
         return false;
     }
 }
-
 
 
 

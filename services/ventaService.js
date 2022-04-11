@@ -1,7 +1,9 @@
 const ventaDao = require('../dao/ventaDao');
 const detalleVentaDao = require('../dao/detalleVentaDao');
 const templateService = require('./templateService');
+const movimientoInventarioService = require('./movimientoInventarioService');
 const {TIPO_TEMPLATE} = require('../utils/Constantes');
+const {ID_TIPO_CANCELACION_VENTA,ID_TIPO_DEVOLUCION_VENTA} = require('../utils/TipoMovimientoArticulo');
 
 const getTicketData = async(idVenta)=>{
     
@@ -49,10 +51,45 @@ const getHtmlTicket = async (idVenta)=>{
 };
 
 
+const cancelarVenta = async (data = {id_venta,id_estatus,motivo,genero})=>{
+      console.log("@cancelarVenta");
+
+      const {id_venta,id_estatus,motivo,genero} = data;
+
+      const ventaEncontrada = await ventaDao.findById(id_venta);
+
+      const detalle = await detalleVentaDao.getListaDetalleVenta(id_venta);    
+
+      for(let i = 0; i < detalle.length; i++){
+        
+            //data = {id_articulo_sucursal,cat_tipo_movimiento,existencia_nueva,precio_nuevo,co_empresa,co_sucursal,nota,genero}
+
+            await movimientoInventarioService.guardarMovimientoInventario({
+                    id_articulo_sucursal:detalle.cat_articulo_sucursal,
+                    cat_tipo_movimiento:ID_TIPO_CANCELACION_VENTA,
+                    existencia_nueva:detalle.cantidad,
+                    precio_nuevo:detalle.precio,
+                    co_empresa:ventaEncontrada.co_empresa,
+                    co_sucursal:ventaEncontrada.co_sucursal,
+                    nota:motivo,
+                    genero:genero
+            });
+
+      }           
+
+      await ventaDao.cancelarVenta(data);      
+
+    return ;
+};
+
+
+
+
 
 module.exports = { 
                     getHtmlTicket,
                     createVenta:ventaDao.createVenta,
-                    cancelarVenta:ventaDao.cancelarVenta,
+                    //cancelarVenta:ventaDao.cancelarVenta,
+                    cancelarVenta,
                     getVentasSucursal: ventaDao.getVentasSucursal
                  };

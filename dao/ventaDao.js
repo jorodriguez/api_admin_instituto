@@ -74,6 +74,8 @@ const createVenta = async (data) => {
                             .setCatTipoMovimiento(ID_TIPO_MOVIMIENTO_VENTA)
                             .setCatArticuloSucursal(detalleVentaItem.cat_articulo_sucursal)
                             .setCantidad(detalleVentaItem.cantidad)
+                            .setPrecio(detalleVentaItem.precio)                            
+                            .setNota(`venta ${rowVenta.folio}`)
                             .build();
 
 
@@ -190,5 +192,6 @@ module.exports = {
    createVenta,
    getVentasSucursal,
    getVentaById,
-   cancelarVenta
+   cancelarVenta,
+   findById:ventaDao.findById
 };

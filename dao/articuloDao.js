@@ -14,6 +14,7 @@ const getArticulosSucursal = async (coSucursal) => {
             , [coSucursal]);
 };
 
+
 const getArticuloCodigo = async (coSucursal,codigo) => {
     console.log("@getArticuloCodigo");
     return await genericDao

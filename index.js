@@ -51,6 +51,7 @@ const catCategoria = require('./routes/categoriasController');
 const catMarcaController = require('./routes/catMarca');
 const estatus = require('./routes/estatus');
 const catUnidadMedida = require('./routes/catUnidadMedida');
+const movimientoInventario = require('./routes/movimientoInventario');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -71,6 +72,8 @@ app.use('/categoria',catCategoria);
 app.use('/marca',catMarcaController);
 app.use('/unidad-medida',catUnidadMedida);
 app.use('/estatus',estatus);
+app.use('/movimiento-inventario',movimientoInventario);
+
 
 app.use('/jobs',schedulerJob);
 

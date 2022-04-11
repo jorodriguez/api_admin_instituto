@@ -13,6 +13,8 @@ class VeMovimiento {
     this.fecha_genero = null;
     this.fecha_modifico = null;
     this.eliminado = null;
+    this.nota = null;
+    this.precio = null;    
   }
   setId(id) {
     this.id = id;
@@ -54,6 +56,10 @@ class VeMovimiento {
     this.cantidad_anterior = cantidadAnterior;
     return this;
   }
+  setPrecio(precio) {
+    this.precio = precio;
+    return this;
+  }  
   setFechaGenero(fechaGenero) {
     this.fecha_genero = fechaGenero;
     return this;
@@ -66,6 +72,10 @@ class VeMovimiento {
     this.eliminado = eliminado;
     return this;
   }
+  setNota(nota) {
+    this.nota = nota;
+    return this;
+  }
   build() {
     return {      
       co_empresa: this.co_empresa,
@@ -76,6 +86,8 @@ class VeMovimiento {
       cantidad: this.cantidad,
       cantidad_posterior: this.cantidad_posterior,
       cantidad_anterior: this.cantidad_anterior,            
+      nota: this.nota,               
+      precio:this.precio      
     };
   }
 }

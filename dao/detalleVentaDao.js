@@ -18,7 +18,8 @@ const getListaDetalleVenta =async (idVenta)=>{
     det.importe,
     art.nombre as articulo,
     art.codigo,
-    det.ve_venta,
+    det.cat_articulo_sucursal,
+    det.ve_venta,    
     marca.nombre as marca,
     medida.nombre as unidad_medida
 from ve_venta_detalle det inner join cat_articulo_sucursal ars on det.cat_articulo_sucursal = ars.id
