@@ -4,6 +4,7 @@ require('moment/locale/es');  // without this line it didn't work
 moment.locale('es');
 const gastoDao = require('../dao/gastoDao');
 const cortesDao = require('../dao/cortesDao');
+const ventaDao = require('../dao/ventaDao');
 const inscripcionDao = require('../dao/inscripcionDao');
 const utilDao = require('../dao/utilDao');
 const sucursalDao = require('../dao/sucursalDao');
@@ -26,10 +27,20 @@ const getCorteDiaSucursal = async (corteData) => {
 
     const resultsGastos = await gastoDao.getGastosCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
 
+    const sumaIngresoVentas = await ventaDao.getSumaVentaSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
+
+    const sumaIngresoSucursal = (parseFloat(sumaIngreso.total) + parseFloat(sumaIngresoVentas.total));
+
+    const totalCaja = (parseFloat(sumaIngresoSucursal) - parseFloat(sumaGastos.total));
+
     console.log("Fecha "+fechaInicio+"  fecha fin"+fechaFin );
     console.log("suc "+idSucursal);
     console.log("sumaIngreso "+ formatCurrency(sumaIngreso.total));
+    console.log("sumaVenta "+ formatCurrency(sumaIngresoVentas.total));    
     console.log("sumaGastos "+ formatCurrency(sumaGastos.total));
+    console.log("sumaIngresoSucursal "+ formatCurrency(sumaIngresoSucursal));
+    console.log("totalCaja "+ formatCurrency(totalCaja));
+    
     
     return {
             fecha:fechaInicio,
@@ -37,7 +48,10 @@ const getCorteDiaSucursal = async (corteData) => {
             totalIngreso: (sumaIngreso ? sumaIngreso.total : 0),
             detalleIngreso:resultsIngreso,
             totalGasto: (sumaGastos ? sumaGastos.total : 0), 
-            detalleGasto:resultsGastos
+            detalleGasto:resultsGastos,
+            totalIngresoVenta:sumaIngresoVentas.total,
+            totalIngresoSucursal:sumaIngresoSucursal,
+            totalCaja:totalCaja
            };
 };
 
@@ -54,9 +68,11 @@ const getHtmlCorteDiaSucursal = async (corteData)=>{
    const params = {
         dia_corte_inicio:corte.fecha,
         dia_corte_fin:corte.fechaFin,
-        total_ingreso: formatCurrency(corte.totalIngreso),
+        total_ingreso: formatCurrency(corte.totalIngreso),        
+        total_ingreso_venta: formatCurrency(corte.totalIngresoVenta),        
+        total_ingreso_sucursal: formatCurrency(corte.totalIngresoSucursal),        
         total_gasto:formatCurrency(corte.totalGasto),
-        total_caja:formatCurrency(corte.totalIngreso-corte.totalGasto),
+        total_caja:formatCurrency(corte.totalCaja),
         nombre_sucursal:sucursal.nombre,
         direccion_sucursal:sucursal.direccion,
         telefono_sucursal:sucursal.telefono

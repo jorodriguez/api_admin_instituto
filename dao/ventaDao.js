@@ -188,10 +188,32 @@ const getQuery = (criterio,limit)=> `
 
 
 
+const getSumaVentaSucursal =async (data)=>{
+    
+    const {idSucursal,fechaInicio,fechaFin} = data;
+
+    const fechaInicioFormat =  castDateToStr(fechaInicio);
+    const fechaFinFormat =  castDateToStr(fechaFin);
+
+    return await genericDao.findOne(` 
+            select 
+                coalesce(sum(v.total),0)  as total
+            from ve_venta v
+            where v.co_sucursal = $1 
+                and v.fecha::date between $2::date and $3::date                
+                and si_estatus = $4
+                and v.eliminado  = false  
+
+    `,[idSucursal,fechaInicioFormat,fechaFinFormat,SI_ESTATUS.VENTA]);
+}
+
+
+
 module.exports = {
    createVenta,
    getVentasSucursal,
    getVentaById,
    cancelarVenta,
-   findById:ventaDao.findById
+   findById:ventaDao.findById,
+   getSumaVentaSucursal
 };
