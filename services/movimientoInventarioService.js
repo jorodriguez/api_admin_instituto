@@ -27,7 +27,7 @@ const guardarMovimientoInventario = async (data = {id_articulo_sucursal,cat_tipo
                   .setCatTipoMovimiento(cat_tipo_movimiento) //cat_tipo_movimiento
                   .setCatArticuloSucursal(articuloSucursal.id)
                   .setCantidad(existencia_nueva)
-                  .setPrecio(precio_nuevo)                                    
+                  .setPrecio(articuloSucursal.precio)                                    
                   .setNota(nota)
                   .build();
 

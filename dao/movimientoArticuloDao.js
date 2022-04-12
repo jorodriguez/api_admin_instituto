@@ -30,17 +30,17 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
         
         if(tipoMovimiento.afectacion == MOVIMIENTO_ENTRADA){
             console.log("MOVIMIENTO_ENTRADA ");
-            cantidadActualizar = (articuloSucursal.cantidad_existencia + cantidadAfectacion);
+            cantidadActualizar = (parseInt(articuloSucursal.cantidad_existencia) + parseInt(cantidadAfectacion));
         }
         
         if(tipoMovimiento.afectacion == MOVIMIENTO_SALIDA){
             console.log("MOVIMIENTO_SALIDA ");
-            cantidadActualizar = (articuloSucursal.cantidad_existencia - cantidadAfectacion);
+            cantidadActualizar = (parseInt(articuloSucursal.cantidad_existencia) - parseInt(cantidadAfectacion));
         }
 
         if(tipoMovimiento.afectacion == MOVIMIENTO_AJUSTE_LIBRE){
             console.log("MOVIMIENTO_AJUSTE_LIBRE ");
-            cantidadActualizar =  cantidadAfectacion;
+            cantidadActualizar =  parseInt(cantidadAfectacion);
         }
 
         const cantidadAnteriorActualizar = articuloSucursal.cantidad_existencia;
@@ -75,7 +75,7 @@ const createMovimientoArticulo = async (catArticuloSucursal,cantidadAfectacion,d
 
             await catArticuloSucursalDao.update(catArticuloSucursal,
                                     {
-                                        cantidad_existencia:cantidadAfectacion,                                                   
+                                        cantidad_existencia:cantidadActualizar,                                                   
                                         fecha_modifico:new Date(),
                                         modifico:data.genero
                                     });

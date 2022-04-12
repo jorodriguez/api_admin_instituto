@@ -4,6 +4,7 @@ const templateService = require('./templateService');
 const movimientoInventarioService = require('./movimientoInventarioService');
 const {TIPO_TEMPLATE} = require('../utils/Constantes');
 const {ID_TIPO_CANCELACION_VENTA,ID_TIPO_DEVOLUCION_VENTA} = require('../utils/TipoMovimientoArticulo');
+const {SI_ESTATUS} = require('../utils/Constantes');
 
 const getTicketData = async(idVenta)=>{
     
@@ -60,15 +61,34 @@ const cancelarVenta = async (data = {id_venta,id_estatus,motivo,genero})=>{
 
       const detalle = await detalleVentaDao.getListaDetalleVenta(id_venta);    
 
+      /*let catTipoMovimiento = "";
+
+      console.log("=== "+id_estatus);
+
+      if(id_estatus ==  SI_ESTATUS.VENTA_CANCELADA){          
+          catTipoMovimiento = ID_TIPO_CANCELACION_VENTA;
+      }
+
+      if(id_estatus ==  SI_ESTATUS.VENTA_ELIMINADA){
+        catTipoMovimiento = ID_TIPO_DEVOLUCION_VENTA;
+       }*/
+
+       console.log("Inicianco devolucion de productos")
+
       for(let i = 0; i < detalle.length; i++){
         
-            //data = {id_articulo_sucursal,cat_tipo_movimiento,existencia_nueva,precio_nuevo,co_empresa,co_sucursal,nota,genero}
+            //data = {id_articulo_sucursal,cat_tipo_movimiento,existencia_nueva,precio_nuevo,co_empresa,co_sucursal,nota,genero}          
+            
+
+            const item = detalle[i];
+
+            console.log("---- devolviendo producto "+item.articulo+" cantidad "+item.cantidad);
 
             await movimientoInventarioService.guardarMovimientoInventario({
-                    id_articulo_sucursal:detalle.cat_articulo_sucursal,
+                    id_articulo_sucursal:item.cat_articulo_sucursal,
                     cat_tipo_movimiento:ID_TIPO_CANCELACION_VENTA,
-                    existencia_nueva:detalle.cantidad,
-                    precio_nuevo:detalle.precio,
+                    existencia_nueva:item.cantidad,
+                    precio_nuevo:item.precio,
                     co_empresa:ventaEncontrada.co_empresa,
                     co_sucursal:ventaEncontrada.co_sucursal,
                     nota:motivo,
@@ -77,9 +97,12 @@ const cancelarVenta = async (data = {id_venta,id_estatus,motivo,genero})=>{
 
       }           
 
-      await ventaDao.cancelarVenta(data);      
+    const result =  await ventaDao.cancelarVenta(data);      
 
-    return ;
+      //enviar correo de cancelacion de venta
+
+
+    return result;
 };
 
 
