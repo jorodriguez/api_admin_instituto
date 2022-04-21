@@ -40,14 +40,15 @@ const getUsuarioPorSucursal = (idSucursal, idTipoUsario) => {
 	        U.MOTIVO_BAJA,
 	        U.FECHA_BAJA,
 	        U.MINUTOS_GRACIA_ENTRADA,
-            SUC.NOMBRE AS NOMBRE_SUCURSAL,            
+            SUC.NOMBRE AS NOMBRE_SUCURSAL,         
+            TIPO_USUARIO.id as CAT_TIPO_USUARIO,   
             TIPO_USUARIO.NOMBRE AS TIPO_USUARIO,
             U.ACCESO_SISTEMA,
             U.SUELDO_MENSUAL,
             U.SUELDO_QUINCENAL,
             EXTRACT(WEEK FROM  u.fecha_genero) = EXTRACT(WEEK FROM  getDate('')) as nuevo_ingreso
         FROM USUARIO U INNER JOIN CO_SUCURSAL SUC ON SUC.ID = U.CO_SUCURSAL 
-		        INNER JOIN CAT_TIPO_USUARIO TIPO_USUARIO ON TIPO_USUARIO.ID = U.CAT_TIPO_USUARIO
+		               INNER JOIN CAT_TIPO_USUARIO TIPO_USUARIO ON TIPO_USUARIO.ID = U.CAT_TIPO_USUARIO
         WHERE 	        
             SUC.ID = $1 AND U.CAT_TIPO_USUARIO=$2
             AND U.ACTIVO = TRUE
@@ -79,7 +80,7 @@ const insertarUsuario = async (usuarioData) => {
 
 const validarCorreoUsuario = (correo) => {
     return genericDao
-        .findOne("select true from usuario where TRIM(correo) = TRIM($1) and eliminado = false", [correo]);
+        .findOne("select count(u.id) > 0 from usuario u where TRIM(correo) = TRIM($1) and eliminado = false limit 1", [correo]);
 };
 
 const buscarCorreo = (correo) => {

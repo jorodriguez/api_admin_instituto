@@ -18,7 +18,7 @@ const gastos = require('./controllers/gastos');
 const reporte_gastos = require('./controllers/reporteGastos');
 const sucursales = require('./controllers/sucursal');
 const alumnoSucursal = require('./controllers/alumno_sucursal');
-const usuarioService = require('./controllers/usuario');
+//const usuarioService = require('./controllers/usuario');
 const catagolos = require('./controllers/catalogos');
 const conf = require('./controllers/configuracion');
 const https = require("https");
@@ -52,6 +52,7 @@ const catMarcaController = require('./routes/catMarca');
 const estatus = require('./routes/estatus');
 const catUnidadMedida = require('./routes/catUnidadMedida');
 const movimientoInventario = require('./routes/movimientoInventario');
+const usuarioRoute = require('./routes/usuario');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -73,6 +74,7 @@ app.use('/marca',catMarcaController);
 app.use('/unidad-medida',catUnidadMedida);
 app.use('/estatus',estatus);
 app.use('/movimiento-inventario',movimientoInventario);
+app.use('/usuario',usuarioRoute);
 
 
 app.use('/jobs',schedulerJob);
@@ -172,12 +174,12 @@ app.get('/reporte_gastos_mes_actual/:id_usuario',checkAuth, reporte_gastos.getRe
 
 
 //catalogo de maestros
-app.get('/usuario/:id_sucursal',checkAuth, usuarioService.getUsuariosPorSucursal);
+/*app.get('/usuario/:id_sucursal',checkAuth, usuarioService.getUsuariosPorSucursal);
 app.get('/usuario/buscar/:id_usuario',checkAuth, usuarioService.buscarUsuarioPorId);
 app.post('/usuario',checkAuth, usuarioService.crearUsuario);
 app.put('/usuario', checkAuth,usuarioService.modificarUsuario);
 app.put('/usuario/:id_usuario',checkAuth, usuarioService.desactivarUsuario);
-
+*/
 //AVISOS
 /*app.get('/aviso/:id_usuario',checkAuth, avisos.getAvisosUsuario);
 app.get('/aviso/tags/:idUsuario',checkAuth, avisos.getTagsContactos);

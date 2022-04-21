@@ -6,8 +6,10 @@ function getUsuariosPorSucursal(idSucursal) {
     return usuarioDao.getUsuarioPorSucursal(idSucursal, TIPO_USUARIO.MAESTRA);
 }
 
-function crearUsuarioConCorreo(usuarioData) {
+const crearUsuarioConCorreo = async (usuarioData) =>{
     console.log("@crearUsuarioConCorreo");
+      
+    
     return new Promise((resolve, reject) => {
         usuarioDao
             .validarCorreoUsuario(usuarioData.correo)
@@ -19,14 +21,18 @@ function crearUsuarioConCorreo(usuarioData) {
                 } else {
                     insertarUsuario(usuarioData)
                         .then(result => {
+
+                            //enviar correo
+                            
+
                             resolve(
                                 new MensajeRetorno(true, "Se registró el usuario", null)
                             );
                         }).catch(error => reject(new MensajeRetorno(false, "Error", error)));
                 }
-
             }).catch(error => reject(new MensajeRetorno(false, "Error", error)));
     });
+    
 }
 
 function insertarUsuario(usuarioData) {
