@@ -1,6 +1,6 @@
 const genericDao = require('./genericDao');
 const { TIPO_USUARIO } = require('../utils/Constantes');
-const { generarRandomPassword } = require('../dao/utilDao');
+//const { generarRandomPassword } = require('../dao/utilDao');
 const { encriptar } = require('../utils/Utils');
 
 function obtenerCorreosPorTema(co_sucursal, id_tema) {
@@ -60,21 +60,21 @@ const getUsuarioPorSucursal = (idSucursal, idTipoUsario) => {
 const insertarUsuario = async (usuarioData) => {
     console.log("@insertarUsuario");
 
-    const { alias,nombre, correo,id_tipo_usuario, co_sucursal, hora_entrada, hora_salida,sueldo_mensual, genero } = usuarioData;
+    const { alias,nombre, correo,id_tipo_usuario, co_sucursal, hora_entrada,password_encriptado, hora_salida,sueldo_mensual, genero } = usuarioData;
 
     console.log("HOIRA EN "+hora_entrada);
     console.log("HOIRA EN "+hora_salida);
     //TIPO_USUARIO.MAESTRA
     console.log(" hora entrada " + hora_entrada + " h salida " + hora_salida + " correo " + correo);
-    let password = await generarRandomPassword();
-    console.log("Password generado  " + JSON.stringify(password));
+    //let password = await generarRandomPassword();
+    //console.log("Password generado  " + JSON.stringify(password));
 
     let sql = `
             INSERT INTO USUARIO(ALIAS,NOMBRE,CORREO,CO_SUCURSAL,CAT_TIPO_USUARIO,HORA_ENTRADA,HORA_SALIDA,PASSWORD,SUELDO_MENSUAL,SUELDO_QUINCENAL,GENERO)
             VALUES(TRIM(BOTH FROM $1),TRIM(BOTH FROM $2),TRIM($3),$4,$5,$6,$7,$8,$9::numeric,($9::numeric/2)::numeric,$10) RETURNING ID;
             `;
     return genericDao
-        .execute(sql, [alias,nombre, correo, co_sucursal,id_tipo_usuario, hora_entrada, hora_salida, password.encripted,sueldo_mensual,genero]);
+        .execute(sql, [alias,nombre, correo, co_sucursal,id_tipo_usuario, hora_entrada, hora_salida, password_encriptado,sueldo_mensual,genero]);
 };
 
 

@@ -1,45 +1,48 @@
 const correoService = require('./CorreoService');
 const templateService = require('../services/templateService');
 const temaNotificacionService = require('../services/temaNotificacionService');
-const {TIPO_TEMPLATE,TEMA_NOTIFICACION} = require('../utils/Constantes');
-const inscripcionDao = require('../dao/inscripcionDao');
+const {TIPO_TEMPLATE,TEMA_NOTIFICACION} = require('./Constantes');
 const usuarioDao = require('../dao/usuarioDao');
+const sucursalDao = require('../dao/sucursalDao');
 
-const enviarCorreoBienvenida = async (data) => {    
+const enviarCorreoBienvenida = async (data = {id_usuario,clave,genero}) => {    
 try{
-   const {id_inscripcion,co_empresa,co_sucursal,genero}=data; 
+   
+    const {id_usuario,clave,genero}=data; 
 
-   const inscripcion = await inscripcionDao.findById(id_inscripcion);
+   const usuario = await usuarioDao.findById(id_usuario);
+
+   if(!usuario){
+        return;
+   }
+
+   const sucursal = await sucursalDao.getSucursalPorId(usuario.co_sucursal);
 
    const usuarioGenero = await usuarioDao.findById(genero);
    
-   const params = {
-        matricula_alumno:inscripcion.matricula,
-        nombre_alumno:inscripcion.alumno,
-        apellidos_alumno:inscripcion.apellidos,
-        direccion_alumno:inscripcion.direccion,
-        correo_alumno:inscripcion.correo,
-        telefono_alumno:inscripcion.telefono,
-        fecha_nacimiento_alumno:inscripcion.fecha_nacimiento_format,
-        logo_taller:inscripcion.logo_taller,
-        nombre_taller:inscripcion.especialidad,
-        horario_taller:inscripcion.horario,
-        dia_taller:inscripcion.dias
+   const params = {        
+        nombre: usuario.nombre,        
+        alias: usuario.alias,        
+        nombre_sucursal: sucursal.nombre,
+        correo: usuario.correo,                        
+        hora_entrada: usuario.hora_entrada,
+        hora_salida: usuario.hora_salida,
+        clave: clave,
+        ver_clave:true
    };
 
    const templateHtml = await templateService.loadTemplateEmpresa({params,
                                         idEmpresa:co_empresa,
                                         idUsuario:genero,
-                                        tipoTemplate:TIPO_TEMPLATE.BIENVENIDA_ALUMNO});
+                                        tipoTemplate:TIPO_TEMPLATE.BIENVENIDA_EMPLEADO});
+        
+    const asunto = `Bienvenido ${usuario.nombre}`;
     
-    const asunto = `Bienvenido ${inscripcion.alumno}`;
-    
-    const para =  [inscripcion.correo]; //(inscripcion.correo || '' )+(usuarioGenero.correo_copia || '');   
+    const para =  [usuario.correo];
 
-    if(usuarioGenero.correo_copia != null){
+    /*if(usuarioGenero.correo_copia != null){
         para.push(usuarioGenero.correo_copia);
     }
-
     const usuariosTema = await temaNotificacionService.getCorreosPorTemaSucursal(
                                 {
                                     coSucursal:co_sucursal,
@@ -52,11 +55,15 @@ try{
     console.log("correo copia "+copia);
    
     const cc = copia;
+    */
+
+    const cc = '';
 
     await correoService.enviarCorreoAsync({para, cc:cc, asunto:asunto, html:templateHtml,idEmpresa:co_empresa});
+
     }catch(e){
         
-        console.log("Error al enviar el correo de bienvenida "+e);
+        console.log("Error al enviar el correo de bienvenida del usuario "+e);
 
     }
 

@@ -1,6 +1,9 @@
 const usuarioDao = require('../dao/usuarioDao');
 const { TIPO_USUARIO } = require('../utils/Constantes');
 const { MensajeRetorno } = require('../utils/MensajeRetorno');
+const { enviarCorreoBienvenida } = require('../utils/NotificacionUsuarioService');
+const { generarRandomPassword } = require('../dao/utilDao');
+
 
 function getUsuariosPorSucursal(idSucursal) {
     return usuarioDao.getUsuarioPorSucursal(idSucursal, TIPO_USUARIO.MAESTRA);
@@ -8,9 +11,23 @@ function getUsuariosPorSucursal(idSucursal) {
 
 const crearUsuarioConCorreo = async (usuarioData) =>{
     console.log("@crearUsuarioConCorreo");
+
+    const correoEncontrado = await usuarioDao.validarCorreoUsuario(usuarioData.correo);
+    
+    if(correoEncontrado){
+        return new MensajeRetorno(false, "El correo ya se encuentra registrado", null);
+    }
+
+    const password = await generarRandomPassword();
+
+    const insertUsuario = await insertarUsuario(usuarioData);
+
+    await enviarCorreoBienvenida({id_usuario: insertUsuario.id,clave:});
+
+    return new MensajeRetorno(true, "Se registró el usuario", null);
       
     
-    return new Promise((resolve, reject) => {
+   /* return new Promise((resolve, reject) => {
         usuarioDao
             .validarCorreoUsuario(usuarioData.correo)
             .then(encontrado => {
@@ -23,7 +40,7 @@ const crearUsuarioConCorreo = async (usuarioData) =>{
                         .then(result => {
 
                             //enviar correo
-                            
+                                await 
 
                             resolve(
                                 new MensajeRetorno(true, "Se registró el usuario", null)
@@ -31,7 +48,7 @@ const crearUsuarioConCorreo = async (usuarioData) =>{
                         }).catch(error => reject(new MensajeRetorno(false, "Error", error)));
                 }
             }).catch(error => reject(new MensajeRetorno(false, "Error", error)));
-    });
+    });*/
     
 }
 

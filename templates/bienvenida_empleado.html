@@ -7,7 +7,7 @@
             	Hola <strong>{{nombre}}</strong>,           
             </p>
             <p>
-            	Te damos la bienvenida ya eres parte de <strong>{{nombre_empresa}}</strong> .
+            	Te damos la bienvenida ya eres parte de <strong>{{nombre_sucursal}}</strong> .
             </p>                        
         </td>
     </tr>
@@ -15,13 +15,13 @@
 <p>Por favor revisa tu registro </p>
 <table width="100%" border="0" style="padding-top:10px" cellspacing="1" cellpadding="1">	
     <tr>
-        <td><strong>Nombre</strong></td>
-        <td>{{nombre}}</td>        
+        <td><strong>Nombre Corto</strong></td>
+        <td>{{alias}}</td>        
     </tr>            
     <tr>
-        <td><strong>Teléfono</strong></td>
-        <td>{{telefono_alumno}}</td>        
-    </tr>
+        <td><strong>Nombre</strong></td>
+        <td>{{nombre}}</td>        
+    </tr>                
     <tr>
         <td><strong>Entrada</strong></td>
         <td>{{hora_entrada}}</td>        
@@ -34,10 +34,12 @@
         <td><strong>Correo</strong></td>
         <td>{{correo_alumno}}</td>        
     </tr>
+    {{#ver_clave}}          
     <tr>
         <td><strong>Clave</strong></td>
         <td>{{clave}}</td>        
     </tr>
+    {{/ver_clave}}          
 </table>
 
 <p>* Por favor no compartas tu clave de acceso. </p>

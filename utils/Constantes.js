@@ -25,7 +25,8 @@ const TIPO_TEMPLATE = {
     CORTE_DIARIO:"TEMPLATE_CORTE_DIA",
     TICKET_VENTA:"TICKET_VENTA",
     BIENVENIDA_ALUMNO:"BIENVENIDA_ALUMNO",
-    CORTE_DIARIO_ENVIO_CORREO:"CORTE_DIARIO_ENVIO_CORREO"
+    CORTE_DIARIO_ENVIO_CORREO:"CORTE_DIARIO_ENVIO_CORREO",
+    BIENVENIDA_EMPLEADO:"BIENVENIDA_EMPLEADO"
 
 };
 
@@ -46,7 +47,8 @@ const TEMA_NOTIFICACION ={  ID_TEMA_NOTIFICACION_PAGOS:2,
                             TEMPLATE_DATOS_FACTURACION: "datos_factura.html",
                             TEMPLATE_RECORDATORIO_PAGO_MENSUALIDAD: "recordatorio_recargo_mensualidad.html",
                             TEMPLATE_REPORTE_PROX_RECARGOS: "reporte_prox_recargo_mensualidad.html",
-                            TEMPLATE_ESTADO_CUENTA: "estado_cuenta.html"
+                            TEMPLATE_ESTADO_CUENTA: "estado_cuenta.html",
+                            TEMPLATE_BIENVENIDA_EMPLEADO: "bienvenida_empleado.html"
                         };
                         
 
