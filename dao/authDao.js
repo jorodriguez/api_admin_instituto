@@ -80,7 +80,7 @@ const getQueryBase = (condicion) => {
                           and ro.eliminado = false                          
                    ) as roles
     FROM usuario u inner join co_sucursal su on u.co_sucursal = su.id
-      inner join co_empresa em on em.id = u.co_empresa    
+                   inner join co_empresa em on em.id = u.co_empresa    
     WHERE ${condicion}
         AND u.acceso_sistema = true 
         AND u.activo = true
