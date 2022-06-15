@@ -299,9 +299,9 @@ const guardarCargoGenerico = async (idAlumno, cat_cargo, cantidad, monto, folio,
 
 
 
-const getCatalogoCargosPorEmpresa = (idEmpresa) => {
+const getCatalogoCargosPorEmpresa = (idEmpresa,idSucursal) => {
     console.log("@getCatalogoCargosPorEmpresa");
-    return cargosDao.getCatalogoCargosPorEmpresa(idEmpresa);
+    return cargosDao.getCatalogoCargosPorEmpresa(idEmpresa,idSucursal);
 };
 
 const getCargoExtraMensualidadEmpresa = (idEmpresa) => {
