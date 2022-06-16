@@ -7,9 +7,9 @@ const getEspecialidad = async (request, response) => {
     console.log("@getEspecialidad");
     try {
         
-        const { id_empresa } = request.params;
+        const { id_empresa,id_sucursal } = request.params;
 
-        const results = await especialidadService.getEspecialidad(id_empresa);
+        const results = await especialidadService.getEspecialidad(id_empresa,id_sucursal);
         
         response.status(200).json(results);       
        

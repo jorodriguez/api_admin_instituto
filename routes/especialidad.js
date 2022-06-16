@@ -3,6 +3,6 @@ const especialidad = require('../controllers/especialidad');
 const checkAuth = require('./check-auth');
 
 //especialidad
-router.get('/:id_empresa',checkAuth, especialidad.getEspecialidad);
+router.get('/:id_empresa/:id_sucursal',checkAuth, especialidad.getEspecialidad);
 
 module.exports = router;

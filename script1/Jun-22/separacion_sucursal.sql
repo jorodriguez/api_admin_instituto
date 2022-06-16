@@ -134,7 +134,6 @@ update cat_cargo set co_sucursal = 1 where id in (1001,
 
 --------------------- carga de cargos para morelia -------------------------------
 
-ALTER SEQUENCE  cat_cargo_id_seq RESTART WITH 1030;
 
 
 
@@ -175,4 +174,136 @@ VALUES (2,(select id from co_sucursal where nombre = 'Campus Morelia'),'Renta de
 --1002
 INSERT INTO cat_cargo (co_empresa,co_sucursal,nombre,descripcion,precio,notificar,escribir_cantidad,escribir_monto,genero) 
 VALUES (2,(select id from co_sucursal where nombre = 'Campus Morelia'),'Gafete','Gafete',150,false,false,false,1);
+
+
+
+
+ALTER SEQUENCE  cat_cargo_id_seq RESTART WITH 1031;
+
+
+
+
+
+-------------////////////////////SEPARACION DE LAS ESPECIALIDADES ////////////
+
+
+alter table cat_especialidad add column co_sucursal integer references co_sucursal(id);
+
+
+--id=2
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (20,1,2,1,18,'Diplomado de Barbería','Diplomado ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1641860827/static/Captura_de_pantalla_de_2022-01-10_18-26-10_gmdp4d.png',true,1);
+
+update co_curso set cat_especialidad = 20, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 2 and co_empresa = 1 and co_sucursal =2);
+
+update cat_especialidad set co_sucursal = 2 where id = 20;
+
+--id=3 para apodaca es el 21
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (21,1,2,1,18,'Diplomado de Uñas','Diplomado ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1641860827/static/Captura_de_pantalla_de_2022-01-10_18-26-29_okolnf.png',true,1);
+
+update co_curso set cat_especialidad = 21, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 3 and co_empresa = 1 and co_sucursal =2);
+
+update cat_especialidad set co_sucursal = 2 where id = 21;
+
+--id=4 para apodaca es el 22
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (22,1,21,18,'Diplomado de Maquillaje','Diplomado ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1641860827/static/Captura_de_pantalla_de_2022-01-10_18-25-43_opvqbc.png',true,1);
+
+update co_curso set cat_especialidad = 22, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 4 and co_empresa = 1 and co_sucursal =2);
+
+update cat_especialidad set co_sucursal = 2 where id = 22;
+
+--id=5 para apodaca es el 23
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (23,1,2,1,18,'Diplomado de Cosmetología','Diplomado ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png',true,1);
+
+update co_curso set cat_especialidad = 23, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 5 and co_empresa = 1 and co_sucursal =2);
+
+--id=6 para apodaca es el 24
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (24,1,2,1,18,'Diplomado de Colorimetría','Diplomado ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png',true,1);
+
+update co_curso set cat_especialidad = 24, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 6 and co_empresa = 1 and co_sucursal =2);
+
+--id=7 para apodaca es el 25
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (25,1,2,1,4,'Taller Cejas y Pestañas','Taller',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png',true,1);
+
+update co_curso set cat_especialidad = 25, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 7 and co_empresa = 1 and co_sucursal =2);
+
+--id=8 para apodaca es el 26
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (26,1,2,1,12,'Diplomado Corte de cabello','Diplomado ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png',true,1);
+
+update co_curso set cat_especialidad = 26, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 8 and co_empresa = 1 and co_sucursal =2);
+
+--id=9 para apodaca es el 27
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (27,1,2,1,16,'Diplomado de Maquillaje y Peinado','Diplomado ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png',true,1);
+
+update co_curso set cat_especialidad = 27, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 9 and co_empresa = 1 and co_sucursal =2);
+
+--id=10 para apodaca es el 28
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (28,1,2,1,4,'Taller de Alaciados','Taller ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png',true,1);
+
+update co_curso set cat_especialidad = 28, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 10 and co_empresa = 1 and co_sucursal =2);
+
+
+--id=11 para apodaca es el 29
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (29,1,2,1,2,'Taller Esmaltado Semipermanente','Taller ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png',true,1);
+
+update co_curso set cat_especialidad = 29, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 11 and co_empresa = 1 and co_sucursal =2);
+
+
+--id=12 para apodaca es el 30
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (30,1,2,1,1,'Pagos anteriores al sistema','Pagos anteriores al sistema',20,null,true,1);
+
+update co_curso set cat_especialidad = 30, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 12 and co_empresa = 1 and co_sucursal =2);
+
+
+--id=13 para apodaca es el 31
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (31,1,2,1,4,'Pedicure','Pedicure',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1653849933/static/WhatsApp_Image_2022-05-29_at_1.44.13_PM_kf7awd.jpg',true,1);
+
+update co_curso set cat_especialidad = 31, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 13 and co_empresa = 1 and co_sucursal =2);
+
+--id=1
+INSERT INTO CAT_ESPECIALIDAD (id,co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (32,1,2,1,76,'Carrera de Diseñadora de Imagen Profesional','Carrera ',20,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png',true,1);
+
+update co_curso set cat_especialidad = 32, fecha_modifico=current_timestamp, modifico= 1 
+where id in (select id from co_curso where cat_especialidad = 1 and co_empresa = 1 and co_sucursal =2 );
+
+
+ALTER SEQUENCE  cat_especialidad_id_seq RESTART WITH 33;
+
+--//////separando la sucursal de morelia
+
+update cat_especialidad set co_sucursal = 4, modifico=1, fecha_modifico = current_date where co_empresa = 2;
+
+
+--//////separando la sucursal de monterrey
+update cat_especialidad set co_sucursal = 1, modifico=1, fecha_modifico = current_date where co_empresa = 1 and co_sucursal is null;
+
+
+
+--nuevas especialidades para CECAN
+INSERT INTO CAT_ESPECIALIDAD (co_empresa,co_sucursal,cat_duracion,duracion,nombre,descripcion,alumnos_permitidos,foto,activo,genero) 
+VALUES (1,6,1,8,'Marketing Digital','Diplomado ',1,'https://res.cloudinary.com/dwttlkcmu/image/upload/v1655236198/static/oferta_educativa_cecan/WhatsApp_Image_2022-06-11_at_4.36.58_PM_augrtl.jpg',true,1);
 
