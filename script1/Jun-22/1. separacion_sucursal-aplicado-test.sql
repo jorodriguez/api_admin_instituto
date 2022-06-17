@@ -1,6 +1,8 @@
 
 
 
+
+
 --cambios para separacion de especialidades por sucursal, y la configuracion de tema  y correos
 
 --update usuario set correo = 'velocirraptor79@hotmail.com' where id = 134
@@ -167,7 +169,7 @@ VALUES (2,(select id from co_sucursal where nombre = 'Campus Morelia'),'Título'
 
 
 --1006
-INSERT INTO cat_cargo (}co_empresa,co_sucursal,nombre,descripcion,precio,notificar,escribir_cantidad,escribir_monto,genero)
+INSERT INTO cat_cargo (co_empresa,co_sucursal,nombre,descripcion,precio,notificar,escribir_cantidad,escribir_monto,genero)
 VALUES (2,(select id from co_sucursal where nombre = 'Campus Morelia'),'Graduación','Graduación',1,false,false,true,1);
 
 
@@ -317,3 +319,7 @@ INSERT INTO co_usuario_notificacion (usuario,co_tema_notificacion,co_sucursal,ge
 VALUES (131,2,5,1),--pagos
 		(131,3,5,1) ,-- corte
 		(131,7,5,1); --alta
+
+
+
+update cat_especialidad set foto = 'https://res.cloudinary.com/dwttlkcmu/image/upload/v1640639519/static/thumbnail_LOGO_PARIS_aw1o2o.png' where id = 17

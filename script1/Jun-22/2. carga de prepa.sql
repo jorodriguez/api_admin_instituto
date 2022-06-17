@@ -51,7 +51,7 @@ VALUES (3,'GRUPO EMPRESARIAL NORESTE GEN, S.A. DE C.V.',
 		 'GEN180119HJA','prepa_cecan','joel.rod.roj@hotmail.com',1);
 
 
-select * from co_sucursal
+
 
 
 --======= REGISTRO DE SUCURSALES =======
@@ -407,7 +407,7 @@ where id=4
 
 
 
-update co_sucursal set nombre = 'CECAN.' where id = 6
+update co_sucursal set nombre = 'CECAN.' where id = 6;
 
 
 
@@ -417,3 +417,11 @@ INSERT INTO co_usuario_notificacion (usuario,co_tema_notificacion,co_sucursal,ge
 VALUES (14,2,6,1),--pagos
 		(14,3,6,1) ,-- corte
 		(14,7,6,1); --alta
+
+
+
+
+update co_template set template_recibo_pago = (select template_recibo_pago from co_template where id  =2 ) where id = 4;
+
+
+update co_template set template_corte_dia = (select template_corte_dia from co_template where id  =2 ) where id = 4;
