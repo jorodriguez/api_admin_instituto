@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 
 //version/branch
 
-const version = "v1/2203-productos";
+const version = "v1/2206-separacion-sucursal Actualización 16-jun 10pm";
 
 app.use(bodyParser.json());
 app.use(
