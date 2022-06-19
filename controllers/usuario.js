@@ -6,7 +6,7 @@ const crearUsuario = (request, response) => {
 
 	try {
 
-		const usuarioData = { alias,nombre,co_tipo_usuario, correo, id_sucursal, hora_entrada, hora_salida,sueldo_mensual, genero } = request.body;
+		const usuarioData = { alias,nombre,co_tipo_usuario, correo, id_sucursal,id_empresa, hora_entrada, hora_salida,sueldo_mensual, genero } = request.body;
 
 		var proceso = null;		
 
