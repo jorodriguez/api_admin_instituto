@@ -1,6 +1,6 @@
-
+const moment = require('moment');
 const handle = require('../helpers/handlersErrors');
-
+const {schemaFechaNoSemanas} = require('../validacion-shemas/consultasShema');
 const cursoService = require('../services/cursoService');
 const cursoSemanasService = require('../services/cursoSemanasService');
 
@@ -14,10 +14,11 @@ const getSemanasColegiaturasParaCargo = async (request,response) =>{
     try {
 
         const { uidCurso,idAlumno } = request.params;
-
+        
         console.log("iudCurso "+uidCurso);
         console.log("iudCurso "+idAlumno);
-        
+
+                
         let results = [];       
 
         results = await cursoSemanasService.getSemanasColegiaturasParaCargo(uidCurso,idAlumno);
@@ -30,6 +31,42 @@ const getSemanasColegiaturasParaCargo = async (request,response) =>{
 };
 
 
+const getSemanasCalculadasPreviewPagosCurso = async (request,response) =>{
+
+    console.log("@getSemanasCalculadasPagosCurso");  
+    
+    try {
+
+        const { fecha_inicio,numero_semanas } = request.params;
+
+        console.log("fecha"+fecha_inicio);
+        console.log("numero semanas "+numero_semanas);
+
+        let fechaConsulta = moment(fecha_inicio).format('YYYY-MM-DD');
+        
+       let validacion =  await schemaFechaNoSemanas.validateAsync({fecha_inicio:fechaConsulta,numero_semanas});
+
+       console.log("validacion "+JSON.stringify(validacion));               
+
+        let results = [];       
+
+        results = await cursoSemanasService.getSemanasCalculadasPreviewPorFecha(fechaConsulta,numero_semanas);
+
+        response.status(200).json({
+                fecha_inicio,
+                numero_semanas,
+                semanas:results
+        });
+
+    } catch (e) {
+        handle.callbackErrorNoControlado(e, response);
+    } 
+};
+
+
+
+
 module.exports = {
-    getSemanasColegiaturasParaCargo
+    getSemanasColegiaturasParaCargo,
+    getSemanasCalculadasPreviewPagosCurso
 };

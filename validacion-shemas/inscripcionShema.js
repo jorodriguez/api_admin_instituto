@@ -35,4 +35,10 @@ const schemaInscripcion =
     genero:Joi.number().required(),
 });
 
-module.exports = {schemaInscripcion}
+const schemaFechaNoSemanas = 
+    Joi.object({                
+    fecha_inicio:Joi.date().required(),            
+    genero:Joi.number().required()
+});
+
+module.exports = {schemaInscripcion,schemaFechaNoSemanas}

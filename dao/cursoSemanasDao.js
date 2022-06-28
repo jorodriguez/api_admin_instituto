@@ -203,29 +203,25 @@ const getSemanaActualCurso = (idCurso)=>{
   `,[idCurso]);
 }
 
-//es para el proceso automatico de generacion de colegiaturas
-/*const getInformacionCrearColegiaturaSemanaActual = ()=>{
+const getSemanasCalculadasPreviewPorFecha = (fecha,numero_semanas)=>{
   return genericDao.findAll(`
-  select	c.id as id_semana_actual,
-  c.co_curso,
-  c.numero_semana_curso,      		
-  inscripcion.co_alumno,
-  al.nombre||' '||al.apellidos  as alumno,
-  inscripcion.* 
-from co_curso_semanas c inner join co_inscripcion inscripcion on inscripcion.co_curso = c.co_curso
-        inner join co_alumno al on al.id = inscripcion.co_alumno
-        inner join co_curso curso on curso.id = inscripcion.co_curso
-where       	
-  c.numero_semana_anio =  extract(week from getDate(''))::int 
-  and c.fecha_clase = getDate('')
-  and c.anio = extract(year from getDate(''))::int
-  and c.eliminado = false
-  and inscripcion.eliminado = false
-  and al.eliminado = false
-  and curso.eliminado = false
+  with fechas as (    
+      SELECT generate_series($1::date,(($1::date)  + interval '${numero_semanas - 1} week')::timestamp,'1 week')::date as dia
+  ) select ROW_NUMBER() over ( order by dia) as numero_semana_curso, 	   
+          to_char(f.dia,'mm-yyyy') as mes,		    
+          m.nombre as nombre_mes,
+          m.abreviatura as abreviatura_mes,
+          to_char(f.dia,'yyyy-MM-dd') as fecha_clase, 		        
+          to_char((f.dia + interval '1 week'),'yyyy-MM-dd')::date as fecha_fin_semana,
+          extract(week from f.dia)::int as numero_semana_anio,
+          extract(year from f.dia::date)::int as numero_anio,
+          lag(to_char(f.dia,'mm-yyyy')) over mes_window is null as generar_cargo_mensual
+  from fechas f  inner join si_meses m on m.id = to_char(f.dia,'mm')::integer
+  WINDOW mes_window as (partition by to_char(f.dia,'mm-yyyy') order by f.dia)  
+  `,[fecha]);
+}
 
-  `,[]);
-}*/
+
 const getInformacionCrearColegiaturaSemanaActual = ()=>{
   return genericDao.findAll(`
     select	
@@ -300,5 +296,6 @@ module.exports = {
   getSemanaCursoById,
   guardarRealcionCargoCursoSemana,
   getInformacionCrearColegiaturaSemanaActual,
-  getSemanasColegiaturasParaCargo
+  getSemanasColegiaturasParaCargo,
+  getSemanasCalculadasPreviewPorFecha
 };
