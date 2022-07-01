@@ -37,20 +37,20 @@ const getSemanasCalculadasPreviewPagosCurso = async (request,response) =>{
     
     try {
 
-        const { fecha_inicio,numero_semanas } = request.params;
+        const { fecha_inicio,numero_semanas,co_empresa } = request.params;
 
         console.log("fecha"+fecha_inicio);
         console.log("numero semanas "+numero_semanas);
 
         let fechaConsulta = moment(fecha_inicio).format('YYYY-MM-DD');
         
-       let validacion =  await schemaFechaNoSemanas.validateAsync({fecha_inicio:fechaConsulta,numero_semanas});
+       let validacion =  await schemaFechaNoSemanas.validateAsync({fecha_inicio:fechaConsulta,numero_semanas,co_empresa});
 
        console.log("validacion "+JSON.stringify(validacion));               
 
         let results = [];       
 
-        results = await cursoSemanasService.getSemanasCalculadasPreviewPorFecha(fechaConsulta,numero_semanas);
+        results = await cursoSemanasService.getSemanasCalculadasPreviewPorFecha(fechaConsulta,numero_semanas,co_empresa);
 
         response.status(200).json({
                 fecha_inicio,

@@ -203,22 +203,28 @@ const getSemanaActualCurso = (idCurso)=>{
   `,[idCurso]);
 }
 
-const getSemanasCalculadasPreviewPorFecha = (fecha,numero_semanas)=>{
+const getSemanasCalculadasPreviewPorFecha = (fecha,numero_semanas,co_empresa)=>{
   return genericDao.findAll(`
   with fechas as (    
       SELECT generate_series($1::date,(($1::date)  + interval '${numero_semanas - 1} week')::timestamp,'1 week')::date as dia
   ) select ROW_NUMBER() over ( order by dia) as numero_semana_curso, 	   
           to_char(f.dia,'mm-yyyy') as mes,		    
-          m.nombre as nombre_mes,
+          m.nombre as nombre_mes,          
+          to_char(f.dia,'dd') as numero_dia,		              
+          dia.nombre as nombre_dia,     
           m.abreviatura as abreviatura_mes,
           to_char(f.dia,'yyyy-MM-dd') as fecha_clase, 		        
           to_char((f.dia + interval '1 week'),'yyyy-MM-dd')::date as fecha_fin_semana,
           extract(week from f.dia)::int as numero_semana_anio,
           extract(year from f.dia::date)::int as numero_anio,
-          lag(to_char(f.dia,'mm-yyyy')) over mes_window is null as generar_cargo_mensual
+          lag(to_char(f.dia,'mm-yyyy')) over mes_window is null as generar_cargo_mensual,
+          false as mostrar,
+          false as generar_cargo
   from fechas f  inner join si_meses m on m.id = to_char(f.dia,'mm')::integer
+                  inner join cat_dia dia on dia.numero_dia  = extract(isodow from f.dia)::integer  		
+  where dia.co_empresa = $2                  
   WINDOW mes_window as (partition by to_char(f.dia,'mm-yyyy') order by f.dia)  
-  `,[fecha]);
+  `,[fecha,co_empresa]);
 }
 
 
