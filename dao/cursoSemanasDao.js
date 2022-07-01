@@ -218,6 +218,8 @@ const getSemanasCalculadasPreviewPorFecha = (fecha,numero_semanas,co_empresa)=>{
           extract(week from f.dia)::int as numero_semana_anio,
           extract(year from f.dia::date)::int as numero_anio,
           lag(to_char(f.dia,'mm-yyyy')) over mes_window is null as generar_cargo_mensual,
+          (f.dia < current_date) as es_fecha_pasada,          
+          (extract(week from f.dia)::int = extract(week from current_date)::int) as es_semana_actual,
           false as mostrar,
           false as generar_cargo
   from fechas f  inner join si_meses m on m.id = to_char(f.dia,'mm')::integer
