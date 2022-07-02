@@ -54,7 +54,12 @@ const createCurso = async (cursoData) => {
                 
                 console.log("curso creado "+idCursoCreado);               
                 
-                await cursoSemanasService.guardarSemanasCurso(idCursoCreado,cursoData.genero);
+                await cursoSemanasService
+                                .guardarSemanasCurso(
+                                                idCursoCreado,
+                                                cursoData.array_semanas_curso,
+                                                cursoData.genero
+                                );
                 
                 return idCursoCreado;
 

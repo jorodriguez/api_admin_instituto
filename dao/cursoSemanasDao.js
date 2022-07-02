@@ -18,6 +18,8 @@ const guardarCursoSemana = async (semanaData) => {
       fecha_fin_semana,
       fecha_clase,
       anio,      
+      generar_colegiatura,
+      identificador_cargo,
       genero    
     } = semanaData;
     
@@ -29,9 +31,11 @@ const guardarCursoSemana = async (semanaData) => {
             fecha_inicio_semana,
             fecha_fin_semana,
             fecha_clase,
-            anio,            
+            anio,       
+            generar_colegiatura,
+            identificador_cargo,     
             genero)
-          values($1,$2,$3,$4::date,$5::date,$6::date,$7,$8) RETURNING ID;
+          values($1,$2,$3,$4::date,$5::date,$6::date,$7,$8,$9,$10) RETURNING ID;
     `,[ co_curso,      
       numero_semana_curso,
       numero_semana_anio,
@@ -39,6 +43,8 @@ const guardarCursoSemana = async (semanaData) => {
       fecha_fin_semana,
       fecha_clase,
       anio,      
+      generar_colegiatura,
+      identificador_cargo,
       genero    ]);      
 
   }catch(e){  
@@ -123,6 +129,10 @@ const getSemanasColegiaturasParaCargo =  (uidCurso,idAlumno)=>{
   select sem.id, 
       curso.id as id_curso,
       especialidad.nombre as especialidad,                  
+      to_char(sem.fecha_clase,'dd') as numero_dia,		              
+      dia.nombre as nombre_dia,
+	    m.abreviatura as abreviatura_mes,
+	    m.nombre as nombre_mes,
       sem.numero_semana_anio,
       sem.numero_semana_curso,
       sem.fecha_inicio_semana,
@@ -133,6 +143,11 @@ const getSemanasColegiaturasParaCargo =  (uidCurso,idAlumno)=>{
       sem.anio,
       (sem.numero_semana_anio < extract(week from getDate(''))::int) as semana_ocurrida,
       (sem.numero_semana_anio = extract(week from getDate(''))::int) as semana_actual,
+      sem.generar_colegiatura,
+      sem.identificador_cargo,
+      (sem.fecha_clase < current_date) as es_fecha_pasada,
+      curso.cat_esquema_pago,
+      esquema.nombre as esquema,
       (select c.id 
           from co_cargo_balance_alumno c 
         where c.cat_cargo = $2 
@@ -142,6 +157,10 @@ const getSemanasColegiaturasParaCargo =  (uidCurso,idAlumno)=>{
             and c.eliminado = false) is not null as tiene_cargo
 from co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
                                 inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad                                                                                                                                            
+                                inner join cat_esquema_pago esquema on esquema.id = curso.cat_esquema_pago
+                                inner join cat_dia dia on dia.numero_dia  = extract(isodow from sem.fecha_clase)::integer  		
+                        									and dia.co_empresa = curso.co_empresa
+                    				 inner join si_meses m on m.id = to_char(sem.fecha_clase,'mm')::integer
 where  curso.uid = $1 
   and curso.eliminado = false                  
 order by sem.fecha_clase
@@ -256,6 +275,10 @@ const getQueryBaseSemanasCurso = (criterio)=>`
 select sem.id, 
 		  curso.id as id_curso,
 		  especialidad.nombre as especialidad,		  
+      to_char(sem.fecha_clase,'dd') as numero_dia,		              
+		  dia.nombre as nombre_dia,
+		  m.abreviatura as abreviatura_mes,
+		  m.nombre as nombre_mes,
 		  sem.numero_semana_anio,
 		  sem.numero_semana_curso,
       sem.fecha_inicio_semana,
@@ -266,10 +289,16 @@ select sem.id,
 		  sem.anio,
 		  (sem.numero_semana_anio < extract(week from getDate(''))::int) as semana_ocurrida,
 		  (sem.numero_semana_anio = extract(week from getDate(''))::int) as semana_actual,
-      bal.id is not null as tiene_cargo
+      sem.generar_colegiatura,
+      sem.identificador_cargo,
+      esquema.nombre as esquema_pago,
+      (sem.fecha_clase < current_date) as es_fecha_pasada      	  
 	from co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
-						inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad						
-            left join co_cargo_balance_alumno bal on bal.id = sem.co_cargo_balance_alumno
+						                inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad						
+                            inner join cat_esquema_pago esquema on esquema.id = curso.cat_esquema_pago
+                            inner join cat_dia dia on dia.numero_dia  = extract(isodow from sem.fecha_clase)::integer  		
+                                                  and dia.co_empresa = curso.co_empresa
+            				        inner join si_meses m on m.id = to_char(sem.fecha_clase,'mm')::integer
 	where  ${criterio ? criterio+' and ':''} 
 		      curso.eliminado = false
   order by sem.fecha_clase

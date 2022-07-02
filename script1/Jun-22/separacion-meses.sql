@@ -32,9 +32,17 @@ CREATE TABLE cat_esquema_pago
 
 insert into cat_esquema_pago(id,nombre, genero) values(1,'Semanal',1),(2,'Mensual',1);
 
-alter table co_curso add column cat_esquema_pago integer not null default 1 references cat_esquema_pago(id);
+alter table co_curso add column cat_esquema_pago integer references cat_esquema_pago(id);
+
+update  co_curso set cat_esquema_pago = 1;
+
+alter table co_curso alter column cat_esquema_pago set not null;
 
 alter table co_curso_semanas add column generar_colegiatura boolean not null default true;
+
+alter table co_curso_semanas add column identificador_cargo text;
+
+update co_curso_semanas set identificador_cargo = 'Semana '||numero_semana_curso::text;
 	
 
 /*with fechas as (    

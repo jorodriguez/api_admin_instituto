@@ -2,25 +2,25 @@ const cursoDao = require('../dao/cursoDao');
 const cursoSemanasDao = require('../dao/cursoSemanasDao');
 const CONSTANTES = require('../utils/Constantes');
 
-const guardarSemanasCurso = async (idCurso,genero) => {
+const guardarSemanasCurso = async (idCurso,arraySemanasCurso,genero) => {
         console.log("@guardarSemanasCurso "+idCurso);
         try {
                 
                 const curso = await cursoDao.getCursoById(idCurso);
 
-                if(curso && curso.activo == true){
+              /*  if(curso && curso.activo == true){
                         console.log("                                          ");
                         console.log("-----------EL CURSO YA ESTA ACTIVO - YA SE GENERARON LAS SEMANAS -------");
                         console.log("                                          ");
                         return true;
-                }
+                }*/
 
-                const semanasCurso = await cursoSemanasDao.getSeriesPeriodosCurso(curso.uid);
+                //const semanasCurso = await cursoSemanasDao.getSeriesPeriodosCurso(curso.uid);
                                 
-                if (semanasCurso && semanasCurso.length > 0) {
+                if (arraySemanasCurso && arraySemanasCurso.length > 0) {
                         
-                        for(let i =0; i < semanasCurso.length; i++){
-                                const element = semanasCurso[i];
+                        for(let i =0; i < arraySemanasCurso.length; i++){
+                                const element = arraySemanasCurso[i];
                                 console.log("agregando la semana del año "+element.numero_semana_anio+" no semana del curso "+element.numero_semana_curso);
                                 
                                 await cursoSemanasDao.guardarCursoSemana(
@@ -32,6 +32,8 @@ const guardarSemanasCurso = async (idCurso,genero) => {
                                                 fecha_fin_semana:element.fecha_fin_semana,
                                                 fecha_clase : element.fecha_clase,
                                                 anio:element.numero_anio,      
+                                                generar_colegiatura:element.generar_cargo,
+                                                identificador_cargo:"",
                                                 genero:genero
                                                 
                                         });

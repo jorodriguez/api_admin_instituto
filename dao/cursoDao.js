@@ -22,6 +22,7 @@ const createCurso = async (cursoData) => {
       nota,
       fecha_inicio_previsto,
       numero_semanas,
+      cat_esquema_pago,
       genero    
     } = cursoData;
 
@@ -30,8 +31,8 @@ const createCurso = async (cursoData) => {
     const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1",[cat_especialidad]);
 
     const id =  await genericDao.execute(`
-          insert into co_curso(cat_especialidad,cat_dia,hora_inicio,hora_fin,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,numero_semanas,foto,genero)
-          values($1,$2,$3,$4,$5,$6,$7,$8,$9::date,($9::date + interval '${numero_semanas} weeks'),$10,$11,$12,$13) RETURNING ID;
+          insert into co_curso(cat_especialidad,cat_dia,hora_inicio,hora_fin,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,numero_semanas,foto,cat_esquema_pago,genero)
+          values($1,$2,$3,$4,$5,$6,$7,$8,$9::date,($9::date + interval '${numero_semanas} weeks'),$10,$11,$12,$13,$14) RETURNING ID;
     `,[cat_especialidad,
       cat_dia,
       hora_inicio,//3
@@ -44,7 +45,8 @@ const createCurso = async (cursoData) => {
       co_sucursal,//10
       numero_semanas,//11
       especialidad.foto,//12
-      genero]);      //13
+      cat_esquema_pago,//13
+      genero]);      //14
 
       console.log("nuevo id del curso "+id);
 
@@ -229,10 +231,12 @@ curso.foto as foto_curso,
 (curso.fecha_genero::date = getDate('')) as es_nuevo,
 curso.fecha_inicio_previsto >= getDate('') as fecha_inicio_previsto_pasada,
 (curso.fecha_inicio_previsto = getDate('')+1) as inicia_manana,
-(select count(i.*) from co_inscripcion i inner join co_alumno a on a.id = i.co_alumno where i.co_curso = curso.id and i.eliminado = false and a.eliminado=false) as inscripciones
+(select count(i.*) from co_inscripcion i inner join co_alumno a on a.id = i.co_alumno where i.co_curso = curso.id and i.eliminado = false and a.eliminado=false) as inscripciones,
+esquema.nombre as esquema
 from co_curso curso inner join cat_especialidad esp on esp.id = curso.cat_especialidad  
-inner join cat_dia dia on dia.id = curso.cat_dia
-  inner join co_sucursal suc on suc.id = curso.co_sucursal
+                    inner join cat_dia dia on dia.id = curso.cat_dia
+                    inner join co_sucursal suc on suc.id = curso.co_sucursal
+                    inner join cat_esquema_pago esquema on esquema.id = curso.cat_esquema_pago
 where 
   ${criterio}  
   ${criterio ? ' and ':''} 

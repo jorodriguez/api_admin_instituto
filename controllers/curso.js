@@ -100,6 +100,7 @@ const createCurso = async (request, response) => {
             nota,
             fecha_inicio_previsto,
             fecha_fin_previsto,      
+            array_semanas_curso,
             genero } = request.body;
         
         const results = await cursoService.createCurso(cursoData);
