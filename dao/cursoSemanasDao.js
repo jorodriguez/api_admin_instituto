@@ -222,10 +222,56 @@ const getSemanaActualCurso = (idCurso)=>{
   `,[idCurso]);
 }
 
-const getSemanasCalculadasPreviewPorFecha = (fecha,numero_semanas,co_empresa)=>{
+const getSemanasCalculadasPreviewPorFecha = (fecha,numero_pagos,esquema,co_empresa)=>{
+
+  const ID_SEMANAL = 1;
+  const ID_MENSUAL = 2;
+  let periodicidad;
+  let intervalo = numero_pagos - 1;
+   
+  if(esquema == ID_SEMANAL){
+    periodicidad = ' week';    
+  }
+  if(esquema == ID_MENSUAL){
+    periodicidad = ' month';
+  }
+
+  console.log(` consulta ${intervalo} ${periodicidad} `);
+
+
   return genericDao.findAll(`
   with fechas as (    
-      SELECT generate_series($1::date,(($1::date)  + interval '${numero_semanas - 1} week')::timestamp,'1 week')::date as dia
+      SELECT generate_series($1::date,(($1::date)  + interval '${intervalo} ${periodicidad}')::timestamp,'1 ${periodicidad}')::date as dia
+  ) select ROW_NUMBER() over ( order by dia) as numero, 	   
+          to_char(f.dia,'mm-yyyy') as mes,		    
+          m.nombre as nombre_mes,          
+          to_char(f.dia,'dd') as numero_dia,		              
+          dia.nombre as nombre_dia,     
+          m.abreviatura as abreviatura_mes,
+          to_char(f.dia,'yyyy-MM-dd') as fecha_clase, 		        
+          to_char((f.dia + interval '1 week'),'yyyy-MM-dd')::date as fecha_fin_semana,
+          extract(week from f.dia)::int as numero_semana_anio,
+          extract(year from f.dia::date)::int as numero_anio,          
+          (f.dia < current_date) as es_fecha_pasada,          
+          (extract(week from f.dia)::int = extract(week from current_date)::int) as es_semana_actual,
+          ROW_NUMBER() over ( order by dia) = 1 as es_primer_fecha,
+          case when ROW_NUMBER() over ( order by dia) = 1 then 
+          	to_char(f.dia,'yyyy-MM-dd')
+          ELSE
+              $1::text
+          END
+          as fecha_cargo,
+          true as generar_cargo
+  from fechas f  inner join si_meses m on m.id = to_char(f.dia,'mm')::integer
+                  inner join cat_dia dia on dia.numero_dia  = extract(isodow from f.dia)::integer  		
+  where dia.co_empresa = $2                    
+  `,[fecha,co_empresa]);
+}
+
+/*const getSemanasCalculadasPreviewPorFecha = (fecha,numero_pagos,esquema,co_empresa)=>{
+  return genericDao.findAll(`
+  with fechas as (    
+      SELECT generate_series($1::date,(($1::date)  + interval '${numero_pagos - 1} week')::timestamp,'1 week')::date as dia
   ) select ROW_NUMBER() over ( order by dia) as numero_semana_curso, 	   
           to_char(f.dia,'mm-yyyy') as mes,		    
           m.nombre as nombre_mes,          
@@ -239,14 +285,15 @@ const getSemanasCalculadasPreviewPorFecha = (fecha,numero_semanas,co_empresa)=>{
           lag(to_char(f.dia,'mm-yyyy')) over mes_window is null as generar_cargo_mensual,
           (f.dia < current_date) as es_fecha_pasada,          
           (extract(week from f.dia)::int = extract(week from current_date)::int) as es_semana_actual,
-          false as mostrar,
+          case when ROW_NUMBER() over ( order by dia) = 1 then 
+          	to_char(f.dia,'yyyy-MM-dd') as fecha_clase
           false as generar_cargo
   from fechas f  inner join si_meses m on m.id = to_char(f.dia,'mm')::integer
                   inner join cat_dia dia on dia.numero_dia  = extract(isodow from f.dia)::integer  		
   where dia.co_empresa = $2                  
   WINDOW mes_window as (partition by to_char(f.dia,'mm-yyyy') order by f.dia)  
   `,[fecha,co_empresa]);
-}
+}*/
 
 
 const getInformacionCrearColegiaturaSemanaActual = ()=>{
@@ -336,3 +383,4 @@ module.exports = {
   getSemanasColegiaturasParaCargo,
   getSemanasCalculadasPreviewPorFecha
 };
+

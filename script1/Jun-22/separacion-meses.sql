@@ -45,6 +45,9 @@ alter table co_curso_semanas add column identificador_cargo text;
 update co_curso_semanas set identificador_cargo = 'Semana '||numero_semana_curso::text;
 	
 
+        update cat_esquema_pago set nombre ='Semana' where id = 1;
+update cat_esquema_pago set nombre ='Mes' where id = 2;
+
 /*with fechas as (    
   select generate_series('2022-01-05',(('2022-01-05'::date)  + interval '12 week')::timestamp,'1 week')::date as dia
 ) select ROW_NUMBER() over ( order by dia) as numero_semana_curso, 	   
