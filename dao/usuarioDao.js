@@ -23,7 +23,55 @@ function obtenerCorreosPorTema(co_sucursal, id_tema) {
 }
 
 
+const getUsuarioPorSucursal = (idSucursal, idTipoUsario) => {
+    return genericDao.findAll(` 
+    
+WITH roles_usuario AS(
+	select rel.usuario as id_usuario
+		,array_to_json(
+			array_agg(
+				json_build_object(
+							'si_usuario_sucursal_rol',rel.id, 
+							'si_rol',rol.id,
+							'rol',rol.nombre					
+							)
+					)	
+				) as roles
+	from si_usuario_sucursal_rol rel inner join si_rol rol on rel.si_rol = rol.id
+	where rel.co_sucursal = $1
+		and rel.eliminado = false 
+		and rol.eliminado = false		
+	group by rel.usuario	
+) SELECT U.ID,
+            U.ALIAS,
+	        U.NOMBRE,
+	        U.CORREO,
+	        U.PASSWORD,
+	        U.CO_SUCURSAL,
+	        U.TOKEN,
+	        to_char(U.HORA_ENTRADA,'HH24:MI')::text as hora_entrada,
+             to_char(U.HORA_SALIDA,'HH24:MI')::text as hora_salida,
+	        U.FOTO,
+	        U.ACTIVO,
+	        U.MOTIVO_BAJA,
+	        U.FECHA_BAJA,
+	        U.MINUTOS_GRACIA_ENTRADA,
+             SUC.NOMBRE AS NOMBRE_SUCURSAL,                        
+             U.ACCESO_SISTEMA,
+             U.SUELDO_MENSUAL,
+             U.SUELDO_QUINCENAL,
+             ru.roles,
+             EXTRACT(WEEK FROM  u.fecha_genero) = EXTRACT(WEEK FROM  getDate('')) as nuevo_ingreso
+        FROM USUARIO U INNER JOIN CO_SUCURSAL SUC ON SUC.ID = U.CO_SUCURSAL 		        
+        				INNER JOIN roles_usuario ru on ru.id_usuario = u.id
+        WHERE 	        
+             SUC.ID = $1 
+             AND U.ACTIVO = TRUE
+	        AND U.ELIMINADO = FALSE
+        ORDER BY U.NOMBRE `, [idSucursal]);
+};
 
+/*
 const getUsuarioPorSucursal = (idSucursal, idTipoUsario) => {
     return genericDao.findAll(` 
     SELECT U.ID,
@@ -55,7 +103,7 @@ const getUsuarioPorSucursal = (idSucursal, idTipoUsario) => {
 	        AND U.ELIMINADO = FALSE
         ORDER BY U.NOMBRE `, [idSucursal, idTipoUsario]);
 };
-
+*/
 
 const insertarUsuario = async (usuarioData) => {
     console.log("@insertarUsuario");

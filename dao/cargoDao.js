@@ -126,9 +126,9 @@ const completarRegistroRecargoMensualidad = (idCargoMensualidad, idRecargo, gene
 };
 
 
-const getCatalogoCargosPorEmpresa = (idEmpresa) => {
-    console.log("@getCatalogoCargosPorEmpresa");
-    return genericDao.findAll("SELECT * from cat_cargo WHERe sistema = true or co_empresa = $1 and eliminado = false  ORDER BY id", [idEmpresa]);
+const getCatalogoCargosPorEmpresa = (idEmpresa,idSucursal) => {
+    console.log("@getCatalogoCargosPorEmpresaSucursal");
+    return genericDao.findAll("SELECT * FROM cat_cargo WHERE sistema = true or (co_empresa = $1 and co_sucursal = $2)  and eliminado = false  ORDER BY sistema desc,nombre asc", [idEmpresa,idSucursal]);
 };
 
 const getCargosAlumno = (uidAlumno,limite) => {

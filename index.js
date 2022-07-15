@@ -140,7 +140,7 @@ app.get('/pagos/imprimir/:id_pago/:id_usuario',checkAuth, pagos.imprimirComproba
 
 app.post('/cargos/registrar',checkAuth, cargos.registrarCargo);
 //app.post('/cargos/registrarColegiatura',checkAuth, cargos.registrarCargo);
-app.get('/cargos/:id_empresa', checkAuth,cargos.getCatalogoCargosPorEmpresa);
+app.get('/cargos/:id_empresa/:id_sucursal', checkAuth,cargos.getCatalogoCargosPorEmpresa);
 app.get('/cargos/alumno/:id_alumno/:limite',checkAuth, cargos.getCargosAlumno);
 app.get('/balance/:id_alumno',checkAuth, cargos.getBalanceAlumno);
 app.put('/cargos/:id_alumno',checkAuth, cargos.eliminarCargos);

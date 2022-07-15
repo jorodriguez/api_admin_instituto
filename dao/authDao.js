@@ -12,10 +12,13 @@ const getQueryBase = (condicion) => {
             su.enviar_recibo_correo,
             su.nombre AS nombre_sucursal,            
             su.foto AS foto_sucursal,
+            su.foto AS logotipo_sucursal,
             su.pago_pendiente,
             su.pago_pendiente_imagen,
             su.pago_pendiente_fondo,
             su.pago_pendiente_bloquear,
+            su.color_tema,
+            su.with_logotipo,
             em.id AS id_empresa,
             em.nombre as nombre_empresa,
             em.logotipo as logotipo_empresa,
@@ -80,7 +83,7 @@ const getQueryBase = (condicion) => {
                           and ro.eliminado = false                          
                    ) as roles
     FROM usuario u inner join co_sucursal su on u.co_sucursal = su.id
-      inner join co_empresa em on em.id = u.co_empresa    
+                   inner join co_empresa em on em.id = u.co_empresa    
     WHERE ${condicion}
         AND u.acceso_sistema = true 
         AND u.activo = true

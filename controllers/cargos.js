@@ -53,9 +53,9 @@ const getCatalogoCargosPorEmpresa = (request, response) => {
 
 try{
     
-    const {id_empresa } = request.params;
+    const {id_empresa,id_sucursal } = request.params;
 
-    cargoService.getCatalogoCargosPorEmpresa(id_empresa)
+    cargoService.getCatalogoCargosPorEmpresa(id_empresa,id_sucursal)
     .then(results=>{
         response.status(200).json(results);
     }).catch(error=>{

@@ -5,7 +5,7 @@ const {
 } = require("../exception/exeption");
 const { isEmptyOrNull } = require("../utils/Utils");
 
-const getEspecialidad = async (idEmpresa) => {
+const getEspecialidad = async (idEmpresa,idSucursal) => {
   console.log("@getEspecialidad");
 
   return await genericDao.findAll(
@@ -21,10 +21,11 @@ const getEspecialidad = async (idEmpresa) => {
       from cat_especialidad e inner join cat_duracion d on d.id = e.cat_duracion
       where e.activo = true
           and e.co_empresa = $1
+          and e.co_sucursal = $2
           and e.eliminado = false
       order by e.nombre       
       `,
-    [idEmpresa]
+    [idEmpresa,idSucursal]
   );
 };
 
