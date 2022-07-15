@@ -133,6 +133,45 @@ const deleteCurso = async (request, response) => {
 
 
 
+const cerrarInscripcionesCurso = async (request, response) => {
+    console.log("@cerrarInscripcionesCurso");
+    try {
+        
+        const id =  parseInt(request.params.id);
+
+        const cursoData = {  motivo,genero } = request.body;
+        
+        const results = await cursoService.cerrarInscripcionesCurso(id,cursoData);
+       
+        response.status(200).json(results);       
+       
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+const abrirInscripcionesCurso = async (request, response) => {
+    console.log("@abrirInscripcionesCurso");
+    try {
+        
+        const id =  parseInt(request.params.id);
+
+        const cursoData = {  motivo,genero } = request.body;
+        
+        const results = await cursoService.abrirInscripcionesCurso(id,cursoData);
+       
+        response.status(200).json(results);       
+       
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+
+
 const updateCurso = async (request, response) => {
     console.log("@updateCurso");
     try {
@@ -219,5 +258,7 @@ module.exports = {
     getCursosByUid,
     getSeriesPeriodosCurso,
     iniciarCurso,
-    getCursosSucursalActivados
+    getCursosSucursalActivados,
+    cerrarInscripcionesCurso,
+    abrirInscripcionesCurso
 };

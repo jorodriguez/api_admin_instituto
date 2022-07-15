@@ -92,5 +92,7 @@ module.exports = {
         getCursosSucursal: cursoDao.getCursosSucursal,
         getCursosActivoSucursal: cursoDao.getCursosActivoSucursal,
         getCursosInicianProximosDias: cursoDao.getCursosInicianProximosDias,
-        getCursoByUid: cursoDao.getCursoByUid        
+        getCursoByUid: cursoDao.getCursoByUid,
+        cerrarInscripcionesCurso:cursoDao.cerrarInscripcionesCurso,
+        abrirInscripcionesCurso:cursoDao.abrirInscripcionesCurso,
 };

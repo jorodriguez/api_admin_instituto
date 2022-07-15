@@ -141,6 +141,43 @@ const eliminarCurso = async (id,cursoData) => {
   );
 };
 
+const cerrarInscripcionesCurso = async (id,cursoData) => {
+  console.log("@cerrarInscripcionesCurso");
+  
+  const { motivo,genero } = cursoData;
+
+  return await genericDao.execute(    `
+                                    UPDATE CO_CURSO
+                                    SET inscripciones_cerradas = true,
+                                        motivo_inscripciones_cerradas = $2,
+                                        fecha_modifico = (getDate('')+getHora('')),
+                                        modifico = $3
+                                    WHERE id = $1
+                                    RETURNING ID;
+                                    `,
+    [id,motivo, genero]
+  );
+};
+
+const abrirInscripcionesCurso = async (id,cursoData) => {
+  console.log("@abrirInscripcionesCurso");
+  
+  const { motivo,genero } = cursoData;
+
+  return await genericDao.execute(    `
+                                    UPDATE CO_CURSO
+                                    SET inscripciones_cerradas = false,
+                                        motivo_inscripciones_cerradas = $2,
+                                        fecha_modifico = (getDate('')+getHora('')),
+                                        modifico = $3
+                                    WHERE id = $1
+                                    RETURNING ID;
+                                    `,
+    [id,motivo, genero]
+  );
+};
+
+
 
 
 const getCursosSucursal = async (idSucursal) => {
@@ -226,6 +263,8 @@ curso.activo,
 curso.numero_semanas,
 curso.uid,
 curso.foto as foto_curso,
+curso.inscripciones_cerradas,
+curso.motivo_inscripciones_cerradas,
 (curso.fecha_genero::date = getDate('')) as es_nuevo,
 curso.fecha_inicio_previsto >= getDate('') as fecha_inicio_previsto_pasada,
 (curso.fecha_inicio_previsto = getDate('')+1) as inicia_manana,
@@ -253,5 +292,7 @@ module.exports = {
   getCursoByUid,  
   marcarCursoComoIniciado,
   actualizarTotalAdeudaAlumno,
-  getCursosActivoSucursal
+  getCursosActivoSucursal,
+  cerrarInscripcionesCurso,
+  abrirInscripcionesCurso
 };
