@@ -23,6 +23,21 @@ const guardarInscripcion = async(inscripcionData)=>{
     return alumno;
 }
 
+const enviarCorreoBienvenida = async (id_inscripcion) => {
+
+    const inscripcion = await  inscripcionDao.findById(id_inscripcion);
+
+    await notificacionAlumnoService
+        .enviarCorreoBienvenida(
+            {
+                id_inscripcion:id_inscripcion,
+                co_empresa:inscripcion.co_empresa,
+                co_sucursal:inscripcion.co_sucursal,
+                genero:inscripcion.genero
+            });
+    
+}
+
 const confirmarInscripcion = async (idInscripcion,inscripcionData)=>{    
     
     //const data = {confirmacion,nota,genero}=inscripcionData;
@@ -92,5 +107,6 @@ module.exports = {
     getInscripcionesAlumno:inscripcionDao.getInscripcionesAlumno,
     getInscripcionesActivasAlumno:inscripcionDao.getInscripcionesActivasAlumno,
     getInscripcionesCurso:inscripcionDao.getInscripcionesCurso,
-    modificarCostoColegiaturaInscripcion
+    modificarCostoColegiaturaInscripcion,
+    enviarCorreoBienvenida
 };

@@ -4,13 +4,13 @@ const handle = require('../helpers/handlersErrors');
 const cursoService = require('../services/cursoService');
 const cursoSemanasService = require('../services/cursoSemanasService');
 
-const getCursosActivos = async (request, response) => {
-    console.log("@getCursosActivos");
+const getCursosActivosInscripcionesAbiertas = async (request, response) => {
+    console.log("@getCursosActivosInscripcionesAbiertas");
     try {
         
         const { id_sucursal,id_especialidad } = request.params;
         console.log(" id_sucursal,id_especialidad",id_sucursal+"  "+id_especialidad);
-        const results = await cursoService.getCursosActivos(id_sucursal,id_especialidad)        
+        const results = await cursoService.getCursosActivosInscripcionesAbiertas(id_sucursal,id_especialidad)        
         response.status(200).json(results);       
        
     } catch (e) {
@@ -33,6 +33,25 @@ const getCursosSucursal = async (request, response) => {
         handle.callbackErrorNoControlado(e, response);
     }
 };
+/*
+const getCursosSucursalEstatusInscripciones = async (request, response) => {
+    console.log("@getCursosSucursalEstatusInscripciones");
+    try {
+        
+        const { id,estatus_inscripciones } = request.params;
+        console.log(" id_sucursal",id);
+        console.log(" estatus_inscripciones ",estatus_inscripciones);
+
+        const results = await cursoService.getCursosSucursalEstatusInscripciones(id,estatus_inscripciones);        
+        
+        response.status(200).json(results);       
+       
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+*/
 
 const getCursosSucursalActivados = async (request, response) => {
     console.log("@getCursosSucursalActivados");
@@ -252,7 +271,7 @@ module.exports = {
     createCurso,
     updateCurso,
     deleteCurso,
-    getCursosActivos,
+    getCursosActivosInscripcionesAbiertas,
     getCursosSucursal,
     getCursosProximosIniciar,
     getCursosByUid,
@@ -260,5 +279,6 @@ module.exports = {
     iniciarCurso,
     getCursosSucursalActivados,
     cerrarInscripcionesCurso,
-    abrirInscripcionesCurso
+    abrirInscripcionesCurso,
+  
 };

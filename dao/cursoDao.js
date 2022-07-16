@@ -185,14 +185,20 @@ const getCursosSucursal = async (idSucursal) => {
     return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 '),[idSucursal]);  
 };
 
-const getCursosActivoSucursal = async (idSucursal,activo) => {
+/*const getCursosSucursalEstatusInscripciones = async (idSucursal,estatusInscripciones) => {
+  console.log("@getCursosSucursalEstatusInscripciones");
+  return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 and curso.inscripciones_cerradas = $2 '),[idSucursal,estatusInscripciones]);  
+};
+*/
+const getCursosActivoSucursal = async (idSucursal) => {
   console.log("@getCursosActivoSucursal");  
-  return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 AND curso.activo = $2 '),[idSucursal,activo]);
+  return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1  '),[idSucursal]);
 };
   
-const getCursosActivos = async (idSucursal,idEspecialidad) => {
+//para las inscripciones
+const getCursosActivosInscripcionesAbiertas = async (idSucursal,idEspecialidad) => {
   console.log("@getcursosActivos");
-  return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 and esp.id = $2 '),[idSucursal,idEspecialidad]);
+  return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 and esp.id = $2 AND curso.inscripciones_cerradas = false'),[idSucursal,idEspecialidad]);
 };
 
 const getCursosInicianHoy = async () => {
@@ -287,7 +293,7 @@ module.exports = {
   getCursosInicianProximosDias,
   eliminarCurso,
   getCursosInicianHoy,
-  getCursosActivos,
+  getCursosActivosInscripcionesAbiertas,
   getCursosSucursal,
   getCursoByUid,  
   marcarCursoComoIniciado,

@@ -75,6 +75,22 @@ const modificarAlumno = async (id, alumnoData) => {
 
 }
 
+
+const modificarCorreoAlumno = async (uid, alumnoData) => {
+    console.log("@modificarCorreoAlumno " + JSON.stringify(alumnoData));
+    const {  correo, genero } = alumnoData;
+
+    return await genericDao.execute(`
+            UPDATE CO_ALUMNO
+                    SET correo=$2,
+                        MODIFICO = $3,
+                        FECHA_MODIFICO=(getDate('')+getHora(''))
+            WHERE uid = $1
+            RETURNING ID;
+    `, [uid,correo,genero]);
+
+}
+
 const modificarFotoPerfil = async (idAlumno, metadaFoto, genero) => {
     console.log("@modificarFotoPerfil");
 
@@ -220,5 +236,6 @@ module.exports = {
     bajaAlumno,
     activarAlumnoEliminado,
     modificarAlumno,
-    getAlumnoPorIdInfoEmpresaSucursal
+    getAlumnoPorIdInfoEmpresaSucursal,
+    modificarCorreoAlumno
 }
