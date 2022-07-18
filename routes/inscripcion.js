@@ -5,6 +5,7 @@ const checkAuth = require('./check-auth');
 
 //inscripcion
 router.post('/',checkAuth, inscripcion.guardarInscripcion);
+router.post('/reenviar_correo_bienvenida',checkAuth, inscripcion.enviarCorreoBienvenida);
 //router.put('/confirmar/:id_inscripcion',checkAuth, inscripcion.confirmarInscripcion);
 router.put('/:id_inscripcion',checkAuth, inscripcion.modificarColegiaturaInscripcion);
 router.get('/:id_sucursal',checkAuth, inscripcion.getInscripciones);

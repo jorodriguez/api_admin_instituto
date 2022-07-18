@@ -181,7 +181,10 @@ const getQueryBase = (criterio) => `
     to_char(a.fecha_nacimiento,'DD-MM-YYYY') as fecha_nacimiento_format,          
     a.uid,    
     curso.foto as foto_curso,
-    curso.activo
+    curso.activo,
+    curso.co_empresa,
+    curso.co_sucursal,
+    i.genero
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
     inner join cat_dia dia on dia.id = curso.cat_dia

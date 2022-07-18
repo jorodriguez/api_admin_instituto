@@ -2,6 +2,7 @@
 const inscripcionService = require('../services/inscripcionService');
 const handle = require('../helpers/handlersErrors');
 const { schemaInscripcion } = require('../validacion-shemas/inscripcionShema');
+const alumnoService = require('../services/alumnoService');
 
 const guardarInscripcion = async (request, response) => {
     console.log("@guardarInscripcion");
@@ -160,6 +161,40 @@ const modificarColegiaturaInscripcion = async (request, response) => {
     }
 };
 
+
+const enviarCorreoBienvenida = async (request, response) => {
+    
+    console.log("@enviarCorreoBienvenida");
+    
+    try {
+
+        const { uuid_alumno,correo,genero } = request.body;
+        
+        console.log("uuid_alumno "+uuid_alumno);
+        console.log("correo "+correo);
+
+        await alumnoService.modificarCorreoAlumno(uuid_alumno,{correo,genero});
+
+        const inscripciones = await inscripcionService.getInscripcionesAlumno(uuid_alumno);
+
+        for(let i = 0; i < inscripciones.length; i++){
+            
+            const inscripcion = inscripciones[i];
+
+            console.log("inscripcion "+JSON.stringify(inscripcion));
+            
+            await inscripcionService.enviarCorreoBienvenida(inscripcion.id_inscripcion);
+        }
+        
+        response.status(200).json({enviado:true});
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
 module.exports = {
     guardarInscripcion,
     confirmarInscripcion,
@@ -168,5 +203,6 @@ module.exports = {
     getInscripcionesCurso,
     getInscripcionesCursoActivoAlumno,
     getInscripcionesSucursalCurso,
-    modificarColegiaturaInscripcion
+    modificarColegiaturaInscripcion,
+    enviarCorreoBienvenida
 };

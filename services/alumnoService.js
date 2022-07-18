@@ -19,5 +19,5 @@ module.exports = {
                     bajaAlumno:alumnoDao.bajaAlumno,
                     activarAlumnoEliminado:alumnoDao.activarAlumnoEliminado,
                     getAlumnoPorUId:alumnoDao.getAlumnoPorUId,
-                    
+                    modificarCorreoAlumno:alumnoDao.modificarCorreoAlumno
                  };
