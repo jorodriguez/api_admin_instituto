@@ -1,38 +1,36 @@
 
 const usuarioService = require('../services/usuarioService');
 const handle = require('../helpers/handlersErrors');
+const { MensajeRetorno } = require('../utils/MensajeRetorno');
 
 const crearUsuario = (request, response) => {
-
+	console.log("@@crearUsuario");
 	try {
 
 		const usuarioData = { alias,nombre,co_tipo_usuario, correo, id_sucursal,id_empresa, hora_entrada, hora_salida,sueldo_mensual, genero } = request.body;
 
-		var proceso = null;		
+		let proceso = null;		
 
-		if (usuarioData.correo != null && usuarioData.correo != undefined && usuarioData.correo != '') {
-			console.log("USUARIO CON CORREO " + usuarioData.correo);
-			proceso = usuarioService.crearUsuarioConCorreo(usuarioData);
-		} else {
-			console.log("USUARIO NORMAL (SIN CORREO)");
-			proceso = usuarioService.crearUsuario(usuarioData);
-		}
+		if (!correo) {
+			console.log("El correo es requerido");
+			return new MensajeRetorno(false, "El correo es requerido", null);
+		} 
+		
+		console.log("USUARIO CON CORREO " + usuarioData.correo);
+		
+		proceso = usuarioService.crearUsuarioConCorreo(usuarioData);
 
 		proceso.then(result => {
-			//enviar notificacion de alta de usuario
-			console.log("nuevo usuario registrado " + JSON.stringify(result));
-
-			//let mensajeRetorno = new MensajeRetorno(true,"Usuario registrado",null);
-			//ENVIAR CONTRASEÑA 
+    		console.log("nuevo usuario registrado " + JSON.stringify(result));
 			response.status(200).json(result);
 
 		}).catch(error => {
-			console.error(error);
+			console.error("error:"+error);
 			handle.callbackError(error, response);
 		});
 
 	} catch (e) {
-		console.error(e);
+		console.error("error no controlado"+e);
 		handle.callbackErrorNoControlado(e, response);
 	}
 };

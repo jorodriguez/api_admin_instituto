@@ -12,44 +12,24 @@ function getUsuariosPorSucursal(idSucursal) {
 const crearUsuarioConCorreo = async (usuarioData) =>{
     console.log("@crearUsuarioConCorreo");
 
-    const correoEncontrado = await usuarioDao.validarCorreoUsuario(usuarioData.correo);
+    const busquedaCorreo = await usuarioDao.validarCorreoUsuario(usuarioData.correo);
+
+    console.log("correoEncontrado "+JSON.stringify(busquedaCorreo));
     
-    if(correoEncontrado){
+    if(busquedaCorreo.encontrado){
         return new MensajeRetorno(false, "El correo ya se encuentra registrado", null);
     }
 
-    const password = await generarRandomPassword();
+    const passwordData = await generarRandomPassword();   
 
-    const insertUsuario = await insertarUsuario(usuarioData);
+    usuarioData.password_encriptado = passwordData.encripted;
 
-    await enviarCorreoBienvenida({id_usuario: insertUsuario.id,clave:});
+    const usuarioId = await insertarUsuario(usuarioData);
+
+    await enviarCorreoBienvenida({id_usuario: usuarioId,clave:passwordData.password});
 
     return new MensajeRetorno(true, "Se registró el usuario", null);
       
-    
-   /* return new Promise((resolve, reject) => {
-        usuarioDao
-            .validarCorreoUsuario(usuarioData.correo)
-            .then(encontrado => {
-                if (encontrado) {
-                    resolve(
-                        new MensajeRetorno(false, "El correo ya se encuentra registrado", null)
-                    );
-                } else {
-                    insertarUsuario(usuarioData)
-                        .then(result => {
-
-                            //enviar correo
-                                await 
-
-                            resolve(
-                                new MensajeRetorno(true, "Se registró el usuario", null)
-                            );
-                        }).catch(error => reject(new MensajeRetorno(false, "Error", error)));
-                }
-            }).catch(error => reject(new MensajeRetorno(false, "Error", error)));
-    });*/
-    
 }
 
 function insertarUsuario(usuarioData) {

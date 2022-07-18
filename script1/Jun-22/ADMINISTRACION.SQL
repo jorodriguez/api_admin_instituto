@@ -9,3 +9,6 @@ insert into si_usuario_sucursal_rol(usuario,co_sucursal,si_rol,co_empresa,genero
 INSERT INTO SI_ROL_OPCION (si_rol,si_opcion,genero) 
 VALUES (8,1,1),
 	  (8,3,1);
+
+
+

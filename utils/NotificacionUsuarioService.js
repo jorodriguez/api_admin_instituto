@@ -8,19 +8,20 @@ const sucursalDao = require('../dao/sucursalDao');
 const enviarCorreoBienvenida = async (data = {id_usuario,clave,genero}) => {    
 try{
    
-    const {id_usuario,clave,genero}=data; 
+    const {id_usuario,clave,genero} = data; 
 
    const usuario = await usuarioDao.findById(id_usuario);
 
    if(!usuario){
+       console.log("No se encontro el usuario");
         return;
    }
 
-   const sucursal = await sucursalDao.getSucursalPorId(usuario.co_sucursal);
+    const sucursal = await sucursalDao.getSucursalPorId(usuario.co_sucursal);
 
-   const usuarioGenero = await usuarioDao.findById(genero);
+    //const usuarioGenero = await usuarioDao.findById(genero);
    
-   const params = {        
+    const params = {        
         nombre: usuario.nombre,        
         alias: usuario.alias,        
         nombre_sucursal: sucursal.nombre,
@@ -29,14 +30,14 @@ try{
         hora_salida: usuario.hora_salida,
         clave: clave,
         ver_clave:true
-   };
+    };
 
-   const templateHtml = await templateService.loadTemplateEmpresa({params,
+    const templateHtml = await templateService.loadTemplateEmpresa({params,
                                         idEmpresa:co_empresa,
                                         idUsuario:genero,
                                         tipoTemplate:TIPO_TEMPLATE.BIENVENIDA_EMPLEADO});
         
-    const asunto = `Bienvenido ${usuario.nombre}`;
+    const asunto = `Bienvenido(a) ${usuario.nombre}`;
     
     const para =  [usuario.correo];
 

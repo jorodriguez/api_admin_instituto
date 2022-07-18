@@ -9,4 +9,5 @@ module.exports = {
     VE_VENTA_DETALLE:'ve_venta_detalle',
     VE_MOVIMIENTO:'ve_movimiento',
     CAT_TIPO_MOVIMIENTO:'cat_tipo_movimiento',
+    SI_ROL:'si_rol',
 }

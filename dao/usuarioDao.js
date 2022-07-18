@@ -67,7 +67,8 @@ WITH roles_usuario AS(
         WHERE 	        
              SUC.ID = $1 
              AND U.ACTIVO = TRUE
-	        AND U.ELIMINADO = FALSE
+             AND U.ELIMINADO = FALSE
+             AND U.visible_catalogo = true            
         ORDER BY U.NOMBRE `, [idSucursal]);
 };
 
@@ -128,7 +129,7 @@ const insertarUsuario = async (usuarioData) => {
 
 const validarCorreoUsuario = (correo) => {
     return genericDao
-        .findOne("select count(u.id) > 0 from usuario u where TRIM(correo) = TRIM($1) and eliminado = false limit 1", [correo]);
+        .findOne("select count(u.id) > 0 as encontrado from usuario u where TRIM(correo) = TRIM($1) and eliminado = false limit 1", [correo]);
 };
 
 const buscarCorreo = (correo) => {

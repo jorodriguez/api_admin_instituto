@@ -4,7 +4,7 @@ const { encriptar } = require('../utils/Utils');
 const generarRandomPassword = () => {
 
     return new Promise((resolve, reject) => {
-        var respuesta = { password: "", encripted: "" };
+        const respuesta = { password: "", encripted: "" };
 
         genericDao
             .findOne(
