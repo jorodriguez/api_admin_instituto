@@ -88,6 +88,7 @@ const getQueryBase = (condicion) => {
         AND u.acceso_sistema = true 
         AND u.activo = true
         AND u.eliminado = false 
+        AND su.eliminado =false
 `;
 
 };
