@@ -12,3 +12,36 @@ alter table si_rol add column descripcion text;
 update si_rol set descripcion = 'Tiene acceso a todas las opciones.' where id = 1;
 
 update usuario set visible_catalogo = false where id in (1,125)
+
+delete from si_usuario_sucursal_rol where eliminado = true;
+
+alter table co_template add column template_correo_registro_usuario text;
+
+
+update co_template set template_correo_registro_usuario = '
+<table width="100%" border="0" style="padding-top:10px" cellspacing="0" cellpadding="0">
+    <tr>
+        <td class="bodycopy">         
+			<p>
+            	Hola <strong>{{nombre}}</strong>,           
+            </p>
+            <p>
+            	Te damos la bienvenida a nuestra institución.
+            </p>                        
+            <p>
+            	tu contraseña de acceso es : <strong>{{clave}}</strong>
+            </p>
+            <br/>            
+            <p>
+            	<a href="https://admin-paris.herokuapp.com"> da click aqui para abrir el sistema</a>
+            </p>
+            
+        </td>
+    </tr>
+</table>
+</td>
+</tr>          
+</table>
+<br/>
+<p>* Por favor no compartas tu clave con nadie.</p>
+'

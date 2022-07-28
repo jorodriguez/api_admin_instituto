@@ -160,15 +160,25 @@ const modificarContrasena = (idUsuario, usuarioData) => {
 
     let nuevoPassword = encriptar(nueva_clave);
 
+    return await updateClave(idUsuario,nuevoPassword,genero);    
+};
+
+
+const updateClave = (idUsuario, usuarioData) => {
+    console.log("@modificarContrasena");
+
+    const { clave_encriptada, genero } = usuarioData;
+
     let sql = `
             UPDATE USUARIO SET PASSWORD =  $2,
                                 MODIFICO = $3,
-                                FECHA_MODIFICO = getDate('')
+                                FECHA_MODIFICO = (getDate('')+getHora(''))
             WHERE id = $1
             returning id;
             `;
-    return genericDao.execute(sql, [idUsuario, nuevoPassword, genero]);
+    return genericDao.execute(sql, [idUsuario, clave_encriptada, genero]);
 };
+
 
 
 const desactivarUsuario = (idUsuario, usuarioData) => {
@@ -242,5 +252,6 @@ module.exports = {
     , buscarCorreo
     , getSucursalesUsuario 
     , desactivarUsuarioReporte
+    , updateClave
 };
 

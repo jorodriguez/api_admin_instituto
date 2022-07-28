@@ -26,10 +26,12 @@ const getAllRolesUsuario = async (request, response) => {
 const cambiarEstadoRol = async (request, response) => {
     console.log("@cambiarEstadoRol");
     try {                   
-            const data = { idRol,idUsuario,idSucursal,idEmpresa } = request.body;
-             const idUsuarioGenero = request.params.idUsuarioGenero;
+            const data = {seleccionado,siRol,siUsuario,coSucursal,coEmpresa} = request.body;
+
+            const idUsuarioGenero = request.params.idUsuarioGenero;
+                       
                           
-             const results = await siUsuarioSucursalRolService.actualizarRol({idUsuarioGenero,...data});
+            const results = await siUsuarioSucursalRolService.actualizarRol({...data,idUsuarioGenero});
 
             response.status(200).json(results);
             

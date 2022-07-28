@@ -23,6 +23,7 @@ const crearUsuarioConCorreo = async (usuarioData) =>{
     const passwordData = await generarRandomPassword();   
 
     usuarioData.password_encriptado = passwordData.encripted;
+
     usuarioData.acceso_sistema = true;
     
     const usuarioId = await insertarUsuario(usuarioData);
@@ -47,6 +48,21 @@ function crearUsuario(usuarioData) {
                 );
             }).catch(error => reject(new MensajeRetorno(false, "Error", error)));
     });
+}
+
+const reiniciarClave = async (usuarioId,idGenero) =>{
+
+    const usuario = await usuarioDao.findById(usuarioId);
+
+    if(!usuario){
+        throw new Error("no existe el usuario");
+    }
+
+    const passwordData = await generarRandomPassword();   
+
+    const usuarioId = await usuarioDao.updateClave(usuario.id,{clave_encriptada:passwordData.encripted, genero:idGenero });
+
+    await enviarCorreoBienvenida({id_usuario: usuarioId,clave:passwordData.password});
 }
 
 
@@ -150,5 +166,6 @@ module.exports = {
     buscarPorId,
     modificarUsuarioConCorreo,
     getSucursalesUsuario,
-    desactivarUsuarioReporte
+    desactivarUsuarioReporte,
+    reiniciarClave
 };

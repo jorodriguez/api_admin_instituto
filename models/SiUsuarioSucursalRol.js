@@ -2,7 +2,7 @@ class SiUsuarioSucursalRol {
   
   constructor() {
     this.id = null;    
-    this.si_usuario = null;
+    this.usuario = null;
     this.si_rol = null;
     this.co_sucursal = null;
     this.co_empresa = null;
@@ -36,8 +36,8 @@ class SiUsuarioSucursalRol {
     this.fecha_modifico = fechaModifico;
     return this;
   }  
-  setSiUsuario(siUsuario) {
-    this.si_usuario = siUsuario;
+  setUsuario(usuario) {
+    this.usuario = usuario;
     return this;
   }
   setCoSucursal(coSucursal) {
@@ -52,7 +52,8 @@ class SiUsuarioSucursalRol {
     return {      
       co_empresa: this.co_empresa,
       co_sucursal:this.co_sucursal,
-      si_usuario: this.si_usuario,
+      si_rol:this.si_rol,
+      usuario: this.usuario,
       genero: this.genero,      
       fecha_genero: this.fecha_genero      
     };

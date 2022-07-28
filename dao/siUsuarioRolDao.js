@@ -21,26 +21,37 @@ const findRelacion = async (siUsuario,siRol,coSucursal,coEmpresa)=>{
     `,[siUsuario,coSucursal,siRol,coEmpresa]);
 }
 
-const actualizarRol = async (data = {idRol,idUsuario,idSucursal,idEmpresa,idUsuarioGenero}) => {
+const actualizarRol = async (data = {seleccionado,siRol,siUsuario,coSucursal,coEmpresa,idUsuarioGenero}) => {
     console.log("@actualizarRol");
     try {        
 
-        //roles[{seleccionado,si_usuario_sucursal_rol}]
+        console.log(JSON.stringify(data));
+
+        let retVal;
+
         const  {seleccionado,siRol,siUsuario,coSucursal,coEmpresa,idUsuarioGenero} = data;
 
         const registroRelacion = await findRelacion(siUsuario,siRol,coSucursal,coEmpresa);
 
         if(!registroRelacion){ //insertar
-                const siUsuarioSucursalRol = new SiUsuarioSucursalRol();
-                const insert = siUsuarioSucursalRol
+
+            console.log("INSERTAR")
+            /*const insert = new SiUsuarioSucursalRol()
                                     .setSiUsuario(siUsuario)
                                     .setCoEmpresa(coEmpresa)
                                     .setCoSucurssal(coSucursal)
                                     .setGenero(idUsuarioGenero)
-                                    .build();
+                                    .build();*/
+            const insert = new SiUsuarioSucursalRol();
+                 insert.usuario = siUsuario;
+                 insert.si_rol = siRol;
+                 insert.co_empresa = coEmpresa;
+                 insert.co_sucursal = coSucursal
+                 insert.genero = idUsuarioGenero;
                 
-                await siUsuarioSucursalRolDao.insert(insert);        
+               retVal = await siUsuarioSucursalRolDao.insert(insert.build());        
         }else{
+            console.log("MODIFICAR")
             //existe la relacion modificar el campo eliminado 
             const updateData = Object.assign(new SiUsuarioSucursalRol(),registroRelacion);
         
@@ -49,15 +60,15 @@ const actualizarRol = async (data = {idRol,idUsuario,idSucursal,idEmpresa,idUsua
                                     .setModifico(idUsuarioGenero)
                                     .setEliminado(!seleccionado)
                                     .buildForUpdate();
+                                    console.log(JSON.stringify(dataWillUpdate));
     
-               await siUsuarioSucursalRolDao.update(registroRelacion.id,dataWillUpdate);            
+                retVal = await siUsuarioSucursalRolDao.update(registroRelacion.id,dataWillUpdate);            
 
         }
-        return true;
-        
+        return retVal ? retVal[0] : null;
     }catch(error){
         console.log(error);
-        return false;
+        return null;
     }
 }
 
