@@ -33,7 +33,7 @@ try{
     };
 
     const templateHtml = await templateService.loadTemplateEmpresa({params,
-                                        idEmpresa:co_empresa,
+                                        idEmpresa:usuario.co_empresa,
                                         idUsuario:genero,
                                         tipoTemplate:TIPO_TEMPLATE.BIENVENIDA_EMPLEADO});
         

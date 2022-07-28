@@ -10,4 +10,5 @@ module.exports = {
     VE_MOVIMIENTO:'ve_movimiento',
     CAT_TIPO_MOVIMIENTO:'cat_tipo_movimiento',
     SI_ROL:'si_rol',
+    SI_USUARIO_SUCURSAL_ROL:'si_usuario_sucursal_rol',
 }

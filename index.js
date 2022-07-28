@@ -53,7 +53,8 @@ const estatus = require('./routes/estatus');
 const catUnidadMedida = require('./routes/catUnidadMedida');
 const movimientoInventario = require('./routes/movimientoInventario');
 const usuarioRoute = require('./routes/usuario');
-const siRol = require('./routes/siRol');
+//const siRol = require('./routes/siRol');
+const siUsuarioSucursalRol = require('./routes/siUsuarioSucursalRol');
 
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
@@ -76,7 +77,7 @@ app.use('/unidad-medida',catUnidadMedida);
 app.use('/estatus',estatus);
 app.use('/movimiento-inventario',movimientoInventario);
 app.use('/usuario',usuarioRoute);
-app.use('/rol',siRol);
+app.use('/usuario-rol',siUsuarioSucursalRol);
 
 
 app.use('/jobs',schedulerJob);

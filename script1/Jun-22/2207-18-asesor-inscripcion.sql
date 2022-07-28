@@ -10,3 +10,5 @@ update si_rol set nombre = 'ASESOR-INSCRIPCIONES' where id = 4
 alter table si_rol add column descripcion text;
 
 update si_rol set descripcion = 'Tiene acceso a todas las opciones.' where id = 1;
+
+update usuario set visible_catalogo = false where id in (1,125)

@@ -7,7 +7,7 @@ const crearUsuario = (request, response) => {
 	console.log("@@crearUsuario");
 	try {
 
-		const usuarioData = { alias,nombre,co_tipo_usuario, correo, id_sucursal,id_empresa, hora_entrada, hora_salida,sueldo_mensual, genero } = request.body;
+		const usuarioData = { alias,nombre,cat_tipo_usuario, correo, co_sucursal,co_empresa, hora_entrada, hora_salida,sueldo_mensual, genero } = request.body;
 
 		let proceso = null;		
 
@@ -122,9 +122,10 @@ const getUsuariosPorSucursal = (request, response) => {
 
 	try {
 		const idSucursal = request.params.id_sucursal;
+		const idEmpresa = request.params.id_empresa;
 
 		usuarioService
-			.getUsuariosPorSucursal(idSucursal)
+			.getUsuariosPorSucursal(idSucursal,idEmpresa)
 			.then(results => {
 
 				response.status(200).json(results);

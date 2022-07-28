@@ -5,8 +5,8 @@ const { enviarCorreoBienvenida } = require('../utils/NotificacionUsuarioService'
 const { generarRandomPassword } = require('../dao/utilDao');
 
 
-function getUsuariosPorSucursal(idSucursal) {
-    return usuarioDao.getUsuarioPorSucursal(idSucursal, TIPO_USUARIO.MAESTRA);
+function getUsuariosPorSucursal(idSucursal,idEmpresa) {
+    return usuarioDao.getUsuarioPorSucursal(idSucursal, idEmpresa);
 }
 
 const crearUsuarioConCorreo = async (usuarioData) =>{
@@ -23,7 +23,8 @@ const crearUsuarioConCorreo = async (usuarioData) =>{
     const passwordData = await generarRandomPassword();   
 
     usuarioData.password_encriptado = passwordData.encripted;
-
+    usuarioData.acceso_sistema = true;
+    
     const usuarioId = await insertarUsuario(usuarioData);
 
     await enviarCorreoBienvenida({id_usuario: usuarioId,clave:passwordData.password});

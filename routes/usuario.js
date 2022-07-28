@@ -3,7 +3,7 @@ const usuarioController = require('../controllers/usuario');
 const checkAuth = require('./check-auth');
 
 
-router.get('/:id_sucursal',checkAuth, usuarioController.getUsuariosPorSucursal);
+router.get('/:id_sucursal/:id_empresa',checkAuth, usuarioController.getUsuariosPorSucursal);
 router.get('/buscar/:id_usuario',checkAuth, usuarioController.buscarUsuarioPorId);
 router.post('/',checkAuth, usuarioController.crearUsuario);
 router.put('/', checkAuth,usuarioController.modificarUsuario);
