@@ -24,44 +24,16 @@ function obtenerCorreosPorTema(co_sucursal, id_tema) {
 
 
 const getUsuarioPorSucursal = (idSucursal, idEmpresa) => {
-    return genericDao.findAll(` 
-    
-SELECT U.ID,
-            U.ALIAS,
-	        U.NOMBRE,
-	        U.CORREO,
-	        U.PASSWORD,
-	        U.CO_SUCURSAL,
-	        U.TOKEN,
-	        to_char(U.HORA_ENTRADA,'HH24:MI')::text as hora_entrada,
-             to_char(U.HORA_SALIDA,'HH24:MI')::text as hora_salida,
-	        U.FOTO,
-	        U.ACTIVO,
-	        U.MOTIVO_BAJA,
-	        U.FECHA_BAJA,
-	        U.MINUTOS_GRACIA_ENTRADA,
-             SUC.NOMBRE AS NOMBRE_SUCURSAL,                        
-             U.ACCESO_SISTEMA,
-             U.SUELDO_MENSUAL,
-             U.SUELDO_QUINCENAL,             
-             ( select count(rel.*)			
-             from si_usuario_sucursal_rol rel inner join si_rol rol on rel.si_rol = rol.id
-             where rel.co_sucursal =1
-                 and rel.usuario = u.id
-                 and rel.eliminado = false 
-                 and rol.eliminado = false)
-             as roles,
-             EXTRACT(WEEK FROM  u.fecha_genero) = EXTRACT(WEEK FROM  getDate('')) as nuevo_ingreso
-        FROM USUARIO U INNER JOIN CO_SUCURSAL SUC ON SUC.ID = U.CO_SUCURSAL 		                			   
-        WHERE 	        
-             SUC.ID = $1 
-             AND SUC.CO_EMPRESA = $2
-             AND U.ACTIVO = TRUE
-             AND U.ELIMINADO = FALSE
-             AND U.visible_catalogo = true            
-        ORDER BY U.NOMBRE `, [idSucursal,idEmpresa]);
+    return genericDao.findAll(getQueryBase(""), [idSucursal,idEmpresa]);
 };
 
+
+const getUsuariosAsesoresPorSucursal = (idSucursal, idEmpresa) => {
+    const ROL_ASESOR = 4;
+    return genericDao.findAll(
+                        getQueryBase(` AND u.id in (select usuario from si_usuario_sucursal_rol where si_rol = $3 and co_sucursal = $1 and co_empresa = $2 and eliminado = false)`)
+                        , [idSucursal,idEmpresa,ROL_ASESOR]);
+};
 /*
 const getUsuarioPorSucursal = (idSucursal, idTipoUsario) => {
     return genericDao.findAll(` 
@@ -153,7 +125,7 @@ const modificarUsuario = (usuarioData) => {
     return genericDao.execute(sql, [id,alias, nombre, correo, hora_entrada, hora_salida,genero,sueldo_mensual]);
 };
 
-const modificarContrasena = (idUsuario, usuarioData) => {
+const modificarContrasena = async (idUsuario, usuarioData) => {
     console.log("@modificarContrasena");
 
     const { nueva_clave, genero } = usuarioData;
@@ -164,7 +136,7 @@ const modificarContrasena = (idUsuario, usuarioData) => {
 };
 
 
-const updateClave = (idUsuario, usuarioData) => {
+const updateClave = async (idUsuario, usuarioData) => {
     console.log("@modificarContrasena");
 
     const { clave_encriptada, genero } = usuarioData;
@@ -176,7 +148,7 @@ const updateClave = (idUsuario, usuarioData) => {
             WHERE id = $1
             returning id;
             `;
-    return genericDao.execute(sql, [idUsuario, clave_encriptada, genero]);
+    return await genericDao.execute(sql, [idUsuario, clave_encriptada, genero]);
 };
 
 
@@ -216,6 +188,21 @@ const desactivarUsuarioReporte = (usuarioData) => {
     return genericDao.execute(sql, [id_usuario,visible, genero]);
 };
 
+const modificarAccesoSistema = (usuarioData = { id_usuario, acceso ,genero }) => {
+
+    console.log("@modificarAccesoSistema");
+    const { id_usuario, acceso ,genero } = usuarioData;
+    let sql = `
+            UPDATE USUARIO SET 
+                    ACCESO_SISTEMA = $2,
+                    FECHA_MODIFICO=(getDate('')+getHora('')),
+                    MODIFICO = $3
+            WHERE ID = $1     
+            RETURNING ID;               
+            `;
+    return genericDao.execute(sql, [id_usuario,acceso, genero]);
+};
+
 const buscarUsuarioId = (idUsuario) => {
     console.log("@findUsuarioId");
     return genericDao.buscarPorId("USUARIO", idUsuario);
@@ -239,6 +226,46 @@ const getSucursalesUsuario = (idUsuario)=>{
         ,[idUsuario]);
 };
 
+
+
+const getQueryBase = (criterio)=>`
+   
+SELECT U.ID,
+            U.ALIAS,
+	        U.NOMBRE,
+	        U.CORREO,
+	        U.PASSWORD,
+	        U.CO_SUCURSAL,
+	        U.TOKEN,
+	        to_char(U.HORA_ENTRADA,'HH24:MI')::text as hora_entrada,
+             to_char(U.HORA_SALIDA,'HH24:MI')::text as hora_salida,
+	        U.FOTO,
+	        U.ACTIVO,
+	        U.MOTIVO_BAJA,
+	        U.FECHA_BAJA,
+	        U.MINUTOS_GRACIA_ENTRADA,
+             SUC.NOMBRE AS NOMBRE_SUCURSAL,                        
+             U.ACCESO_SISTEMA,
+             U.SUELDO_MENSUAL,
+             U.SUELDO_QUINCENAL,             
+             ( select count(rel.*)			
+             from si_usuario_sucursal_rol rel inner join si_rol rol on rel.si_rol = rol.id
+             where rel.co_sucursal = $1
+                 and rel.usuario = u.id
+                 and rel.eliminado = false 
+                 and rol.eliminado = false)
+             as roles,
+             EXTRACT(WEEK FROM  u.fecha_genero) = EXTRACT(WEEK FROM  getDate('')) as nuevo_ingreso
+        FROM USUARIO U INNER JOIN CO_SUCURSAL SUC ON SUC.ID = U.CO_SUCURSAL 		                			   
+        WHERE  	        
+             SUC.ID = $1 
+             AND SUC.CO_EMPRESA = $2
+             ${criterio}
+             AND U.ACTIVO = TRUE
+             AND U.ELIMINADO = FALSE
+             AND U.visible_catalogo = true            
+        ORDER BY U.NOMBRE`;
+
 module.exports = {
     obtenerCorreosPorTema
     , insertarUsuario
@@ -253,5 +280,7 @@ module.exports = {
     , getSucursalesUsuario 
     , desactivarUsuarioReporte
     , updateClave
+    , modificarAccesoSistema
+    , getUsuariosAsesoresPorSucursal
 };
 

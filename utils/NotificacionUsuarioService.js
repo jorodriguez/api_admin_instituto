@@ -5,7 +5,7 @@ const {TIPO_TEMPLATE,TEMA_NOTIFICACION} = require('./Constantes');
 const usuarioDao = require('../dao/usuarioDao');
 const sucursalDao = require('../dao/sucursalDao');
 
-const enviarCorreoBienvenida = async (data = {id_usuario,clave,genero}) => {    
+const enviarCorreoRegistroUsuario = async (data = {id_usuario,clave,genero}) => {    
 try{
    
     const {id_usuario,clave,genero} = data; 
@@ -18,9 +18,7 @@ try{
    }
 
     const sucursal = await sucursalDao.getSucursalPorId(usuario.co_sucursal);
-
-    //const usuarioGenero = await usuarioDao.findById(genero);
-   
+     
     const params = {        
         nombre: usuario.nombre,        
         alias: usuario.alias,        
@@ -32,35 +30,22 @@ try{
         ver_clave:true
     };
 
-    const templateHtml = await templateService.loadTemplateEmpresa({params,
-                                        idEmpresa:usuario.co_empresa,
-                                        idUsuario:genero,
-                                        tipoTemplate:TIPO_TEMPLATE.BIENVENIDA_EMPLEADO});
+    const templateHtml = await templateService.loadTemplateEmpresa({
+                                            params,
+                                            idEmpresa:usuario.co_empresa,
+                                            idUsuario:genero,
+                                            tipoTemplate:TIPO_TEMPLATE.REGISTRO_EMPLEADO
+                                        });
         
-    const asunto = `Bienvenido(a) ${usuario.nombre}`;
+    const asunto = `Hola ${usuario.nombre},`;
     
-    const para =  [usuario.correo];
+    const para = [usuario.correo];
 
-    /*if(usuarioGenero.correo_copia != null){
-        para.push(usuarioGenero.correo_copia);
-    }
-    const usuariosTema = await temaNotificacionService.getCorreosPorTemaSucursal(
-                                {
-                                    coSucursal:co_sucursal,
-                                    coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_ALTA_ALUMNO
-                                }
-                       );
-    
-    let copia = [].concat(usuariosTema.correos_usuarios || []).concat(usuariosTema.correos_copia || []);
+    const cc =  usuario.copia_correo;
 
-    console.log("correo copia "+copia);
-   
-    const cc = copia;
-    */
+    console.log("HETML ENCVIAR "+templateHtml);
 
-    const cc = '';
-
-    await correoService.enviarCorreoAsync({para, cc:cc, asunto:asunto, html:templateHtml,idEmpresa:co_empresa});
+    return await correoService.enviarCorreoAsync({para, cc:cc, asunto:asunto, html:templateHtml,idEmpresa:usuario.co_empresa});
 
     }catch(e){
         
@@ -71,5 +56,5 @@ try{
 };
 
 module.exports = {
-    enviarCorreoBienvenida
+    enviarCorreoRegistroUsuario
 };

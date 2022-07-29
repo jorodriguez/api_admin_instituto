@@ -57,8 +57,8 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
                     case TIPO_TEMPLATE.BIENVENIDA_ALUMNO:                            
                             html = mustache.to_html((template.encabezado || '') + (template.template_correo_bienvenida || '')+ (template.pie || ''), paramsSend);
                     break;
-                    case TIPO_TEMPLATE.BIENVENIDA_EMPLEADO:                            
-                            html = mustache.to_html((template.encabezado || '') + (template.template_correo_bienvenida_empleado || '')+ (template.pie || ''), paramsSend);
+                    case TIPO_TEMPLATE.REGISTRO_EMPLEADO:                            
+                            html = mustache.to_html((template.encabezado || '') + (template.template_correo_registro_usuario || '')+ (template.pie || ''), paramsSend);
                     break;
                     default:
                         console.log("====================");

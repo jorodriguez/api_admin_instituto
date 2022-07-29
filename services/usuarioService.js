@@ -1,7 +1,7 @@
 const usuarioDao = require('../dao/usuarioDao');
 const { TIPO_USUARIO } = require('../utils/Constantes');
 const { MensajeRetorno } = require('../utils/MensajeRetorno');
-const { enviarCorreoBienvenida } = require('../utils/NotificacionUsuarioService');
+const { enviarCorreoRegistroUsuario } = require('../utils/NotificacionUsuarioService');
 const { generarRandomPassword } = require('../dao/utilDao');
 
 
@@ -9,15 +9,16 @@ function getUsuariosPorSucursal(idSucursal,idEmpresa) {
     return usuarioDao.getUsuarioPorSucursal(idSucursal, idEmpresa);
 }
 
-const crearUsuarioConCorreo = async (usuarioData) =>{
+const crearUsuarioConCorreo = async (usuarioData) => {
     console.log("@crearUsuarioConCorreo");
 
+    console.log("@@@@@ PARAMS "+JSON.stringify(usuarioData));
     const busquedaCorreo = await usuarioDao.validarCorreoUsuario(usuarioData.correo);
-
-    console.log("correoEncontrado "+JSON.stringify(busquedaCorreo));
-    
+        
     if(busquedaCorreo.encontrado){
+
         return new MensajeRetorno(false, "El correo ya se encuentra registrado", null);
+
     }
 
     const passwordData = await generarRandomPassword();   
@@ -28,7 +29,9 @@ const crearUsuarioConCorreo = async (usuarioData) =>{
     
     const usuarioId = await insertarUsuario(usuarioData);
 
-    await enviarCorreoBienvenida({id_usuario: usuarioId,clave:passwordData.password});
+    console.log("@usuario insertado "+usuarioId);
+
+    await enviarCorreoRegistroUsuario({ id_usuario: usuarioId,clave:passwordData.password, genero : usuarioData.genero });
 
     return new MensajeRetorno(true, "Se registró el usuario", null);
       
@@ -60,9 +63,9 @@ const reiniciarClave = async (usuarioId,idGenero) =>{
 
     const passwordData = await generarRandomPassword();   
 
-    const usuarioId = await usuarioDao.updateClave(usuario.id,{clave_encriptada:passwordData.encripted, genero:idGenero });
+    await usuarioDao.updateClave(usuario.id,{clave_encriptada:passwordData.encripted, genero:idGenero });
 
-    await enviarCorreoBienvenida({id_usuario: usuarioId,clave:passwordData.password});
+    return await enviarCorreoRegistroUsuario({id_usuario: usuarioId,clave:passwordData.password,genero:idGenero});
 }
 
 
@@ -146,6 +149,8 @@ function desactivarUsuario(idUsuario, usuarioData) {
     //return 
 }
 
+
+
 function buscarPorId(idUsuario) {
     return usuarioDao.buscarUsuarioId(idUsuario);
 }
@@ -158,6 +163,10 @@ const desactivarUsuarioReporte  =(usuarioData) =>{
     return usuarioDao.desactivarUsuarioReporte(usuarioData);
 };
 
+const bloquearAccesoSistema  =(usuarioData) =>{
+    return usuarioDao.modificarAccesoSistema(usuarioData);
+};
+
 module.exports = {
     getUsuariosPorSucursal,
     crearUsuarioConCorreo, crearUsuario, modificarContrasena,
@@ -167,5 +176,7 @@ module.exports = {
     modificarUsuarioConCorreo,
     getSucursalesUsuario,
     desactivarUsuarioReporte,
-    reiniciarClave
+    reiniciarClave,
+    bloquearAccesoSistema,
+    getUsuariosAsesoresPorSucursal: usuarioDao.getUsuariosAsesoresPorSucursal
 };

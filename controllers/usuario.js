@@ -142,6 +142,23 @@ const getUsuariosPorSucursal = (request, response) => {
 };
 
 
+const getAsesoresPorSucursal = async (request, response) => {
+
+	try {
+		const idSucursal = request.params.id_sucursal;
+		const idEmpresa = request.params.id_empresa;
+
+		const results = await usuarioService.getUsuariosAsesoresPorSucursal(idSucursal,idEmpresa);
+		
+		response.status(200).json(results);
+
+	} catch (e) {
+		console.error(e);
+		handle.callbackErrorNoControlado(e, response);
+	}
+};
+
+
 const buscarUsuarioPorId = (request, response) => {
 
 	try {
@@ -188,6 +205,7 @@ const getSucursalesUsuario = (request, response) => {
 };
 
 
+
 const desactivarUsuarioReporte = async (request, response) => {
 
 	try {
@@ -203,6 +221,47 @@ const desactivarUsuarioReporte = async (request, response) => {
 };
 
 
+const reiniciarClave = async (request, response) => {
+
+	try {
+		const {id_usuario, genero}  = request.body;
+
+		const resultado = await usuarioService.reiniciarClave(id_usuario,genero);
+
+		response.status(200).json(resultado);
+	} catch (e) {
+		console.error(e);
+		handle.callbackErrorNoControlado(e, response);
+	}
+};
+
+const bloquearAccesoSistema = async (request, response) => {
+
+	try {
+		const data = {  acceso ,genero }  = request.body;
+		const id_usuario = request.params.id_usuario;
+
+		const resultado = await usuarioService.bloquearAccesoSistema({ id_usuario,...data});
+
+		response.status(200).json(resultado);
+	} catch (e) {
+		console.error(e);
+		handle.callbackErrorNoControlado(e, response);
+	}
+};
+
+
+
+
 module.exports = {
-	crearUsuario, modificarUsuario, desactivarUsuario, getUsuariosPorSucursal, buscarUsuarioPorId,getSucursalesUsuario,desactivarUsuarioReporte
+	crearUsuario, 
+	modificarUsuario,
+	desactivarUsuario, 
+	getUsuariosPorSucursal, 
+	buscarUsuarioPorId,
+	getSucursalesUsuario,
+	desactivarUsuarioReporte,
+	reiniciarClave,
+	bloquearAccesoSistema,
+	getAsesoresPorSucursal
 };

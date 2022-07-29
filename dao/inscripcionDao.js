@@ -8,11 +8,11 @@ const { isEmptyOrNull } = require("../utils/Utils");
 
 const guardarInscripcion = async(idAlumno,inscripcionData)=>{
   console.log("@guardarInscripcion");
-  const {co_curso,co_empresa,co_sucursal,co_alumno,costo_colegiatura,costo_inscripcion,nota,genero} = inscripcionData;
+  const {co_curso,co_empresa,co_sucursal,co_alumno,costo_colegiatura,costo_inscripcion,nota,usuario_inscribe,genero} = inscripcionData;
 
   return genericDao.execute(`
-          INSERT INTO CO_INSCRIPCION(co_curso,co_empresa,co_sucursal,co_alumno,costo_colegiatura,costo_inscripcion,nota,genero)
-          VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING ID;
+          INSERT INTO CO_INSCRIPCION(co_curso,co_empresa,co_sucursal,co_alumno,costo_colegiatura,costo_inscripcion,nota,usuario_inscribe,genero)
+          VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING ID;
   `,[co_curso,co_empresa,co_sucursal,idAlumno,costo_colegiatura,costo_inscripcion,nota,genero]);
 }
 
@@ -184,12 +184,16 @@ const getQueryBase = (criterio) => `
     curso.activo,
     curso.co_empresa,
     curso.co_sucursal,
+    asesor.nombre as inscribio,
+    usuario_genero.nombre as nombre_genero,
     i.genero
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
     inner join cat_dia dia on dia.id = curso.cat_dia
     inner join co_alumno a on a.id = i.co_alumno
     inner join co_sucursal suc on suc.id = i.co_sucursal
+    inner join usuario usuario_genero on usuario_genero.id = i.genero
+    left join usuario asesor on asesor.id = i.usuario_inscribio
 where ${criterio}
   and i.eliminado = false
   and curso.eliminado = false

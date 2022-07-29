@@ -44,4 +44,7 @@ update co_template set template_correo_registro_usuario = '
 </table>
 <br/>
 <p>* Por favor no compartas tu clave con nadie.</p>
-'
+';
+
+
+alter table co_inscripcion add column usuario_inscribio integer references usuario(id);
