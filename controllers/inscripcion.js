@@ -29,6 +29,7 @@ const guardarInscripcion = async (request, response) => {
                 telefono_tutor,
                 costo_colegiatura, 
                 costo_inscripcion,
+                usuario_inscribe,
                 genero
             }
             = request.body;

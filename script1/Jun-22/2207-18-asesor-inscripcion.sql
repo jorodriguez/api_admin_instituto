@@ -47,4 +47,4 @@ update co_template set template_correo_registro_usuario = '
 ';
 
 
-alter table co_inscripcion add column usuario_inscribio integer references usuario(id);
+alter table co_inscripcion add column usuario_inscribe integer references usuario(id);

@@ -13,7 +13,7 @@ const guardarInscripcion = async(idAlumno,inscripcionData)=>{
   return genericDao.execute(`
           INSERT INTO CO_INSCRIPCION(co_curso,co_empresa,co_sucursal,co_alumno,costo_colegiatura,costo_inscripcion,nota,usuario_inscribe,genero)
           VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING ID;
-  `,[co_curso,co_empresa,co_sucursal,idAlumno,costo_colegiatura,costo_inscripcion,nota,genero]);
+  `,[co_curso,co_empresa,co_sucursal,idAlumno,costo_colegiatura,costo_inscripcion,nota,usuario_inscribe, genero]);
 }
 
 const confirmarInscripcion = async(idInscripcion,inscripcionData)=>{
@@ -193,7 +193,7 @@ from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join co_alumno a on a.id = i.co_alumno
     inner join co_sucursal suc on suc.id = i.co_sucursal
     inner join usuario usuario_genero on usuario_genero.id = i.genero
-    left join usuario asesor on asesor.id = i.usuario_inscribio
+    left join usuario asesor on asesor.id = i.usuario_inscribe
 where ${criterio}
   and i.eliminado = false
   and curso.eliminado = false

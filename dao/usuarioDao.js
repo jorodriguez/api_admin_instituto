@@ -45,7 +45,7 @@ const getUsuarioPorSucursal = (idSucursal, idTipoUsario) => {
 	        U.CO_SUCURSAL,
 	        U.TOKEN,
 	        to_char(U.HORA_ENTRADA,'HH24:MI')::text as hora_entrada,
-            to_char(U.HORA_SALIDA,'HH24:MI')::text as hora_salida,
+            to_char(U.HORA_SALIDA,'HHtoa24:MI')::text as hora_salida,
 	        U.FOTO,
 	        U.ACTIVO,
 	        U.MOTIVO_BAJA,

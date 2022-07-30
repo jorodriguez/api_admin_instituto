@@ -7,12 +7,14 @@ const cursoDao = require('../dao/cursoDao');
 const guardarInscripcion = async(inscripcionData)=>{
 
     const alumnoData = { co_sucursal,cat_genero,nombre,apellidos,direccion,telefono,correo,fecha_nacimiento,nota,foto,co_empresa,genero} = inscripcionData;
-    const inscripcion= { co_curso,co_empresa,co_sucursal,costo_colegiatura,costo_inscripcion,nota,genero} = inscripcionData;
+    const inscripcion= { co_curso,co_empresa,co_sucursal,costo_colegiatura,costo_inscripcion,nota,usuario_inscribe,genero} = inscripcionData;
         
     const idAlumno = await alumnoDao.guardarAlumno(alumnoData);
-    console.log("======== infoAlumno "+idAlumno);
+    
     const idInscripcion = await inscripcionDao.guardarInscripcion(idAlumno,inscripcion);
+    
     await  cargoService.registrarInscripcion(co_curso,idAlumno,genero);
+    
     const alumno = await alumnoDao.getAlumnoPorId(idAlumno);
     
     //Enviar un correo  {id_inscripcion,co_empresa,co_sucursal,genero}

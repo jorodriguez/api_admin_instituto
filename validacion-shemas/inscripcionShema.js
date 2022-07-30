@@ -32,6 +32,7 @@ const schemaInscripcion =
     nota:Joi.string().optional().allow('').allow(null),
     costo_colegiatura:Joi.number().positive().required(),
     costo_inscripcion:Joi.number().required(),
+    usuario_inscribe:Joi.number().required(),
     genero:Joi.number().required(),
 });
 
