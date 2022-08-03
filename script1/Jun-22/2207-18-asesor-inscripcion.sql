@@ -48,3 +48,16 @@ update co_template set template_correo_registro_usuario = '
 
 
 alter table co_inscripcion add column usuario_inscribe integer references usuario(id);
+
+
+insert into si_rol(id,si_modulo,nombre,genero)
+values(8,1,'ADMINISTRADOR',1)
+
+
+insert into si_rol_opcion(si_rol,si_opcion,genero)
+values(8,1,1),(8,3,1)
+
+
+insert into si_usuario_sucursal_rol(usuario,co_sucursal,si_rol,co_empresa,genero)
+values(125,1,8,1,1)
+
