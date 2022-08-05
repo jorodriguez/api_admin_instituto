@@ -1,5 +1,36 @@
 const genericDao = require('./genericDao');
 
+/*
+ with universo as (		
+				select distinct opc.*
+						(array_to_json((
+								select array_agg(op.*) 
+								from si_rol_opcion s inner join si_opcion op on op.id = s.si_opcion 
+								where s.si_rol in (
+												select sur.si_rol 
+												from si_usuario_sucursal_rol sur
+												where sur.usuario = u.id
+													and sur.co_sucursal = u.co_sucursal
+													and sur.eliminado = false
+												)
+									and op.si_opcion = opc.id
+									and s.eliminado=false
+									and op.eliminado= false
+						)))
+						as opciones_hijo
+                        from si_usuario_sucursal_rol r inner join si_rol rol on rol.id = r.si_rol
+                        inner join si_rol_opcion ro on ro.si_rol = rol.id
+                        inner join si_opcion opc on opc.id = ro.si_opcion
+where r.usuario = u.id
+and r.co_sucursal = u.co_sucursal
+and opc.si_opcion is null
+and r.eliminado = false
+and ro.eliminado = false
+and opc.eliminado = false
+order by opc.orden
+) select array_to_json(array_agg(c.*)) from universo c
+*/
+
 const  CONDICION_LOGIN =  'TRIM(u.correo) = TRIM($1)';
 const  CONDICION_ID =  'u.id = $1';
 const getQueryBase = (condicion) => {
@@ -33,34 +64,32 @@ const getQueryBase = (condicion) => {
 				
 			)	
             AS sucursales,
-            (with universo as (		
-				select opc.*,
-						(array_to_json((
-								select array_agg(op.*) 
-								from si_rol_opcion s inner join si_opcion op on op.id = s.si_opcion 
-								where s.si_rol in (
-												select sur.si_rol 
-												from si_usuario_sucursal_rol sur
-												where sur.usuario = u.id
-													and sur.co_sucursal = u.co_sucursal
-													and sur.eliminado = false
-												)
-									and op.si_opcion = opc.id
-									and s.eliminado=false
-									and op.eliminado= false
-						)))
-						as opciones_hijo
-                from si_usuario_sucursal_rol r inner join si_rol rol on rol.id = r.si_rol
-												inner join si_rol_opcion ro on ro.si_rol = rol.id
-												inner join si_opcion opc on opc.id = ro.si_opcion
-                where r.usuario = u.id
-						and r.co_sucursal = u.co_sucursal
-						and opc.si_opcion is null
-						and r.eliminado = false
-                        and ro.eliminado = false
-                        and opc.eliminado = false
-                order by opc.orden
-				) select array_to_json(array_agg(c.*)) from universo c
+            (
+                with universo as (		
+                    select distinct opc.*			 		
+                       from si_usuario_sucursal_rol r inner join si_rol rol on rol.id = r.si_rol
+                                                       inner join si_rol_opcion ro on ro.si_rol = rol.id
+                                                       inner join si_opcion opc on opc.id = ro.si_opcion
+                       where r.usuario = u.id
+                               and r.co_sucursal = u.co_sucursal
+                               and opc.si_opcion is null
+                               and r.eliminado = false
+                               and ro.eliminado = false
+                               and opc.eliminado = false
+                       order by opc.orden
+                  ),
+                  menu_completo as (
+                      select uni.id,uni.si_opcion,uni.nombre,uni.ruta,uni.icono_menu,uni.orden,uni.menu_principal,
+                          (array_to_json((
+                                       select array_agg(op.*) 
+                                       from si_rol_opcion s inner join si_opcion op on op.id = s.si_opcion 
+                                       where  op.si_opcion = uni.id
+                                           and s.eliminado=false
+                                           and op.eliminado= false
+                       ))) as opciones_hijo		
+                   from universo uni				
+               )  
+               select array_to_json(array_agg(c.*)) from menu_completo c
 			) AS menu,
             (
 				select array_to_json(array_agg(opc.*))

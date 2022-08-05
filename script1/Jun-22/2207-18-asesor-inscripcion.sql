@@ -53,11 +53,22 @@ alter table co_inscripcion add column usuario_inscribe integer references usuari
 insert into si_rol(id,si_modulo,nombre,genero)
 values(8,1,'ADMINISTRADOR',1)
 
-
+--suc mty
 insert into si_rol_opcion(si_rol,si_opcion,genero)
-values(8,1,1),(8,3,1)
+values(8,1,1),(8,3,1),(125,1,8,1,1)
 
-
+--suc apo
 insert into si_usuario_sucursal_rol(usuario,co_sucursal,si_rol,co_empresa,genero)
-values(125,1,8,1,1)
+values(125,2,8,1,1),(125,2,3,1,1)
 
+
+
+--suc cecan
+insert into si_usuario_sucursal_rol(usuario,co_sucursal,si_rol,co_empresa,genero)
+values(134,6,8,3,1),(134,6,3,3,1)
+
+
+
+update si_opcion set eliminado = false where id in (1,3)
+
+update si_rol set eliminado = true where id = 3

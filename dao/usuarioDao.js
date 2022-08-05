@@ -73,16 +73,9 @@ const insertarUsuario = async (usuarioData) => {
 
     const { alias,nombre, correo,cat_tipo_usuario, co_sucursal, hora_entrada,password_encriptado, hora_salida,sueldo_mensual, co_empresa, genero } = usuarioData;
 
-    console.log("HOIRA EN "+hora_entrada);
-    console.log("HOIRA EN "+hora_salida);
-    //TIPO_USUARIO.MAESTRA
-    console.log(" hora entrada " + hora_entrada + " h salida " + hora_salida + " correo " + correo);
-    //let password = await generarRandomPassword();
-    //console.log("Password generado  " + JSON.stringify(password));
-
     let sql = `
-            INSERT INTO USUARIO(ALIAS,NOMBRE,CORREO,CO_SUCURSAL,CAT_TIPO_USUARIO,HORA_ENTRADA,HORA_SALIDA,PASSWORD,SUELDO_MENSUAL,SUELDO_QUINCENAL,CO_EMPRESA,GENERO)
-            VALUES(TRIM(BOTH FROM $1),TRIM(BOTH FROM $2),TRIM($3),$4,$5,$6,$7,$8,$9::numeric,($9::numeric/2)::numeric,$10,$11) RETURNING ID;
+            INSERT INTO USUARIO(ALIAS,NOMBRE,CORREO,CO_SUCURSAL,CAT_TIPO_USUARIO,HORA_ENTRADA,HORA_SALIDA,PASSWORD,SUELDO_MENSUAL,SUELDO_QUINCENAL,CO_EMPRESA,ACCESO_SISTEMA,GENERO)
+            VALUES(TRIM(BOTH FROM $1),TRIM(BOTH FROM $2),TRIM($3),$4,$5,$6,$7,$8,$9::numeric,($9::numeric/2)::numeric,$10,true,$11) RETURNING ID;
             `;
     return genericDao
         .execute(sql, [alias,nombre, correo, co_sucursal,cat_tipo_usuario, hora_entrada, hora_salida, password_encriptado,sueldo_mensual,co_empresa,genero]);
