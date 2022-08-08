@@ -72,3 +72,26 @@ values(134,6,8,3,1),(134,6,3,3,1)
 update si_opcion set eliminado = false where id in (1,3)
 
 update si_rol set eliminado = true where id = 3
+
+
+alter table si_rol add column ordenacion integer default 0;
+
+update si_rol set descripcion = 'Acceso a Cobranza,Inscripciones, Catalogo de Talleres, Registro de Gastos y Corte', ordenacion=1 where id = 1;
+
+update si_rol set descripcion = 'Acceso a Cobranza,Catalogo de Talleres, Registro de Gastos y Corte', ordenacion=2 where id = 2;
+
+update si_rol set descripcion = 'Acceso solo a Incripciones', ordenacion = 3 where id = 4;
+
+update si_rol set descripcion = 'Acceso solo a la Terminal de Ventas',ordenacion = 4 where id = 6;
+
+update si_rol set descripcion = 'Acceso solo al Catalogo de Productos y Consulta de Ventas', ordenacion = 5 where id = 7;
+
+update si_rol set descripcion = 'Acceso solo a la Administración',ordenacion = 6 where id = 8;
+
+
+update si_opcion set icono_menu = 'fa fa-cog' where id = 1
+
+
+update co_inscripcion set usuario_inscribe = genero where co_sucursal <> 1;
+
+update co_inscripcion set usuario_inscribe = 130 where co_sucursal = 1;

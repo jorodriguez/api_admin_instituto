@@ -86,6 +86,7 @@ select (
         rol.descripcion
     from si_rol rol	 
     where rol.eliminado = false
+    order by rol.ordenacion asc
 `;
 
 

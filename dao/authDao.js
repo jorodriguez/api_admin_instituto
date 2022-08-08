@@ -53,9 +53,11 @@ const getQueryBase = (condicion) => {
             em.id AS id_empresa,
             em.nombre as nombre_empresa,
             em.logotipo as logotipo_empresa,
-            (select count(r.*)
+            (
+                select count(r.*)
                 from si_usuario_sucursal_rol r							
-                where r.usuario = u.id and r.eliminado = false)	
+                where r.usuario = u.id and r.eliminado = false
+            )	
             AS contador_sucursales,
             (
 				select  array_to_json(array_agg(distinct r.co_sucursal))
@@ -81,7 +83,7 @@ const getQueryBase = (condicion) => {
                   menu_completo as (
                       select uni.id,uni.si_opcion,uni.nombre,uni.ruta,uni.icono_menu,uni.orden,uni.menu_principal,
                           (array_to_json((
-                                       select array_agg(op.*) 
+                                       select array_agg(distinct  op.*) 
                                        from si_rol_opcion s inner join si_opcion op on op.id = s.si_opcion 
                                        where  op.si_opcion = uni.id
                                            and s.eliminado=false
