@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 
 //version/branch
 
-const version = "v1/2207-18-asesores Actualización solicitada";
+const version = "v1/2207-18-asesores Actualización solicitada, liberado  8 de agosto";
 
 app.use(bodyParser.json());
 app.use(
