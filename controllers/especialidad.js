@@ -20,6 +20,63 @@ const getEspecialidad = async (request, response) => {
 };
 
 
+
+const createEspecialidad = async (request, response) => {
+    console.log("@createEspecialidad");
+    try {
+                  
+            const data = request.body;
+            
+            const results = await especialidadService.createEspecialidad(data);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+const updateEspecialidad = async (request, response) => {
+    console.log("@updateEspecialidad");
+    try {
+                  
+            const data = request.body;
+
+            const id = request.params.id;
+            
+            const results = await especialidadService.updateEspecialidad(id,data);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+const deleteEspecialidad = async (request, response) => {
+    console.log("@deleteEspecialidad");
+    try {
+                  
+            const data = request.body;
+
+            const id = request.params.id;
+            
+            const results = await especialidadService.deleteEspecialidad(id,data);
+
+            response.status(200).json(results);
+            
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
 module.exports = {
-    getEspecialidad
+    getEspecialidad,
+    createEspecialidad,
+    updateEspecialidad,
+    deleteEspecialidad
 };

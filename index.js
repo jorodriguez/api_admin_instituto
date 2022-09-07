@@ -56,6 +56,7 @@ const usuarioRoute = require('./routes/usuario');
 //const siRol = require('./routes/siRol');
 const siUsuarioSucursalRol = require('./routes/siUsuarioSucursalRol');
 
+
 app.use('/auth',loginRoutes);
 app.use('/alumnos',alumnoRoute);
 app.use('/curso',cursoRoute);
@@ -78,6 +79,7 @@ app.use('/estatus',estatus);
 app.use('/movimiento-inventario',movimientoInventario);
 app.use('/usuario',usuarioRoute);
 app.use('/usuario-rol',siUsuarioSucursalRol);
+
 
 
 app.use('/jobs',schedulerJob);
