@@ -19,7 +19,21 @@ const getEspecialidad = async (request, response) => {
     }
 };
 
+const findById = async (request, response) => {
+    console.log("@findById");
+    try {
+        
+        const { id } = request.params;
 
+        const results = await especialidadService.findById(id);
+        
+        response.status(200).json(results);       
+       
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
 
 const createEspecialidad = async (request, response) => {
     console.log("@createEspecialidad");
@@ -78,5 +92,6 @@ module.exports = {
     getEspecialidad,
     createEspecialidad,
     updateEspecialidad,
-    deleteEspecialidad
+    deleteEspecialidad,
+    findById
 };

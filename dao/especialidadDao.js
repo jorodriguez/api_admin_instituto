@@ -6,7 +6,7 @@ const {
 const { isEmptyOrNull } = require("../utils/Utils");
 const Tables = require('../utils/Tables');
 const Dao = require('./Dao');
-const especialidadDao = new Dao(Tables.CAT_CATEGORIA); 
+const especialidadDao = new Dao(Tables.CAT_ESPECIALIDAD); 
 const CatEspecialidad = require('../models/CatEspecialidad');
 
 const createEspecialidad = async (data) => {
@@ -60,33 +60,38 @@ const deleteEspecialidad = async (id,data) => {
 const getEspecialidad = async (idEmpresa,idSucursal) => {
   console.log("@getEspecialidad");
 
-  return await genericDao.findAll(
-      `              
-      select e.id,
-        e.nombre,
-        e.duracion,
-        d.nombre as nombre_duracion,
-        e.alumnos_permitidos,
-        e.foto,
-        e.color,
-        e.descripcion,
-        d.nombre as duracion
-      from cat_especialidad e inner join cat_duracion d on d.id = e.cat_duracion
-      where e.activo = true
-          and e.co_empresa = $1
-          and e.co_sucursal = $2
-          and e.eliminado = false
-      order by e.nombre       
-      `,
-    [idEmpresa,idSucursal]
+  return await genericDao.findAll(QUERY_BASE,[idEmpresa,idSucursal]
   );
 };
 
+const findById = async (id) => {
+  console.log("@findById");
 
+  return await genericDao.findOne(QUERY_BASE,[id]
+  );
+};
+
+const QUERY_BASE =  `              
+select e.id,
+  e.nombre,
+  e.duracion,
+  d.nombre as nombre_duracion,
+  e.alumnos_permitidos,
+  e.foto,
+  e.color,
+  e.descripcion        
+from cat_especialidad e inner join cat_duracion d on d.id = e.cat_duracion
+where e.activo = true
+    and e.co_empresa = $1
+    and e.co_sucursal = $2
+    and e.eliminado = false
+order by e.nombre       
+`;
 
 module.exports = {
   createEspecialidad,
   updateEspecialidad,
   deleteEspecialidad,
-  getEspecialidad
+  getEspecialidad,
+  findById
 };

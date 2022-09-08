@@ -65,7 +65,7 @@ class CatEspecialidad {
       alumnos_permitidos : this.alumnos_permitidos,
       foto: this.foto,
       activo : this.activo = true,
-      colot: this.color,
+      color: this.color,
       folio :this.folio,    
       genero: this.genero,                      
     };
@@ -81,7 +81,7 @@ class CatEspecialidad {
       alumnos_permitidos : this.alumnos_permitidos,
       foto: this.foto,
       activo : this.activo = true,
-      colot: this.color,
+      color: this.color,
       folio :this.folio,      
       modifico: this.modifico,      
       fecha_modifico: this.fecha_modifico,      
