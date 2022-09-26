@@ -32,7 +32,7 @@ const updateEspecialidad = async (id,data) => {
 
   const dataWillUpdate = dataUpdate.setFechaModifico(new Date()).setModifico(data.genero).buildForUpdate();
 
-  const row = await categoriaDao.update(id,dataWillUpdate);
+  const row = await especialidadDao.update(id,dataWillUpdate);
   
   return row ? row[0]:null;
 }
@@ -46,7 +46,7 @@ const deleteEspecialidad = async (id,data) => {
 
       const dataWillDelete = dataDel.setFechaModifico(new Date()).setModifico(data.genero).buildForDelete();
   
-      const row = await categoriaDao.update(id,dataWillDelete);
+      const row = await especialidadDao.update(id,dataWillDelete);
       
       return row ;
       

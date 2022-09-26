@@ -70,11 +70,9 @@ class CatEspecialidad {
       genero: this.genero,                      
     };
   }
+  //cat_duracion : this.cat_duracion,
   buildForUpdate() {
-    return {                
-      co_empresa: this.co_empresa,
-      co_sucursal: this.co_sucursal,
-      cat_duracion : this.cat_duracion,
+    return {                                  
       duracion: this.duracion,    
       descripcion: this.descripcion,
       nombre: this.nombre,

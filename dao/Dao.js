@@ -36,16 +36,6 @@ class Dao{
             console.log("@findById " + this.modelName);
             
             return await findOne(`SELECT * FROM ${this.modelName} WHERE  id =$1 AND ELIMINADO = FALSE`,[id]);
-
-            /*const results = await knex.select('*').from(this.modelName).where('id',id);
-
-            console.log("RESULS "+JSON.stringify(results));
-
-            const rowOne = (results != null && resulstresults.lenght > 0) ? results[0]:null;
-
-            return rowOne;*/
-
-            //await findOne(`SELECT * FROM ${this.modelName} WHERE  id =$1 AND ELIMINADO = FALSE`,[id]);
         };
 
         this.getInstanceModel = () => {
