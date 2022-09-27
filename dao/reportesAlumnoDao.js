@@ -10,6 +10,8 @@ const {
 } = require('../utils/Utils');
 const genericDao = require('./genericDao');
 
+
+
 const getQueryAlumnosPorCurso = (eliminados) =>
     `
     select 	esp.nombre as especialidad,
@@ -37,16 +39,18 @@ const getQueryAlumnosPorCurso = (eliminados) =>
            ${eliminados && ' and i.eliminado = '+eliminados}
     order by a.matricula,a.eliminado`;
 
-const getListaAlumnosCurso = (filtros = {idCurso,eliminados = false}) => {    
-    console.log("@getListaAlumnosCurso");
-    
-    const  {idCurso,eliminados = false } = filtros;
 
-    return genericDao.findOne( getQueryAlumnosPorCurso() ,[]);
+
+const getReporteListaAlumnosCurso = (filtros = {uidCurso}) => {    
+    console.log("@getReporteListaAlumnosCurso");
+    
+    const  { uidCurso } = filtros;
+
+    return genericDao.findAll( getQueryAlumno(" curso.uid = $1 ") ,[uidCurso]);
 };
 
 
-const getQueryAlumno = (criterio) => `
+const getQueryAlumno = (criterio,order) => `
 SELECT 
     a.matricula,  
     a.id as id_alumno,
@@ -83,25 +87,14 @@ FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
              inner join cat_genero genero on genero.id = a.cat_genero
              inner join co_sucursal s on i.co_sucursal = s.id             				
              inner join co_curso curso on curso.id = i.co_curso             					             					
-             inner join cat_especialidad esp on esp.id = curso.cat_especialidad             
-            -- inner join cat_horario horario on horario.id = curso.cat_horario
-    WHERE i.eliminado = false 
-          ${criterio ? ' AND '+criterio : ''}        
-    ORDER BY i.fecha_genero DESC
+             inner join cat_especialidad esp on esp.id = curso.cat_especialidad                         
+    WHERE  1 = 1 
+        ${criterio ? ' AND '+criterio : ''}        
+        ${order ? ' ORDER BY  DESC '+order : '' }      
+    
 `;
 
 
 module.exports = {
-    guardarAlumno,    
-    getAlumnos,
-    getAlumnosCurso,        
-    getCorreosTokensAlumno,
-    modificarFotoPerfil,
-    getAlumnoPorUId,
-    getAlumnoPorId,
-    bajaAlumno,
-    activarAlumnoEliminado,
-    modificarAlumno,
-    getAlumnoPorIdInfoEmpresaSucursal,
-    modificarCorreoAlumno
+    getReporteListaAlumnosCurso
 }
