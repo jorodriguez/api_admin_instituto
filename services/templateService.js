@@ -60,6 +60,9 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
                     case TIPO_TEMPLATE.REGISTRO_EMPLEADO:                            
                             html = mustache.to_html((template.encabezado || '') + (template.template_correo_registro_usuario || '')+ (template.pie || ''), paramsSend);
                     break;
+                    case TIPO_TEMPLATE.LISTA_REPORTE_ALUMNOS:                            
+                            html = mustache.to_html((template.encabezado || '') + (template.template_lista_alumnos || '')+ (template.pie || ''), paramsSend);
+                    break;
                     default:
                         console.log("====================");
                         console.log("NINGUN TEMPLATE ENCONTRADO");
