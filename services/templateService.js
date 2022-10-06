@@ -17,7 +17,7 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
          
         if(template){
                 console.log("template encontrado "+template.nombre_empresa);
-                //const template = await templateCorreoDao.getTemplateCorreoEmpresa(idEmpresaParam);        
+                
                 const usuarioImprime = await usuarioDao.findById(idUsuario);
                 
                 paramsSend.nombre_empresa = template.nombre_empresa;                
@@ -59,6 +59,9 @@ const loadTemplateEmpresa = async(templateData = {params,idEmpresa,idUsuario,tip
                     break;
                     case TIPO_TEMPLATE.REGISTRO_EMPLEADO:                            
                             html = mustache.to_html((template.encabezado || '') + (template.template_correo_registro_usuario || '')+ (template.pie || ''), paramsSend);
+                    break;
+                    case TIPO_TEMPLATE.LISTA_ALUMNOS:                            
+                            html = mustache.to_html((template.template_lista_alumnos || ''), paramsSend);
                     break;
                     default:
                         console.log("====================");

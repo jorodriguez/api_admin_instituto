@@ -35,9 +35,11 @@ const getTemplateEmpresa = async (idEmpresa) => {
             tem.template_ticket_venta,
             tem.template_correo_bienvenida,
             tem.template_correo_registro_usuario,
+            tem.template_lista_alumnos,
             tem.logo_correo as logotipo,
 			em.pagina_oficial,
-            to_char(getDate('') + getHora(''),'dd-mm-yyyy HH24:mi') as fecha_impresion
+            to_char(getDate('') + getHora(''),'dd-mm-yyyy HH24:mi') as fecha_impresion,
+            to_char(getDate('') + getHora(''),'dd-mm-yyyy') as fecha_actual
     from co_empresa em inner join co_template tem on tem.id = em.co_template
         where em.id = $1
         and  em.activa = true 

@@ -227,6 +227,11 @@ const getCursoById = async (id) => {
   return await genericDao.findOne(`select * from co_curso where id = $1 and eliminado = false`,[id]);
 };
 
+const findByUuId = async (uuid) => {
+  console.log("@findByUuId");
+  return await genericDao.findOne(`select * from co_curso where uid = $1 and eliminado = false`,[id]);
+};
+
 
 const actualizarTotalAdeudaAlumno = async (idAlumno,genero) => {
   console.log("@actualizarTotalAdeudaAlumno");  
@@ -265,7 +270,9 @@ to_char(curso.hora_inicio,'HH24:MI')::text as hora_inicio,
 to_char(curso.hora_fin,'HH24:MI')::text as hora_fin,
 suc.id as co_sucursal,
 suc.nombre as sucursal,
+suc.direccion as direccion_sucursal,
 curso.activo,
+curso.co_empresa,
 curso.numero_semanas,
 curso.uid,
 curso.foto as foto_curso,
@@ -300,5 +307,6 @@ module.exports = {
   actualizarTotalAdeudaAlumno,
   getCursosActivoSucursal,
   cerrarInscripcionesCurso,
-  abrirInscripcionesCurso
+  abrirInscripcionesCurso,
+  findByUuId
 };

@@ -55,6 +55,7 @@ const movimientoInventario = require('./routes/movimientoInventario');
 const usuarioRoute = require('./routes/usuario');
 //const siRol = require('./routes/siRol');
 const siUsuarioSucursalRol = require('./routes/siUsuarioSucursalRol');
+const reportesController = require('./routes/reportesController');
 
 
 app.use('/auth',loginRoutes);
@@ -79,6 +80,7 @@ app.use('/estatus',estatus);
 app.use('/movimiento-inventario',movimientoInventario);
 app.use('/usuario',usuarioRoute);
 app.use('/usuario-rol',siUsuarioSucursalRol);
+app.use('/reportes',reportesController);
 
 
 

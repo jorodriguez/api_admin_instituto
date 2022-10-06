@@ -52,11 +52,13 @@ const getReporteListaAlumnosCurso = (filtros = {uidCurso}) => {
 
 const getQueryAlumno = (criterio,order) => `
 SELECT 
+    row_number() over() row_index,
     a.matricula,  
     a.id as id_alumno,
     i.id as id_inscripcion,
     a.nombre as alumno,             	
     a.apellidos,
+    a.nombre ||' '||a.apellidos as nombre_completo,
     a.nota,
     a.foto,
     a.telefono,  

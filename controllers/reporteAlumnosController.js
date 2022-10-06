@@ -20,7 +20,26 @@ const getReporteListaAlumnos = async (request, response) => {
     }
 };
 
+const getHtmlReporteListaAlumnos = async (request, response) => {
+    console.log("@getHtmlReporteListaAlumnos");
+    try {
+
+        const { uidCurso,idUsuario } = request.params;
+
+        console.log("uidCurso "+uidCurso);
+
+        const lista = await reporteAlumnosService.getReporteHtmlListaAlumnosCurso(uidCurso,idUsuario);
+
+        response.status(200).send(lista);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
 
 module.exports = {
-    getReporteListaAlumnos
+    getReporteListaAlumnos, getHtmlReporteListaAlumnos
 };
