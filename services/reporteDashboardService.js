@@ -8,13 +8,19 @@ const getDashboardContadores = async (data = {coEmpresa,coSucusal}) => {
     console.log("@getDashboardContadores");
        
     const contadores = await reportesDashboardDao.getContadores(data);
-   
-
+    
+    reportesDashboardDao.getTopAlumnosDeudores
     return contadores;
 };
 
 
 
 module.exports = { 
-       getDashboardContadores
+       getDashboardContadores,
+       getTotalAdeudoSucursal:reportesDashboardDao.getTotalAdeudoSucursal,
+       getTotalAdeudoDesgloseCargosSucursal:reportesDashboardDao.getTotalAdeudoDesgloseCargosSucursal,
+       getTotalInscripciones:reportesDashboardDao.getTotalInscripciones,
+       getTotalInscripcionesDesgloseCurso:reportesDashboardDao.getTotalInscripcionesDesgloseCurso,
+       getTopAlumnosDeudores:reportesDashboardDao.getTopAlumnosDeudores,
+       getTotalAdeudoPorCurso:reportesDashboardDao.getTotalAdeudosPorCurso
 };

@@ -7,5 +7,12 @@ router.get('/alumnos/:uidCurso',checkAuth,reporteAlumnosController.getReporteLis
 router.get('/alumnos/html/:uidCurso/usuario/:idUsuario',checkAuth,reporteAlumnosController.getHtmlReporteListaAlumnos);
 
 router.get('/contadores/:coEmpresa/sucursal/:coSucursal',checkAuth,reporteDashboardController.getContadoresDashboard);
+router.get('/totales-cargos/:coEmpresa/sucursal/:coSucursal',checkAuth,reporteDashboardController.getTotalesCargos);
+
+router.get('/totales-inscripciones/:coEmpresa/sucursal/:coSucursal',checkAuth,reporteDashboardController.getTotalesInscripciones);
+
+router.get('/top-alumnos-deudores/:coEmpresa/sucursal/:coSucursal',checkAuth,reporteDashboardController.getTopAlumnosDeudores);
+
+router.get('/totales-adeudos-por-curso/:coEmpresa/sucursal/:coSucursal',checkAuth,reporteDashboardController.getTotalAdeudoPorCurso);
 
 module.exports = router;
