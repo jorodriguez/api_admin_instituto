@@ -195,11 +195,13 @@ from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join usuario usuario_genero on usuario_genero.id = i.genero
     left join usuario asesor on asesor.id = i.usuario_inscribe
 where ${criterio}
-  and i.eliminado = false
-  and curso.eliminado = false
   and a.eliminado =false
+  and i.eliminado = false
+  and curso.eliminado = false  
 order by i.fecha_genero desc
 `;
+
+
 
 module.exports = {
   getInscripciones,
