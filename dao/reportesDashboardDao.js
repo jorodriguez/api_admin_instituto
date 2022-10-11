@@ -18,7 +18,14 @@ const getContadores = (data = {coEmpresa,coSucusal}) => {
 
     return genericDao.findOne(`
         select 
-    	  (select count(*) as alumnos from co_inscripcion where eliminado = false and co_empresa = $1 and co_sucursal = $2) as alumnos,
+    	  (
+            select count(i.*) as alumnos 
+            from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
+    	  					  inner join co_alumno a on a.id = i.co_alumno
+    	  	where i.eliminado = false and i.co_empresa = $1 and i.co_sucursal = $2
+    	  		and curso.eliminado = false
+    	  		and a.eliminado = false  
+          ) as alumnos,
 	    (select count(*) as talleres from co_curso where eliminado = false and co_empresa = $1 and co_sucursal = $2) as talleres
     ` ,[coEmpresa,coSucursal]);
 };
@@ -75,9 +82,23 @@ const getTotalInscripciones = (data = {coEmpresa,coSucusal}) => {
 
     return genericDao.findOne(`  
                 select 
-	                (select count(*) from co_inscripcion where co_empresa = $1 and co_sucursal = $2 and eliminado = false and to_char(fecha_genero,'yyyy-mm') = to_char(getDate(''),'yyyy-mm')) as inscritos_mes_actual,
-	                (select count(*) from co_inscripcion where co_empresa = $1 and co_sucursal = $2 and eliminado = false and to_char(fecha_genero,'yyyy-mm') = to_char( (getDate('') - interval '1 month'),'yyyy-mm')) as inscritos_mes_anterior
-
+                (
+                            select count(i.*) 
+                          from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
+                            inner join co_alumno a on a.id = i.co_alumno
+                         where i.co_empresa = $1 and i.co_sucursal = $2 and i.eliminado = false 
+                             and curso.eliminado = false
+                              and a.eliminado = false
+                         and to_char(i.fecha_genero,'yyyy-mm') = to_char(getDate(''),'yyyy-mm')
+                    ) as inscritos_mes_actual,
+                (
+                    select count(i.*) 
+                           from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
+                            inner join co_alumno a on a.id = i.co_alumno
+                    where i.co_empresa = $1 and i.co_sucursal = $2 and i.eliminado = false 
+                            and curso.eliminado = false
+                              and a.eliminado = false
+                    and to_char(i.fecha_genero,'yyyy-mm') = to_char( (getDate('') - interval '1 month'),'yyyy-mm')) as inscritos_mes_anterior
 
     ` ,[coEmpresa,coSucursal]);
 };
@@ -91,10 +112,12 @@ const getTotalInscripcionesDesgloseCurso = (data = {coEmpresa,coSucusal}) => {
     select count(i.*) as numero_inscripciones,
                 esp.nombre as curso
     from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
-                inner join cat_especialidad esp on esp.id = curso.cat_especialidad
+     					inner join co_alumno a on a.id = i.co_alumno
+                			inner join cat_especialidad esp on esp.id = curso.cat_especialidad
     where 
             curso.eliminado = false 
             and i.eliminado = false
+            and a.eliminado = false
             and curso.co_empresa = $1 
             and curso.co_sucursal = $2	
     group by esp.nombre
@@ -122,6 +145,7 @@ from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
                 inner join cat_dia dia on dia.id = curso.cat_dia
 where 
   curso.eliminado = false 
+  and alumno.eliminado = false
   and i.eliminado = false
   and i.co_empresa = $1 
   and i.co_sucursal = $2	
