@@ -197,7 +197,7 @@ const registrarColegiatura = async (idCurso, idAlumno, idCursoSemana, genero) =>
         console.log("                                          ");
     } else {
         //retId = await  guardarColegiatura(idCurso,idAlumno,cursoSemana.id,'',`Semana ${cursoSemana.numero_semana_curso}`, `${cursoSemana.modulo}-${cursoSemana.materia_modulo}`, genero);
-        retId = await guardarColegiatura(idCurso, idAlumno, cursoSemana.id, '', genero);
+        retId = await guardarColegiatura(idCurso, idAlumno, cursoSemana.id, '',`Semana ${cursoSemana.numero_semana_curso}`, genero);
 
         //    await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemana.id,retId,genero);
         console.log("cargo registrado " + retId);
@@ -207,7 +207,7 @@ const registrarColegiatura = async (idCurso, idAlumno, idCursoSemana, genero) =>
 
 }
 
-const guardarColegiatura = async (idCurso, idAlumno, coCursoSemana, folio, genero) => {
+const guardarColegiatura = async (idCurso, idAlumno, coCursoSemana, folio,textoAyuda, genero) => {
     console.log("@guardarColegiatura");
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
 
@@ -233,7 +233,7 @@ const guardarColegiatura = async (idCurso, idAlumno, coCursoSemana, folio, gener
             monto_modificado: false,
             monto_original: inscripcionAlumno.costo_colegiatura,
             co_curso: inscripcionAlumno.id_curso,
-            texto_ayuda: ``,
+            texto_ayuda: textoAyuda,
             genero: genero
         });
 
