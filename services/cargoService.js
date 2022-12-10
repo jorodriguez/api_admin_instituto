@@ -234,7 +234,7 @@ const guardarColegiatura = async (idCurso, idAlumno, coCursoSemana, folio,textoA
             monto_original: inscripcionAlumno.costo_colegiatura,
             co_curso: inscripcionAlumno.id_curso,
             texto_ayuda: textoAyuda,
-            genero: genero
+            genero: inscripcionAlumno.genero
         });
 
         //actualizar totales adeuda
