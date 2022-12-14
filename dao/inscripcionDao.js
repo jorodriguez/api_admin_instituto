@@ -1,26 +1,26 @@
 const genericDao = require("./genericDao");
 const {
-  ExceptionDatosFaltantes,
-  ExceptionBD,
+    ExceptionDatosFaltantes,
+    ExceptionBD,
 } = require("../exception/exeption");
 const { isEmptyOrNull } = require("../utils/Utils");
 
 
-const guardarInscripcion = async(idAlumno,inscripcionData)=>{
-  console.log("@guardarInscripcion");
-  const {co_curso,co_empresa,co_sucursal,co_alumno,costo_colegiatura,costo_inscripcion,nota,usuario_inscribe,genero} = inscripcionData;
+const guardarInscripcion = async(idAlumno, inscripcionData) => {
+    console.log("@guardarInscripcion");
+    const { co_curso, co_empresa, co_sucursal, co_alumno, costo_colegiatura, costo_inscripcion, nota, usuario_inscribe, genero } = inscripcionData;
 
-  return genericDao.execute(`
+    return genericDao.execute(`
           INSERT INTO CO_INSCRIPCION(co_curso,co_empresa,co_sucursal,co_alumno,costo_colegiatura,costo_inscripcion,nota,usuario_inscribe,genero)
           VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING ID;
-  `,[co_curso,co_empresa,co_sucursal,idAlumno,costo_colegiatura,costo_inscripcion,nota,usuario_inscribe, genero]);
+  `, [co_curso, co_empresa, co_sucursal, idAlumno, costo_colegiatura, costo_inscripcion, nota, usuario_inscribe, genero]);
 }
 
-const confirmarInscripcion = async(idInscripcion,inscripcionData)=>{
-  console.log("@confirmarInscripcion");
-  const {confirmacion,nota,genero} = inscripcionData;
+const confirmarInscripcion = async(idInscripcion, inscripcionData) => {
+    console.log("@confirmarInscripcion");
+    const { confirmacion, nota, genero } = inscripcionData;
 
-  return genericDao.execute(`
+    return genericDao.execute(`
           UPDATE CO_INSCRIPCION 
             SET CONFIRMADO = $2,
                 FECHA_CONFIRMADO = (getDate('')+getHora(''))::timestamp,
@@ -29,118 +29,120 @@ const confirmarInscripcion = async(idInscripcion,inscripcionData)=>{
                 USUARIO_CONFIRMO = $4,                
                 MODIFICO = $4
           WHERE id = $1 RETURNING ID;              
-  `,[idInscripcion,confirmacion,nota,genero]);
+  `, [idInscripcion, confirmacion, nota, genero]);
 }
 
 
 
-const modificarColegiaturaInscripcion = async(idInscripcion,inscripcionData)=>{
-  console.log("@modificarColegiaturaInscripcion");
-  const {costo_colegiatura,nota,genero} = inscripcionData;
+const modificarColegiaturaInscripcion = async(idInscripcion, inscripcionData) => {
+    console.log("@modificarColegiaturaInscripcion");
+    const { costo_colegiatura, nota, genero } = inscripcionData;
 
-  return genericDao.execute(`
+    return genericDao.execute(`
           UPDATE CO_INSCRIPCION 
             SET COSTO_COLEGIATURA = $2,                
                 FECHA_MODIFICO = (getDate('')+getHora(''))::timestamp,
                 NOTA = (NOTA ||' \n '||to_char((getDate('')+getHora('')),'DD-MM-YYYY HH24:MI') ||' '|| $3),                
                 MODIFICO = $4
           WHERE id = $1 RETURNING ID;              
-  `,[idInscripcion,costo_colegiatura,nota,genero]);
+  `, [idInscripcion, costo_colegiatura, nota, genero]);
 }
 
 
-const getInscripcionesAlumno = async(uidAlumno)=>{
-  console.log("@guardarInscripcionesA1lumno"); 
-  return await genericDao.findAll(getQueryBase(' a.uid = $1 '),[uidAlumno]);
+const getInscripcionesAlumno = async(uidAlumno) => {
+    console.log("@guardarInscripcionesA1lumno");
+    return await genericDao.findAll(getQueryBase(' a.uid = $1 '), [uidAlumno]);
 }
 
 //corte
-const getInscripcionesCorteFecha = async(idSucursal,fecha)=>{
-  console.log("@getInscripcionesCorteFecha"); 
-  return await genericDao.findAll(getQueryBase(' suc.id = $1 and i.fecha_genero::date = $2 '),[idSucursal,fecha]);
+const getInscripcionesCorteFecha = async(idSucursal, fecha) => {
+    console.log("@getInscripcionesCorteFecha");
+    return await genericDao.findAll(getQueryBase(' suc.id = $1 and i.fecha_genero::date = $2 '), [idSucursal, fecha]);
 }
 
-const getInscripcionesActivasAlumno = async(uidAlumno)=>{
-  console.log("@getInscripcionesActivasAlumno"); 
-  return await genericDao.findAll(getQueryBase(' a.uid = $1 '),[uidAlumno]);
+const getInscripcionesActivasAlumno = async(uidAlumno) => {
+    console.log("@getInscripcionesActivasAlumno");
+    return await genericDao.findAll(getQueryBase(' a.uid = $1 '), [uidAlumno]);
 }
 
-const getInscripciones = async (idSucursal) => {
-  console.log("@getInscripciones");
-  return await genericDao.findAll(getQueryBase(' suc.id = $1 '),[idSucursal]
-  );
+const getInscripciones = async(idSucursal) => {
+    console.log("@getInscripciones");
+    return await genericDao.findAll(getQueryBase(' suc.id = $1 '), [idSucursal]);
 };
 
-const getInscripcionesSucursalCurso = async (idSucursal,idCurso) => {
-  console.log("@getInscripcionesSucursalCurso");
-  return await genericDao.findAll(getQueryBase(' suc.id = $1 AND curso.id = $2 '),[idSucursal,idCurso]
-  );
+const getInscripcionesSucursalCurso = async(idSucursal, idCurso) => {
+    console.log("@getInscripcionesSucursalCurso");
+    return await genericDao.findAll(getQueryBase(' suc.id = $1 AND curso.id = $2 '), [idSucursal, idCurso]);
 };
 
 
-const getInscripcionAlumnoCurso = async (idAlumno,idCurso) => {
-  console.log("@getInscripciones");
-  //return await genericDao.findOne(` select * from co_inscripcion where co_curso = and co_alumno = and eliminado = false; `,[idSucursal]);
-  return genericDao.findOne(getQueryBase(" a.id = $1 and curso.id = $2 "),[idAlumno,idCurso]);
+const getInscripcionAlumnoCurso = async(idAlumno, idCurso) => {
+    console.log("@getInscripciones");
+    //return await genericDao.findOne(` select * from co_inscripcion where co_curso = and co_alumno = and eliminado = false; `,[idSucursal]);
+    return genericDao.findOne(getQueryBase(" a.id = $1 and curso.id = $2 "), [idAlumno, idCurso]);
 };
 
-const actualizarCampoInscripcion = async (idInscripcion,idCargoInscripcion,genero) => {
-  console.log("@actualizarCampoInscripcion"); 
-  console.log("actualizer co_cargo_inscripcion de co_inscripcion idCArgo="+idCargoInscripcion); 
-  return genericDao.execute(` UPDATE CO_INSCRIPCION 
+const actualizarCampoInscripcion = async(idInscripcion, idCargoInscripcion, genero) => {
+    console.log("@actualizarCampoInscripcion");
+    console.log("actualizer co_cargo_inscripcion de co_inscripcion idCArgo=" + idCargoInscripcion);
+    return genericDao.execute(` UPDATE CO_INSCRIPCION 
                               SET co_cargo_inscripcion = $2,
                                    fecha_modifico = (getDate('')+getHora(''))::timestamp,
                                    modifico = $3
                               WHERE 
                                 id=$1
-                              returning id;`
-          ,[idInscripcion,idCargoInscripcion,genero]);
+                              returning id;`, [idInscripcion, idCargoInscripcion, genero]);
 };
 
-const actualizarTotalAdeudaInscripcion = async (idAlumno,idCurso,genero) => {
-  console.log("@actualizarTotalAdeudaInscripcion");  
+const actualizarTotalAdeudaInscripcion = async(idAlumno, idCurso, genero) => {
+    console.log("@actualizarTotalAdeudaInscripcion");
 
-  return genericDao.execute(` UPDATE CO_INSCRIPCION SET 
+    return genericDao.execute(` UPDATE CO_INSCRIPCION SET 
                                   total_adeuda = (select case when sum(total) is null then 0 else sum(total) end from co_cargo_balance_alumno where co_alumno = $1 and co_curso = $2 and eliminado = false),
                                   fecha_modifico = (getDate('')+getHora(''))::timestamp,
                                   modifico = $3
                             WHERE 
                                   co_alumno=$1 and co_curso = $2
-                              returning id`
-        ,[idAlumno,idCurso,genero]);
+                              returning id`, [idAlumno, idCurso, genero]);
 };
 
 
 
 
 
-const getInscripcionesCurso = async (uidCurso)=>{
-  console.log("@getIncripcionesCurso");
-  
-  return await genericDao.findAll(getQueryBase(" curso.uid = $1 "),[uidCurso]);
+const getInscripcionesCurso = async(uidCurso) => {
+    console.log("@getIncripcionesCurso");
+
+    return await genericDao.findAll(getQueryBase(" curso.uid = $1 "), [uidCurso]);
 }
 
-const getInscripcionesConfirmadasCurso = async (uidCurso)=>{
-  console.log("@getInscripcionesConfirmadasCurso");
-  
-  //return await genericDao.findAll(getQueryBase(" curso.uid = $1 AND  i.confirmado "),[uidCurso]);
-  return await genericDao.findAll(getQueryBase(" curso.uid = $1  "),[uidCurso]);
+const getInscripcionesConfirmadasCurso = async(uidCurso) => {
+    console.log("@getInscripcionesConfirmadasCurso");
+
+    //return await genericDao.findAll(getQueryBase(" curso.uid = $1 AND  i.confirmado "),[uidCurso]);
+    return await genericDao.findAll(getQueryBase(" curso.uid = $1  "), [uidCurso]);
 }
 
-const getIncripcionesCursoIniciaHoy = async (idCurso)=>{
-  console.log("@getIncripcionesIniciarCursoHoy id="+idCurso);  
-  return await genericDao.findAll(getQueryBase(" curso.id = $1 and curso.fecha_inicio::date <= getDate('') and curso.semana_actual = 0 and curso.activo = false "),[idCurso]);
+const getIncripcionesCursoIniciaHoy = async(idCurso) => {
+    console.log("@getIncripcionesIniciarCursoHoy id=" + idCurso);
+    return await genericDao.findAll(getQueryBase(" curso.id = $1 and curso.fecha_inicio::date <= getDate('') and curso.semana_actual = 0 and curso.activo = false "), [idCurso]);
 }
 
-const getIncripcionesIniciarCursoHoyPorSucursal =(idSucursal)=>{
-  console.log("@getIncripcionesIniciarCursoHoyPorSucursal");
-  
-  return genericDao.findAll(getQueryBase("  curso.fecha_inicio::date <= getDate('') and a.co_sucursal = $1 and curso.semana_actual = 0  and curso.activo = false "),[idSucursal]);
+const getIncripcionesIniciarCursoHoyPorSucursal = (idSucursal) => {
+    console.log("@getIncripcionesIniciarCursoHoyPorSucursal");
+
+    return genericDao.findAll(getQueryBase("  curso.fecha_inicio::date <= getDate('') and a.co_sucursal = $1 and curso.semana_actual = 0  and curso.activo = false "), [idSucursal]);
 }
 
-const findById = async (id)=>{
-  console.log("@findById");  
-  return await genericDao.findOne(getQueryBase(" i.id = $1 "),[id]);
+const getIncripcionCursoAlumno = (uuidAlumno) => {
+    console.log("@getIncripcionCursoAlumno");
+
+    return genericDao.findAll(getQueryBase(" a.uid = $1 "), [uuidAlumno]);
+}
+
+const findById = async(id) => {
+    console.log("@findById");
+    return await genericDao.findOne(getQueryBase(" i.id = $1 "), [id]);
 }
 
 const getQueryBase = (criterio) => `               
@@ -184,6 +186,7 @@ const getQueryBase = (criterio) => `
     curso.activo,
     curso.co_empresa,
     curso.co_sucursal,
+    curso.numero_semanas,
     asesor.nombre as inscribio,
     usuario_genero.nombre as nombre_genero,
     i.genero
@@ -204,20 +207,21 @@ order by i.fecha_genero desc
 
 
 module.exports = {
-  getInscripciones,
-  actualizarCampoInscripcion,
-  actualizarTotalAdeudaInscripcion,
-  getInscripcionAlumnoCurso,
-  getIncripcionesIniciarCursoHoyPorSucursal,
-  getIncripcionesCursoIniciaHoy,
-  confirmarInscripcion,
-  guardarInscripcion,
-  getInscripcionesAlumno,
-  getInscripcionesCurso,
-  getInscripcionesConfirmadasCurso,
-  getInscripcionesActivasAlumno,
-  getInscripcionesSucursalCurso,
-  modificarColegiaturaInscripcion,
-  findById,
-  getInscripcionesCorteFecha
+    getInscripciones,
+    actualizarCampoInscripcion,
+    actualizarTotalAdeudaInscripcion,
+    getInscripcionAlumnoCurso,
+    getIncripcionesIniciarCursoHoyPorSucursal,
+    getIncripcionesCursoIniciaHoy,
+    confirmarInscripcion,
+    guardarInscripcion,
+    getInscripcionesAlumno,
+    getInscripcionesCurso,
+    getInscripcionesConfirmadasCurso,
+    getInscripcionesActivasAlumno,
+    getInscripcionesSucursalCurso,
+    modificarColegiaturaInscripcion,
+    findById,
+    getInscripcionesCorteFecha,
+    getIncripcionCursoAlumno,
 };

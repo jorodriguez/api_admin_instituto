@@ -5,48 +5,47 @@ const { ExceptionDatosFaltantes, ExceptionBD } = require('../exception/exeption'
 const { isEmptyOrNull } = require('../utils/Utils');
 
 
-const registrarCargoGeneral =async  (cargoData) => {
+const registrarCargoGeneral = async(cargoData) => {
 
     console.log("@registrarCargoGeneral");
 
-        const { id_alumno,co_curso,folio,co_curso_semanas, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero } = cargoData;
+    const { id_alumno, co_curso, folio, co_curso_semanas, cat_cargo, cantidad, cargo, total, nota, monto, monto_modificado, monto_original, texto_ayuda, genero } = cargoData;
 
-        console.log('idalumno '+id_alumno);
-        console.log('co_curso '+co_curso);
-        console.log('folio '+folio);
-        console.log('co_curso_semana '+co_curso_semanas);
-        console.log('cat_cargo '+cat_cargo);
-        console.log('cantiddad '+cantidad);
-        console.log('cargo '+cargo);
-        console.log('total '+total);
-        console.log('nota '+nota);
-        console.log('monto '+monto);
-        console.log('monto_modificado '+monto_modificado);
-        console.log('monto_original '+monto_original);
-        console.log('texto_ayuda '+texto_ayuda);
-        console.log('genero '+genero);
+    console.log('idalumno ' + id_alumno);
+    console.log('co_curso ' + co_curso);
+    console.log('folio ' + folio);
+    console.log('co_curso_semana ' + co_curso_semanas);
+    console.log('cat_cargo ' + cat_cargo);
+    console.log('cantiddad ' + cantidad);
+    console.log('cargo ' + cargo);
+    console.log('total ' + total);
+    console.log('nota ' + nota);
+    console.log('monto ' + monto);
+    console.log('monto_modificado ' + monto_modificado);
+    console.log('monto_original ' + monto_original);
+    console.log('texto_ayuda ' + texto_ayuda);
+    console.log('genero ' + genero);
 
-        //Aqui ir por el cat_cargo y ver el precio para saber si se modifico el precio y poner la bandeja de monto_modificado
+    //Aqui ir por el cat_cargo y ver el precio para saber si se modifico el precio y poner la bandeja de monto_modificado
 
-        const id =  await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(
+    const id = await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(
                             CO_ALUMNO,CO_CURSO,FOLIO,CO_CURSO_SEMANAS,FECHA,Cat_Cargo,CANTIDAD,CARGO,
                             TOTAL,NOTA,MONTO_MODIFICADO,MONTO_ORIGINAL,TEXTO_AYUDA,GENERO)
-                            VALUES($1,$2,$3,$4,(getDate('')+getHora(''))::timestamp,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ID;`
-                            ,[id_alumno,co_curso,folio || '',co_curso_semanas, cat_cargo,cantidad,cargo,total,nota,monto_modificado,monto_original,texto_ayuda,genero]);
-        console.log("ID DE CARGO GENERADO "+id);
+                            VALUES($1,$2,$3,$4,(getDate('')+getHora(''))::timestamp,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ID;`, [id_alumno, co_curso, folio || '', co_curso_semanas, cat_cargo, cantidad, cargo, total, nota, monto_modificado, monto_original, texto_ayuda, genero]);
+    console.log("ID DE CARGO GENERADO " + id);
 
-        return id;
-       
+    return id;
+
 };
 
-const getCatCargo = async (id) => {
+const getCatCargo = async(id) => {
     console.log("@getCatCargo");
     return await genericDao.findOne("SELECT * from cat_cargo WHERE id = $1 and eliminado = false ", [id]);
 };
 
 
 
-const getColegiaturasPendientesCobranza = async (idSucursal) => {
+const getColegiaturasPendientesCobranza = async(idSucursal) => {
     console.log("@getColegiaturasPendientesCobranza");
     return await genericDao.findAll(
         `
@@ -83,12 +82,11 @@ const getColegiaturasPendientesCobranza = async (idSucursal) => {
         and c.pagado = false
         and c.eliminado = false
         order by semana.fecha_clase::date,(semana.fecha_clase=getDate('')), al.nombre,al.apellidos,esp.nombre desc
-        `
-        ,[CARGOS.ID_CARGO_MENSUALIDAD,idSucursal]);
+        `, [CARGOS.ID_CARGO_MENSUALIDAD, idSucursal]);
 };
 
 
-const buscarCargoColegiatura = async (idCurso,idCoCursoSemana,idAlumno)=>{
+const buscarCargoColegiatura = async(idCurso, idCoCursoSemana, idAlumno) => {
     return await genericDao.findOne(
         `select * 
          from co_cargo_balance_alumno
@@ -97,10 +95,10 @@ const buscarCargoColegiatura = async (idCurso,idCoCursoSemana,idAlumno)=>{
             and co_curso_semanas = $2
             and co_alumno = $3
         and eliminado = false
-     `, [idCurso,idCoCursoSemana,idAlumno]);
+     `, [idCurso, idCoCursoSemana, idAlumno]);
 }
 
-const buscarCargoInscripcion = async (idCurso,idAlumno)=>{
+const buscarCargoInscripcion = async(idCurso, idAlumno) => {
     return await genericDao.findOne(
         `select * 
          from co_cargo_balance_alumno
@@ -108,7 +106,7 @@ const buscarCargoInscripcion = async (idCurso,idAlumno)=>{
             and co_curso = $1 
             and co_alumno = $2
         and eliminado = false
-     `, [idCurso,idAlumno]);
+     `, [idCurso, idAlumno]);
 }
 
 
@@ -121,27 +119,26 @@ const completarRegistroRecargoMensualidad = (idCargoMensualidad, idRecargo, gene
                                     recargo = true,                                    
                                     fecha_modifico = (getDate('')+getHora(''))::timestamp,
                                     modifico = $3
-                                WHERE id = $1 RETURNING id;`
-        , [idCargoMensualidad, idRecargo, genero]);
+                                WHERE id = $1 RETURNING id;`, [idCargoMensualidad, idRecargo, genero]);
 };
 
 
-const getCatalogoCargosPorEmpresa = (idEmpresa,idSucursal) => {
+const getCatalogoCargosPorEmpresa = (idEmpresa, idSucursal) => {
     console.log("@getCatalogoCargosPorEmpresaSucursal");
-    return genericDao.findAll("SELECT * FROM cat_cargo WHERE sistema = true or (co_empresa = $1 and co_sucursal = $2)  and eliminado = false  ORDER BY sistema desc,nombre asc", [idEmpresa,idSucursal]);
+    return genericDao.findAll("SELECT * FROM cat_cargo WHERE sistema = true or (co_empresa = $1 and co_sucursal = $2)  and eliminado = false  ORDER BY sistema desc,nombre asc", [idEmpresa, idSucursal]);
 };
 
-const getCargosAlumno = (uidAlumno,limite) => {
+const getCargosAlumno = (uidAlumno, limite) => {
     console.log("@getCargosAlumno");
 
     //pagina = (pagina-1);
     console.log("request.params.id_alumno " + uidAlumno);
     console.log("limite " + limite);
     //console.log("pagin " + pagina);
-    
-//    let offset = (limite * pagina);
-return genericDao.findAll(
-    ` 
+
+    //    let offset = (limite * pagina);
+    return genericDao.findAll(
+        ` 
 SELECT
 b.id as id_cargo_balance_alumno,
 b.fecha,
@@ -159,45 +156,22 @@ b.nota,
 b.pagado,               	                                         
 false as checked,
 0 as pago,
-esp.nombre as especialidad,
-semana.numero_semana_curso,
-semana.numero_semana_curso as materia_modulo
+    esp.nombre as especialidad,
+    semana.numero_semana_curso,
+    semana.numero_semana_curso as materia_modulo    
 FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
                             inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
                             left join co_curso curso on curso.id = b.co_curso
                             left join cat_especialidad esp on esp.id = curso.cat_especialidad
-                            left join co_curso_semanas semana on semana.id = b.co_curso_semanas                            
-WHERE a.uid = $1 and b.eliminado = false and a.eliminado = false
+                            left join co_curso_semanas semana on semana.id = b.co_curso_semanas                                                 
+WHERE a.uid = $1 
+     and b.eliminado = false 
+    and a.eliminado = false
 ORDER by b.pagado, b.fecha desc
-         LIMIT ${limite}`,
-    [uidAlumno]);
-
-   /* return genericDao.findAll(
-        ` SELECT
-               b.id as id_cargo_balance_alumno,
-               b.fecha,
-               to_char(b.fecha,'dd-mm-yyyy HH24:MI') as fecha_format,
-               b.cantidad,
-               cargo.nombre as nombre_cargo,
-               cargo.aplica_descuento,
-               b.texto_ayuda,
-               cat_cargo as id_cargo,
-               cargo.es_facturable,
-               b.total as total,
-               b.cargo,
-               b.total_pagado,
-               b.nota,
-               b.pagado,               	                                         
-               false as checked,
-               0 as pago 
-             FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
-                                           inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
-             WHERE a.uid = $1 and b.eliminado = false and a.eliminado = false
-             ORDER by b.pagado, b.fecha desc
-             LIMIT ${limite}`,
-        [uidAlumno]);*/
+         LIMIT ${limite}`, [uidAlumno]);
 
 };
+
 
 const getBalanceAlumno = (idAlumno) => {
     console.log("@getBalanceAlumno");
@@ -205,8 +179,7 @@ const getBalanceAlumno = (idAlumno) => {
     return genericDao.findOne(
         `SELECT al.nombre as nombre_alumno,al.apellidos as apellidos_alumno,to_char(al.fecha_limite_pago_mensualidad,'dd-Mon') as fecha_limite_pago_mensualidad, bal.* 
          FROM co_alumno al inner join  co_balance_alumno bal on al.co_balance_alumno = bal.id and bal.eliminado = false
-         WHERE al.id = $1::int and al.eliminado = false `
-        , [idAlumno]);
+         WHERE al.id = $1::int and al.eliminado = false `, [idAlumno]);
     /*
     response,
     (results) => {
@@ -307,8 +280,7 @@ const obtenerFiltroAniosCargosSucursal = (idSucursal) => {
 	        group by to_char(c.fecha,'YYYY')
 	        order by to_char(c.fecha,'YYYY')::integer desc
 	
-                        `,
-            [idSucursal]);
+                        `, [idSucursal]);
 
 };
 
@@ -347,7 +319,7 @@ with  serie_meses as (
         from serie_meses s left join meses_pagados mp on mp.fecha_registrado = s.fecha_mes
 `;
 
-const obtenerEstadoCuenta = async (idAlumno) => {
+const obtenerEstadoCuenta = async(idAlumno) => {
     console.log("@obtenerEstadoCuenta");
 
     console.log("ID alumno " + idAlumno);
@@ -355,67 +327,165 @@ const obtenerEstadoCuenta = async (idAlumno) => {
     const alumno = await genericDao.findOne(`
     SELECT 
         
-        al.nombre as nombre_alumno,
-    al.apellidos as apellidos_alumno,            	
-    al.correo,			
-    al.total_adeudo,			
-    suc.nombre as sucursal,
-        suc.id as co_sucursal,
-    suc.direccion as direccion_sucursal,
-        empresa.id as id_empresa,
-    empresa.nombre as empresa,
-        al.total_adeudo > 0 as adeuda,
-        to_char(getDate(''),'YYYY-MM-DD') as fecha,			
-    to_char(getHora(''),'HH24:MI') as hora
- FROM co_alumno al 
+            al.nombre as nombre_alumno,
+            al.apellidos as apellidos_alumno,            	
+            al.correo,			
+            al.total_adeudo,			
+            suc.nombre as sucursal,
+            suc.id as co_sucursal,
+            suc.direccion as direccion_sucursal,
+            empresa.id as id_empresa,
+            empresa.nombre as empresa,
+            al.total_adeudo > 0 as adeuda,
+            to_char(getDate(''),'YYYY-MM-DD') as fecha,			
+            to_char(getHora(''),'HH24:MI') as hora
+    FROM co_alumno al 
                      inner join co_sucursal suc on suc.id = al.co_sucursal							
                     inner join co_empresa empresa on empresa.id = suc.co_empresa
- WHERE al.id = $1 and al.eliminado = false`,
-        [idAlumno]);
+    WHERE al.id = $1 and al.eliminado = false`, [idAlumno]);
 
     const detalleMensualidadesPendientes = await obtenerDetalleEstadoCuenta(
-        idAlumno        
-    );   
+        idAlumno
+    );
 
     return {
         alumno: alumno,
-        cargos: detalleMensualidadesPendientes || []        
+        cargos: detalleMensualidadesPendientes || []
     };
-
-
 };
 
-const obtenerDetalleEstadoCuenta = async (idAlumno) => {
-    console.log("obtenerDetalleEstadoCuenta")
-/*
 
-SELECT
-b.id as id_cargo_balance_alumno,
-b.fecha,
-to_char(b.fecha,'dd-mm-yyyy HH24:MI') as fecha_format,
-b.cantidad,
-cargo.nombre as nombre_cargo,
-cargo.aplica_descuento,
-b.texto_ayuda,
-cat_cargo as id_cargo,
-cargo.es_facturable,
-b.total as total,
-b.cargo,
-b.total_pagado,
-b.nota,
-b.pagado,               	                                         
-false as checked,
-0 as pago,
-esp.nombre as especialidad,
-semana.numero_semana_curso,
-semana.numero_semana_curso as materia_modulo
+
+const obtenerEstadoCuentaDetallado = async(uid, id_curso) => {
+    console.log("obtenerEstadoCuentaDetallado")
+
+    return await genericDao.findAll(` 
+   
+WITH pagos as (
+	select 	to_char(pago.fecha,'DD-MM-YYY HH:MM am') as fecha,
+		  	pago.folio,
+       		genero.nombre as registro,
+       		pago.pago,	
+       		pago.nota,       
+       		forma_pago.nombre as forma_pago,
+       		rel.co_cargo_balance_alumno as id_cargo
+	from co_pago_cargo_balance_alumno rel inner join co_pago_balance_alumno pago on pago.id = rel.co_pago_balance_alumno 
+							   inner join usuario genero on genero.id = pago.genero
+							   inner join co_forma_pago forma_pago on forma_pago.id = pago.co_forma_pago
+							   inner join co_cargo_balance_alumno cargo on cargo.id = rel.co_cargo_balance_alumno
+							   inner join co_alumno al on al.id = cargo.co_alumno
+	where al.uid = $1  and rel.eliminado = false and pago.eliminado = false	
+), universo as( SELECT
+	b.id as id_cargo_balance_alumno,
+	b.fecha,
+	to_char(b.fecha,'dd-mm-yyyy HH24:MI') as fecha_format,
+	b.cantidad,
+	cargo.nombre as nombre_cargo,
+	cargo.aplica_descuento,
+	b.texto_ayuda,
+	cat_cargo as id_cargo,	
+	b.total as total,
+	b.cargo,
+	b.total_pagado,
+	b.nota,
+	b.pagado,               	                                         
+	esp.nombre as especialidad,
+	semana.id as id_semana,
+	semana.numero_semana_curso::text as numero_semana_curso,    
+	semana.numero_semana_curso as materia_modulo,
+	b.motivo_eliminacion,
+	to_char(b.fecha_modifico,'DD-MM-YYYY HH:MM am') as fecha_elimino,
+	elimino.nombre as elimino,
+	array_to_json(array_agg(p.*)) as lista_pagos,
+    total_pagado > 0 as existen_pagos
 FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
-                            inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
+                            inner join cat_cargo cargo on b.cat_cargo = cargo.id                           					                                           
+                            left join pagos p on p.id_cargo = b.id
                             left join co_curso curso on curso.id = b.co_curso
                             left join cat_especialidad esp on esp.id = curso.cat_especialidad
                             left join co_curso_semanas semana on semana.id = b.co_curso_semanas                            
-WHERE a.uid = $1 and b.eliminado = false and a.eliminado = false
-ORDER by b.pagado, b.fecha desc*/
+                            left join usuario elimino on elimino.id = b.modifico
+WHERE a.uid= $1
+	 and b.eliminado = false 
+	 and a.eliminado = false
+GROUP by b.id,cargo.id,esp.id,semana.id,elimino.id
+) select u.*,sem.numero_semana_curso,to_char(sem.fecha_clase,'DD-MM-YYYY') as fecha_clase_format
+  from co_curso_semanas sem left join universo u on u.id_semana = sem.id
+  where id in (
+  		select id from co_curso_semanas where co_curso = $2
+  )
+ order by sem.numero_semana_curso
+    `, [uid, id_curso]);
+};
+
+
+const obtenerOtrosCargosEstadoCuentaDetallado = async(uid) => {
+    console.log("obtenerOtrosCargosEstadoCuentaDetallado")
+
+    return await genericDao.findAll(` 
+   
+WITH pagos as (
+	select 	to_char(pago.fecha,'DD-MM-YYY HH:MM am') as fecha,
+		  	pago.folio,
+       		genero.nombre as registro,
+       		pago.pago,	
+       		pago.nota,              		
+       		forma_pago.nombre as forma_pago,
+       		rel.co_cargo_balance_alumno as id_cargo
+	from co_pago_cargo_balance_alumno rel inner join co_pago_balance_alumno pago on pago.id = rel.co_pago_balance_alumno 
+							   inner join usuario genero on genero.id = pago.genero
+							   inner join co_forma_pago forma_pago on forma_pago.id = pago.co_forma_pago
+							   inner join co_cargo_balance_alumno cargo on cargo.id = rel.co_cargo_balance_alumno
+							   inner join co_alumno al on al.id = cargo.co_alumno
+	where al.uid = $1  and rel.eliminado = false and pago.eliminado = false				
+) SELECT
+	b.id as id_cargo_balance_alumno,
+	b.fecha,
+	to_char(b.fecha,'dd-mm-yyyy HH24:MI') as fecha_format,
+	b.cantidad,
+	cargo.nombre as nombre_cargo,
+	cargo.aplica_descuento,
+	b.texto_ayuda,
+	cat_cargo as id_cargo,	
+	b.total as total,
+	b.cargo,
+	b.total_pagado,
+	b.nota,
+	b.pagado,               	                                         
+	esp.nombre as especialidad,
+	semana.id as id_semana,
+	semana.numero_semana_curso::text as numero_semana_curso,
+	semana.numero_semana_curso as materia_modulo,
+	b.motivo_eliminacion,
+	to_char(b.fecha_modifico,'DD-MM-YYYY HH:MM am') as fecha_elimino,
+	elimino.nombre as elimino,
+	array_to_json(array_agg(p.*))::text as lista_pagos,
+    total_pagado > 0 as existen_pagos
+FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
+                            inner join cat_cargo cargo on b.cat_cargo = cargo.id                           					                                           
+                            left join pagos p on p.id_cargo = b.id
+                            left join co_curso curso on curso.id = b.co_curso
+                            left join cat_especialidad esp on esp.id = curso.cat_especialidad
+                            left join co_curso_semanas semana on semana.id = b.co_curso_semanas                            
+                            left join usuario elimino on elimino.id = b.modifico
+WHERE a.uid= $1
+	 and b.eliminado = false 
+	 and a.eliminado = false
+	 and b.cat_cargo <> 1
+GROUP by b.id,cargo.id,esp.id,semana.id,elimino.id
+order by b.fecha 
+    `, [uid]);
+};
+
+
+
+
+
+
+
+
+const obtenerDetalleEstadoCuenta = async(idAlumno) => {
+    console.log("obtenerDetalleEstadoCuenta")
 
     return await genericDao.findAll(` SELECT a.co_balance_alumno,
                b.id as id_cargo_balance_alumno,
@@ -447,8 +517,7 @@ ORDER by b.pagado, b.fecha desc*/
 					and b.pagado = false
 			 		and b.eliminado = false
 					and a.eliminado = false
-              ORDER by b.pagado,cargo.nombre asc, b.fecha desc`,
-        [idAlumno]);
+              ORDER by b.pagado,cargo.nombre asc, b.fecha desc`, [idAlumno]);
 };
 
 const getCargoExtraMensualidadEmpresa = (idEmpresa) => {
@@ -464,13 +533,13 @@ const getCargoExtraMensualidadEmpresa = (idEmpresa) => {
 
 
 
-const getCargoPorAlumno = (idAlumno,idCargo) => {
+const getCargoPorAlumno = (idAlumno, idCargo) => {
     console.log("@existeCargoPorAlumno");
-    return genericDao.findOne(`select * from co_cargo_balance_alumno where co_alumno = $1 and cat_cargo = $2 and eliminado = false limit 1`, [idAlumno,idCargo]);
+    return genericDao.findOne(`select * from co_cargo_balance_alumno where co_alumno = $1 and cat_cargo = $2 and eliminado = false limit 1`, [idAlumno, idCargo]);
 };
 
 
-module.exports = {    
+module.exports = {
     registrarCargoGeneral,
     getCatalogoCargosPorEmpresa,
     getCargosAlumno,
@@ -485,5 +554,7 @@ module.exports = {
     buscarCargoColegiatura,
     buscarCargoInscripcion,
     getCatCargo,
-    getColegiaturasPendientesCobranza
+    getColegiaturasPendientesCobranza,
+    obtenerEstadoCuentaDetallado,
+    obtenerOtrosCargosEstadoCuentaDetallado
 };

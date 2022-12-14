@@ -1,9 +1,9 @@
 const genericDao = require('./genericDao');
 
-const getTemplateCorreoEmpresa = async (idEmpresa) => {
+const getTemplateCorreoEmpresa = async(idEmpresa) => {
     console.log("@getTemplateCorreoEmpresa");
     return await genericDao.findOne(
-    `select em.nombre as nombre_empresa,
+        `select em.nombre as nombre_empresa,
             em.direccion as direccion_empresa,
             em.telefono as telefono_empresa,		
             tem.nombre as nombre_template,
@@ -20,10 +20,10 @@ const getTemplateCorreoEmpresa = async (idEmpresa) => {
     `, [idEmpresa]);
 };
 
-const getTemplateEmpresa = async (idEmpresa) => {
+const getTemplateEmpresa = async(idEmpresa) => {
     console.log("@getTemplateEmpresa");
     return await genericDao.findOne(
-    `select em.nombre as nombre_empresa,
+        `select em.nombre as nombre_empresa,
             em.direccion as direccion_empresa,
             em.telefono as telefono_empresa,		
             em.rfc as rfc,		
@@ -36,6 +36,7 @@ const getTemplateEmpresa = async (idEmpresa) => {
             tem.template_correo_bienvenida,
             tem.template_correo_registro_usuario,
             tem.template_lista_alumnos,
+            tem.template_estado_cuenta_detallado,
             tem.logo_correo as logotipo,            
 			em.pagina_oficial,
             to_char(getDate('') + getHora(''),'dd-mm-yyyy HH24:mi') as fecha_impresion,
