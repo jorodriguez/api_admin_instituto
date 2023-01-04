@@ -1,27 +1,27 @@
 const genericDao = require("./genericDao");
 const {
-  ExceptionDatosFaltantes,
-  ExceptionBD,
+    ExceptionDatosFaltantes,
+    ExceptionBD,
 } = require("../exception/exeption");
 const { isEmptyOrNull } = require("../utils/Utils");
 const { ID_CARGO_COLEGIATURA } = require('../utils/Constantes');
 
-const guardarCursoSemana = async (semanaData) => {
-  console.log("@guardarCursoSemana");    
-  try{
-	  
-    const {
-      co_curso,            
-      numero_semana_curso,
-      numero_semana_anio,
-      fecha_inicio_semana,
-      fecha_fin_semana,
-      fecha_clase,
-      anio,      
-      genero    
-    } = semanaData;
-    
-    return await genericDao.execute(`
+const guardarCursoSemana = async(semanaData) => {
+    console.log("@guardarCursoSemana");
+    try {
+
+        const {
+            co_curso,
+            numero_semana_curso,
+            numero_semana_anio,
+            fecha_inicio_semana,
+            fecha_fin_semana,
+            fecha_clase,
+            anio,
+            genero
+        } = semanaData;
+
+        return await genericDao.execute(`
           insert into co_curso_semanas(
             co_curso,            
             numero_semana_curso,
@@ -32,39 +32,40 @@ const guardarCursoSemana = async (semanaData) => {
             anio,            
             genero)
           values($1,$2,$3,$4::date,$5::date,$6::date,$7,$8) RETURNING ID;
-    `,[ co_curso,      
-      numero_semana_curso,
-      numero_semana_anio,
-      fecha_inicio_semana,
-      fecha_fin_semana,
-      fecha_clase,
-      anio,      
-      genero    ]);      
+    `, [co_curso,
+            numero_semana_curso,
+            numero_semana_anio,
+            fecha_inicio_semana,
+            fecha_fin_semana,
+            fecha_clase,
+            anio,
+            genero
+        ]);
 
-  }catch(e){  
-    console.log("Error al insertar la semana del curso "+e);
-    throw new ExceptionBD("Error");
-  }
+    } catch (e) {
+        console.log("Error al insertar la semana del curso " + e);
+        throw new ExceptionBD("Error");
+    }
 };
 
 
 
-const modificarCursoSemana = async (semanaData) => {
-  console.log("@modificarCursoSemana");    
-  try{
-	  
-    const {
-      id,            
-      numero_semana_curso,
-      numero_semana_anio,
-      fecha_inicio_semana,
-      fecha_fin_semana,
-      fecha_clase,
-      anio,      
-      genero    
-    } = semanaData;
-    
-    return await genericDao.execute(`
+const modificarCursoSemana = async(semanaData) => {
+    console.log("@modificarCursoSemana");
+    try {
+
+        const {
+            id,
+            numero_semana_curso,
+            numero_semana_anio,
+            fecha_inicio_semana,
+            fecha_fin_semana,
+            fecha_clase,
+            anio,
+            genero
+        } = semanaData;
+
+        return await genericDao.execute(`
          UPDATE CO_CURSO_SEMANAS
          SET 
               numero_semana_curso = $2,
@@ -77,49 +78,50 @@ const modificarCursoSemana = async (semanaData) => {
               genero = $8
          WHERE ID = $1 
          RETURNING ID;                    
-    `,[id, 
-      numero_semana_curso,
-      numero_semana_anio,
-      fecha_inicio_semana,
-      fecha_fin_semana,
-      fecha_clase,
-      anio,      
-      genero    ]);      
+    `, [id,
+            numero_semana_curso,
+            numero_semana_anio,
+            fecha_inicio_semana,
+            fecha_fin_semana,
+            fecha_clase,
+            anio,
+            genero
+        ]);
 
-  }catch(e){  
-    console.log("Error al modificar la semana del curso "+e);
-    throw new ExceptionBD("Error");
-  }
+    } catch (e) {
+        console.log("Error al modificar la semana del curso " + e);
+        throw new ExceptionBD("Error");
+    }
 };
 
-const guardarRealcionCargoCursoSemana = async (idCursoSemana,idCargo,genero) => {
-  console.log("@guardarRealcionCargoCursoSemana");    
-  try{	  
-        
-    return await genericDao.execute(`
+const guardarRealcionCargoCursoSemana = async(idCursoSemana, idCargo, genero) => {
+    console.log("@guardarRealcionCargoCursoSemana");
+    try {
+
+        return await genericDao.execute(`
           UPDATE co_curso_semanas
           SET co_cargo_balance_alumno = $2,
               fecha_modifico = (getDate('')+getHora(''))::timestamp,
               modifico = $3
           WHERE ID = $1
           RETURNING ID;
-    `,[idCursoSemana,idCargo,genero]);      
+    `, [idCursoSemana, idCargo, genero]);
 
-  }catch(e){  
-    console.log("Error al modificar la relacion cargo "+e);
-    throw new ExceptionBD("Error");
-  }
+    } catch (e) {
+        console.log("Error al modificar la relacion cargo " + e);
+        throw new ExceptionBD("Error");
+    }
 };
 
 
 
-const getSeriesPeriodosCurso = (uidCurso) => {    
-  return genericDao.findAll(getQueryBaseSeries(), [uidCurso]);
+const getSeriesPeriodosCurso = (uidCurso) => {
+    return genericDao.findAll(getQueryBaseSeries(), [uidCurso]);
 }
 
-const getSemanasColegiaturasParaCargo =  (uidCurso,idAlumno)=>{
-  
-  return genericDao.findAll(`
+const getSemanasColegiaturasParaCargo = (uidCurso, idAlumno) => {
+
+    return genericDao.findAll(`
   select sem.id, 
       curso.id as id_curso,
       especialidad.nombre as especialidad,                  
@@ -145,13 +147,13 @@ from co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
 where  curso.uid = $1 
   and curso.eliminado = false                  
 order by sem.fecha_clase
-  `,[uidCurso,ID_CARGO_COLEGIATURA,idAlumno]);
+  `, [uidCurso, ID_CARGO_COLEGIATURA, idAlumno]);
 
 }
 
-const getSemanasCursoRecalculados = (uidCurso) =>{
+const getSemanasCursoRecalculados = (uidCurso) => {
 
-  return genericDao.findAll(`
+    return genericDao.findAll(`
   with periodo as(     		
     select c.id as id_curso,fecha_inicio_previsto::date,fecha_fin_previsto::date
         from co_curso c inner join cat_especialidad e on e.id = c.cat_especialidad                
@@ -172,39 +174,39 @@ const getSemanasCursoRecalculados = (uidCurso) =>{
       extract(year from m.fecha_clase::date)::int as numero_anio 	 	
   from materias m 
  
-  `,[uidCurso]);
+  `, [uidCurso]);
 
 }
 
-const getSemanasCurso = (uidCurso) => {    
-  return genericDao.findAll(getQueryBaseSemanasCurso(" curso.uid = $1 "), [uidCurso]);
+const getSemanasCurso = (uidCurso) => {
+    return genericDao.findAll(getQueryBaseSemanasCurso(" curso.uid = $1 "), [uidCurso]);
 }
 
-const getSemanaCursoById = (idSemanaCurso)=>{
-  return genericDao.findOne(`
+const getSemanaCursoById = (idSemanaCurso) => {
+    return genericDao.findOne(`
   select sem.*,curso.numero_semanas as modulo,curso.numero_semanas as materia_modulo,especialidad.nombre as especialidad
   from 
   co_curso_semanas sem inner join co_curso curso on curso.id = sem.co_curso
     inner join cat_especialidad especialidad on especialidad.id = curso.cat_especialidad    
   where sem.id = $1
       and sem.eliminado = false
-  `,[idSemanaCurso]);
+  `, [idSemanaCurso]);
 }
 
 
-const getSemanaActualCurso = (idCurso)=>{
-  return genericDao.findOne(`
+const getSemanaActualCurso = (idCurso) => {
+    return genericDao.findOne(`
       select * 
       from co_curso_semanas
       where co_curso = $1
           and numero_semana_anio =  extract(week from getDate(''))::int 
           and anio = extract(year from getDate(''))::int
           and eliminado = false
-  `,[idCurso]);
+  `, [idCurso]);
 }
 
-const getSemanasCalculadasPreviewPorFecha = (fecha,numero_semanas,co_empresa)=>{
-  return genericDao.findAll(`
+const getSemanasCalculadasPreviewPorFecha = (fecha, numero_semanas, co_empresa) => {
+    return genericDao.findAll(`
   with fechas as (    
       SELECT generate_series($1::date,(($1::date)  + interval '${numero_semanas - 1} week')::timestamp,'1 week')::date as dia
   ) select ROW_NUMBER() over ( order by dia) as numero_semana_curso, 	   
@@ -226,12 +228,12 @@ const getSemanasCalculadasPreviewPorFecha = (fecha,numero_semanas,co_empresa)=>{
                   inner join cat_dia dia on dia.numero_dia  = extract(isodow from f.dia)::integer  		
   where dia.co_empresa = $2                  
   WINDOW mes_window as (partition by to_char(f.dia,'mm-yyyy') order by f.dia)  
-  `,[fecha,co_empresa]);
+  `, [fecha, co_empresa]);
 }
 
 
-const getInformacionCrearColegiaturaSemanaActual = ()=>{
-  return genericDao.findAll(`
+const getInformacionCrearColegiaturaSemanaActual = () => {
+    return genericDao.findAll(`
     select	
 	      c.id as id_semana_actual,
   	    c.co_curso,
@@ -249,10 +251,10 @@ const getInformacionCrearColegiaturaSemanaActual = ()=>{
       and curso.eliminado = false
       group by c.id,c.co_curso,c.numero_semana_curso
 
-  `,[]);
+  `, []);
 }
 
-const getQueryBaseSemanasCurso = (criterio)=>`
+const getQueryBaseSemanasCurso = (criterio) => `
 select sem.id, 
 		  curso.id as id_curso,
 		  especialidad.nombre as especialidad,		  
@@ -272,11 +274,12 @@ select sem.id,
             left join co_cargo_balance_alumno bal on bal.id = sem.co_cargo_balance_alumno
 	where  ${criterio ? criterio+' and ':''} 
 		      curso.eliminado = false
+          and sem.eliminado = false
   order by sem.fecha_clase
 
 `;
 
-const getQueryBaseSeries =()=>`
+const getQueryBaseSeries = () => `
 with fechas_curso as (  
   select c.fecha_inicio_previsto,c.fecha_fin_previsto from co_curso c  where c.uid = $1   and c.eliminado = false  			 			
 ), fechas as(
@@ -295,15 +298,15 @@ from fechas f
 
 
 module.exports = {
-  guardarCursoSemana,
-  modificarCursoSemana,
-  getSemanasCursoRecalculados,
-  getSeriesPeriodosCurso,
-  getSemanaActualCurso,
-  getSemanasCurso,
-  getSemanaCursoById,
-  guardarRealcionCargoCursoSemana,
-  getInformacionCrearColegiaturaSemanaActual,
-  getSemanasColegiaturasParaCargo,
-  getSemanasCalculadasPreviewPorFecha
+    guardarCursoSemana,
+    modificarCursoSemana,
+    getSemanasCursoRecalculados,
+    getSeriesPeriodosCurso,
+    getSemanaActualCurso,
+    getSemanasCurso,
+    getSemanaCursoById,
+    guardarRealcionCargoCursoSemana,
+    getInformacionCrearColegiaturaSemanaActual,
+    getSemanasColegiaturasParaCargo,
+    getSemanasCalculadasPreviewPorFecha
 };
