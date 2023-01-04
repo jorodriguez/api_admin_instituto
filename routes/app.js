@@ -6,32 +6,32 @@ const port = process.env.PORT || 5000;
 
 //version/branch
 
-const version = "v1/2208-mejoras impresión lista alunos,dashboard, cat especialidad";
+const version = "v1/2212-mejioras impresion del historial de pagos";
 
 app.use(bodyParser.json());
 app.use(
-	bodyParser.urlencoded({
-		extended: true,
-	})
+    bodyParser.urlencoded({
+        extended: true,
+    })
 );
 
 app.use((req, res, next) => {
-	res.setHeader('Access-Control-Allow-Origin', '*');
-	res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
-	res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Origin,Accept,Authorization,x-access-token'); // If needed	
-	res.setHeader('Access-Control-Allow-Credentials', true); // If needed
-	next();
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE'); // If needed
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type,Origin,Accept,Authorization,x-access-token'); // If needed	
+    res.setHeader('Access-Control-Allow-Credentials', true); // If needed
+    next();
 });
 
 app.get('/', (request, response) => {
-	console.log(process.env);
-	console.log("=====================");
-	//console.log(JSON.stringify(pool));
-	response.json({ info: `Instituto paris ${version} (env:${process.env.ENV})` });
+    console.log(process.env);
+    console.log("=====================");
+    //console.log(JSON.stringify(pool));
+    response.json({ info: `Instituto paris ${version} (env:${process.env.ENV})` });
 });
 
 app.listen(port, () => {
-	console.log(`App corriendo en el puerto ${port} ${version} (env:${process.env.ENV})`);
+    console.log(`App corriendo en el puerto ${port} ${version} (env:${process.env.ENV})`);
 });
 
 
