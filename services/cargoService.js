@@ -1,5 +1,3 @@
-
-
 const cargosDao = require('../dao/cargoDao');
 const alumnoDao = require('../dao/alumnoDao');
 const catCargoDao = require('../dao/catCargoDao');
@@ -14,7 +12,7 @@ const { getSemanaActual } = require('./cursoSemanasService');
 const alumnoService = require('./alumnoService');
 
 //registrar cargos
-const registrarCargo = async (cargoData) => {
+const registrarCargo = async(cargoData) => {
     console.log("@registrarCargo");
     try {
 
@@ -51,7 +49,7 @@ const registrarCargo = async (cargoData) => {
 };
 
 
-const registrarInscripcion = async (idCurso, idAlumno, genero) => {
+const registrarInscripcion = async(idCurso, idAlumno, genero) => {
     console.log("@registrarInscripcion");
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
     console.log(`idCurso ${idCurso} idAlumno ${idAlumno} genero ${genero}`);
@@ -95,7 +93,7 @@ const registrarInscripcion = async (idCurso, idAlumno, genero) => {
 }
 
 ///registrar automaticamente las colegiaturas
-const registrarColegiaturaAlumnoSemanaActualAutomatico = async () => {
+const registrarColegiaturaAlumnoSemanaActualAutomatico = async() => {
 
     console.log("@registrarColegiaturaAlumnoSemanaActualAutomatico");
 
@@ -116,10 +114,10 @@ const registrarColegiaturaAlumnoSemanaActualAutomatico = async () => {
 
         console.log(`${i} - Creando colegiaturas para la semana ${cursoSemanaActual.numero_semana_curso} 
                         del curso ${cursoSemanaActual.co_curso} total de alumnos a generar colegiaturas ${cursoSemanaActual.contador_inscripciones}`);
-        
+
         const listaInscripciones = cursoSemanaActual.array_inscripciones ? cursoSemanaActual.array_inscripciones : [];
 
-        for (let x = 0; x < listaInscripciones.length;x++) {
+        for (let x = 0; x < listaInscripciones.length; x++) {
 
             const inscripcion = listaInscripciones[x];
 
@@ -128,7 +126,7 @@ const registrarColegiaturaAlumnoSemanaActualAutomatico = async () => {
             //verificar existencia del registro
             const cargoColegiatura = await cargosDao.buscarCargoColegiatura(cursoSemanaActual.co_curso, cursoSemanaActual.id_semana_actual, inscripcion.co_alumno);
 
-            console.log("      Colegiatura encontrada  " + (cargoColegiatura!=null));
+            console.log("      Colegiatura encontrada  " + (cargoColegiatura != null));
 
             if (cargoColegiatura != null) {
                 console.log("                                          ");
@@ -148,7 +146,7 @@ const registrarColegiaturaAlumnoSemanaActualAutomatico = async () => {
 }
 
 
-const registrarColegiaturaAlumnoSemanaActual = async (idCurso, idAlumno, genero) => {
+const registrarColegiaturaAlumnoSemanaActual = async(idCurso, idAlumno, genero) => {
 
     console.log("@registrarColegiaturaAlumnoSemanaActual");
 
@@ -177,7 +175,7 @@ const registrarColegiaturaAlumnoSemanaActual = async (idCurso, idAlumno, genero)
 }
 
 
-const registrarColegiatura = async (idCurso, idAlumno, idCursoSemana, genero) => {
+const registrarColegiatura = async(idCurso, idAlumno, idCursoSemana, genero) => {
 
     console.log("@registrarColegiatura");
 
@@ -197,7 +195,7 @@ const registrarColegiatura = async (idCurso, idAlumno, idCursoSemana, genero) =>
         console.log("                                          ");
     } else {
         //retId = await  guardarColegiatura(idCurso,idAlumno,cursoSemana.id,'',`Semana ${cursoSemana.numero_semana_curso}`, `${cursoSemana.modulo}-${cursoSemana.materia_modulo}`, genero);
-        retId = await guardarColegiatura(idCurso, idAlumno, cursoSemana.id, '',`Semana ${cursoSemana.numero_semana_curso}`, genero);
+        retId = await guardarColegiatura(idCurso, idAlumno, cursoSemana.id, '', `Semana ${cursoSemana.numero_semana_curso}`, genero);
 
         //    await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemana.id,retId,genero);
         console.log("cargo registrado " + retId);
@@ -207,7 +205,7 @@ const registrarColegiatura = async (idCurso, idAlumno, idCursoSemana, genero) =>
 
 }
 
-const guardarColegiatura = async (idCurso, idAlumno, coCursoSemana, folio,textoAyuda, genero) => {
+const guardarColegiatura = async(idCurso, idAlumno, coCursoSemana, folio, textoAyuda, genero) => {
     console.log("@guardarColegiatura");
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
 
@@ -252,7 +250,7 @@ const guardarColegiatura = async (idCurso, idAlumno, coCursoSemana, folio,textoA
 }
 
 
-const guardarCargoGenerico = async (idAlumno, cat_cargo, cantidad, monto, folio, nota, genero) => {
+const guardarCargoGenerico = async(idAlumno, cat_cargo, cantidad, monto, folio, nota, genero) => {
     console.log("@guardarCargoGenerico");
 
     let idRet = null;
@@ -299,9 +297,9 @@ const guardarCargoGenerico = async (idAlumno, cat_cargo, cantidad, monto, folio,
 
 
 
-const getCatalogoCargosPorEmpresa = (idEmpresa,idSucursal) => {
+const getCatalogoCargosPorEmpresa = (idEmpresa, idSucursal) => {
     console.log("@getCatalogoCargosPorEmpresa");
-    return cargosDao.getCatalogoCargosPorEmpresa(idEmpresa,idSucursal);
+    return cargosDao.getCatalogoCargosPorEmpresa(idEmpresa, idSucursal);
 };
 
 const getCargoExtraMensualidadEmpresa = (idEmpresa) => {
@@ -346,7 +344,7 @@ const obtenerFiltroAniosCargosSucursal = (idSucursal) => {
     return cargosDao.obtenerFiltroAniosCargosSucursal(idSucursal);
 };
 
-const obtenerEstadoCuentaAlumno = async (idAlumno) => {
+const obtenerEstadoCuentaAlumno = async(idAlumno) => {
     console.log("@obtenerEstadoCuentaAlumno");
     /*const informacionAlumno = await alumnoDao.getCorreosTokensAlumno(idAlumno);  
     let estado = await cargosDao.obtenerEstadoCuenta(idAlumno);         
@@ -361,7 +359,7 @@ const obtenerEstadoCuentaAlumno = async (idAlumno) => {
 
 };
 
-const obtenerPreviewEstadoCuenta = async (idAlumno) => {
+const obtenerPreviewEstadoCuenta = async(idAlumno) => {
     const params = await obtenerEstadoCuentaAlumno(idAlumno);
     //console.log(JSON.stringify(params));
     const { id_empresa } = params.alumno;
@@ -385,4 +383,4 @@ module.exports = {
     getCargoExtraMensualidadEmpresa,
     registrarColegiaturaAlumnoSemanaActualAutomatico,
     getColegiaturasPendientesCobranza
-}; 
+};

@@ -56,35 +56,35 @@ const usuarioRoute = require('./routes/usuario');
 //const siRol = require('./routes/siRol');
 const siUsuarioSucursalRol = require('./routes/siUsuarioSucursalRol');
 const reportesController = require('./routes/reportesController');
+const esquemaPagoController = require('./routes/catEsquemaPago');
 
 
-app.use('/auth',loginRoutes);
-app.use('/alumnos',alumnoRoute);
-app.use('/curso',cursoRoute);
-app.use('/inscripcion',inscripcionRoute);
-app.use('/especialidad',especialidadRoute);
-app.use('/dias',catDiaRoute);
-app.use('/horarios',catHorario);
-app.use('/escolaridad',catEscolaridad);
-app.use('/periodos-curso',perdiodosCurso);
-app.use('/materias',catMateria);
-app.use('/reportes',corte);
-app.use('/cobranza',cobranza);
-app.use('/venta',venta);
-app.use('/articulo',articulo);
-app.use('/categoria-articulo',categoriaArticulo);
-app.use('/categoria',catCategoria);
-app.use('/marca',catMarcaController);
-app.use('/unidad-medida',catUnidadMedida);
-app.use('/estatus',estatus);
-app.use('/movimiento-inventario',movimientoInventario);
-app.use('/usuario',usuarioRoute);
-app.use('/usuario-rol',siUsuarioSucursalRol);
-app.use('/reportes',reportesController);
+app.use('/auth', loginRoutes);
+app.use('/alumnos', alumnoRoute);
+app.use('/curso', cursoRoute);
+app.use('/inscripcion', inscripcionRoute);
+app.use('/especialidad', especialidadRoute);
+app.use('/dias', catDiaRoute);
+app.use('/horarios', catHorario);
+app.use('/escolaridad', catEscolaridad);
+app.use('/periodos-curso', perdiodosCurso);
+app.use('/materias', catMateria);
+app.use('/reportes', corte);
+app.use('/cobranza', cobranza);
+app.use('/venta', venta);
+app.use('/articulo', articulo);
+app.use('/categoria-articulo', categoriaArticulo);
+app.use('/categoria', catCategoria);
+app.use('/marca', catMarcaController);
+app.use('/unidad-medida', catUnidadMedida);
+app.use('/estatus', estatus);
+app.use('/movimiento-inventario', movimientoInventario);
+app.use('/usuario', usuarioRoute);
+app.use('/usuario-rol', siUsuarioSucursalRol);
+app.use('/reportes', reportesController);
+app.use('/esquema-pago', esquemaPagoController);
 
-
-
-app.use('/jobs',schedulerJob);
+app.use('/jobs', schedulerJob);
 
 //app.use('/escolaridad',catEscolaridad);
 
@@ -93,91 +93,91 @@ app.get('/sucursal_usuario/:id', authController.obtenerSucursalesUsuario);
 app.put('/sucursal_usuario', authController.cambiarSucursalUsuario);
 
 //Asistencia Usuarios
-app.use('/asistencia_usuarios',asistenciaUsuariosRoute);
+app.use('/asistencia_usuarios', asistenciaUsuariosRoute);
 
-app.use('/usuarios_rh',usuarioRhRoute);
+app.use('/usuarios_rh', usuarioRhRoute);
 
-app.get('/genero_alumno', checkAuth,catagolos.getCatGeneroAlumno);
+app.get('/genero_alumno', checkAuth, catagolos.getCatGeneroAlumno);
 
-app.get('/pass/:text',(request,response)=>{
-	
-	console.log("@Encriptar clave ");
-	try{
-	
-	const { text } = request.params;
+app.get('/pass/:text', (request, response) => {
 
-	let p = text;
+    console.log("@Encriptar clave ");
+    try {
 
-	console.log("@p "+p);
-	
-	if(!p){
-		const desiredMaxLength = 5
-		p='';	
-		for (var i = 0; i < desiredMaxLength; i++) {
-			p += Math.floor(Math.random() * 10);
-		}			
-	}
+        const { text } = request.params;
+
+        let p = text;
+
+        console.log("@p " + p);
+
+        if (!p) {
+            const desiredMaxLength = 5
+            p = '';
+            for (var i = 0; i < desiredMaxLength; i++) {
+                p += Math.floor(Math.random() * 10);
+            }
+        }
 
 
-	console.log("@Encriptar clave");
+        console.log("@Encriptar clave");
 
-	const enc = encriptar(p);
+        const enc = encriptar(p);
 
-	console.log("@enc "+enc);
+        console.log("@enc " + enc);
 
-	response.status(200).json({p:p,enc:enc});
-	}catch(error){
-		response.status(200).json(error);
-	}
+        response.status(200).json({ p: p, enc: enc });
+    } catch (error) {
+        response.status(200).json(error);
+    }
 });
 
 
 //pagos
-app.post('/pagos/registrar',checkAuth, pagos.registrarPago);
+app.post('/pagos/registrar', checkAuth, pagos.registrarPago);
 //app.post('/pagos/:id_alumno',checkAuth, pagos.go);
-app.get('/pagos/:id_cargo_balance_alumno',checkAuth, pagos.getPagosByCargoId);
+app.get('/pagos/:id_cargo_balance_alumno', checkAuth, pagos.getPagosByCargoId);
 //app.get('/pagos/printing/:id_pago',checkAuth, cargos.obtenerHtmlPreviewEstadoCuenta);
-app.put('/pagos/reenviar_comprobante',checkAuth, pagos.reenviarComprobantePago);//Reenviar correo
+app.put('/pagos/reenviar_comprobante', checkAuth, pagos.reenviarComprobantePago); //Reenviar correo
 
 
 
 
 //imprimir - obtiene html
-app.get('/pagos/imprimir/:id_pago/:id_usuario',checkAuth, pagos.imprimirComprobantePago);
+app.get('/pagos/imprimir/:id_pago/:id_usuario', checkAuth, pagos.imprimirComprobantePago);
 
-app.post('/cargos/registrar',checkAuth, cargos.registrarCargo);
+app.post('/cargos/registrar', checkAuth, cargos.registrarCargo);
 //app.post('/cargos/registrarColegiatura',checkAuth, cargos.registrarCargo);
-app.get('/cargos/:id_empresa/:id_sucursal', checkAuth,cargos.getCatalogoCargosPorEmpresa);
-app.get('/cargos/alumno/:id_alumno/:limite',checkAuth, cargos.getCargosAlumno);
-app.get('/balance/:id_alumno',checkAuth, cargos.getBalanceAlumno);
-app.put('/cargos/:id_alumno',checkAuth, cargos.eliminarCargos);
+app.get('/cargos/:id_empresa/:id_sucursal', checkAuth, cargos.getCatalogoCargosPorEmpresa);
+app.get('/cargos/alumno/:id_alumno/:limite', checkAuth, cargos.getCargosAlumno);
+app.get('/balance/:id_alumno', checkAuth, cargos.getBalanceAlumno);
+app.put('/cargos/:id_alumno', checkAuth, cargos.eliminarCargos);
 
-app.get('/formas_pagos', checkAuth,catagolos.getFormasPago);
+app.get('/formas_pagos', checkAuth, catagolos.getFormasPago);
 
 //-Estado de cuenta
-app.get('/estado_cuenta/:id_alumno',checkAuth,cargos.obtenerEstadoCuentaAlumno);
-app.get('/estado_cuenta/preview/:id_alumno',checkAuth, cargos.obtenerHtmlPreviewEstadoCuenta);
+app.get('/estado_cuenta/:id_alumno', checkAuth, cargos.obtenerEstadoCuentaAlumno);
+app.get('/estado_cuenta/preview/:id_alumno', checkAuth, cargos.obtenerHtmlPreviewEstadoCuenta);
 app.get('/estado_cuenta/print/:id_alumno', cargos.obtenerPdfPreviewEstadoCuenta);
-app.post('/estado_cuenta/enviar',checkAuth,cargos.enviarEstadoCuentaAlumno);
+app.post('/estado_cuenta/enviar', checkAuth, cargos.enviarEstadoCuentaAlumno);
 
 
 //gastos
-app.get('/gastos/:co_sucursal/:anio_mes',checkAuth, gastos.getGastosPorSucursal);
-app.get('/historico_gastos/:co_sucursal',checkAuth, gastos.getSumaMesGastosPorSucursal);
+app.get('/gastos/:co_sucursal/:anio_mes', checkAuth, gastos.getGastosPorSucursal);
+app.get('/historico_gastos/:co_sucursal', checkAuth, gastos.getSumaMesGastosPorSucursal);
 //app.put('/gastos/corte/dia/sucursal/:id_sucursal',checkAuth, gastos.getGastosCortePorSucursal);
-app.post('/gastos',checkAuth, gastos.registrarGasto);
-app.put('/gastos',checkAuth, gastos.modificarGasto);
-app.delete('/gastos/:id', checkAuth,gastos.eliminarGasto);
-app.get('/tipos_gasto/:id_empresa',checkAuth, gastos.getCatalogoTipoGastoPorEmpresa);
+app.post('/gastos', checkAuth, gastos.registrarGasto);
+app.put('/gastos', checkAuth, gastos.modificarGasto);
+app.delete('/gastos/:id', checkAuth, gastos.eliminarGasto);
+app.get('/tipos_gasto/:id_empresa', checkAuth, gastos.getCatalogoTipoGastoPorEmpresa);
 
 //Reporte de gastos
 //app.get('/reporte_gastos', reporte_gastos.getReporteGastosSucursalesMensual);
-app.get('/reporte_gastos_sucursales/:id_usuario',checkAuth, reporte_gastos.getReporteGastosSucursalesMensualActual);
+app.get('/reporte_gastos_sucursales/:id_usuario', checkAuth, reporte_gastos.getReporteGastosSucursalesMensualActual);
 //app.get('/reporte_gastos/:mes_anio', reporte_gastos.getReporteGastosSucursalesMensual);
-app.get('/reporte_gastos/:id_sucursal',checkAuth, reporte_gastos.getReporteGastosMensualesPorSucursalTrend);
-app.get('/reporte_gastos/:id_sucursal/:mes_anio',checkAuth, reporte_gastos.getReporteDetalleGastosPorSucursal);
-app.get('/reporte_gastos_global/:id_usuario',checkAuth, reporte_gastos.getReporteGastosGlobal);
-app.get('/reporte_gastos_mes_actual/:id_usuario',checkAuth, reporte_gastos.getReporteGastoMensualActual);
+app.get('/reporte_gastos/:id_sucursal', checkAuth, reporte_gastos.getReporteGastosMensualesPorSucursalTrend);
+app.get('/reporte_gastos/:id_sucursal/:mes_anio', checkAuth, reporte_gastos.getReporteDetalleGastosPorSucursal);
+app.get('/reporte_gastos_global/:id_usuario', checkAuth, reporte_gastos.getReporteGastosGlobal);
+app.get('/reporte_gastos_mes_actual/:id_usuario', checkAuth, reporte_gastos.getReporteGastoMensualActual);
 
 
 //catalogo de maestros
@@ -197,25 +197,25 @@ app.delete('/aviso',checkAuth,avisos.eliminarAvisos);
 */
 
 //configuracion
-app.get('/configuracion',checkAuth, conf.getConfiguracion);
+app.get('/configuracion', checkAuth, conf.getConfiguracion);
 
 
 //sucursales y cambios
-app.get('/sucursal/:id_empresa', checkAuth,sucursales.getSucursalPorEmpresa);
-app.put('/cambio_sucursal/:id_alumno',checkAuth, alumnoSucursal.cambiarSucursalAlumno);
+app.get('/sucursal/:id_empresa', checkAuth, sucursales.getSucursalPorEmpresa);
+app.put('/cambio_sucursal/:id_alumno', checkAuth, alumnoSucursal.cambiarSucursalAlumno);
 
 
 //Subir imagen
-app.post('/foto_perfil',checkAuth, fileUpload.single('image'), (req,res)=>{
-	let respuesta = validarTokenCompleto(req, res);
+app.post('/foto_perfil', checkAuth, fileUpload.single('image'), (req, res) => {
+    let respuesta = validarTokenCompleto(req, res);
 
-	if (!respuesta.tokenValido) {
-		console.log(" ((((( Token invalido  )))))");
-		return req.status(respuesta.status).send(respuesta);
-	} else {
-		console.log(" PASA EL TOKEN ");
-		uploadCloudinary.uploadImagenPerfil(req,res);		
-	}
+    if (!respuesta.tokenValido) {
+        console.log(" ((((( Token invalido  )))))");
+        return req.status(respuesta.status).send(respuesta);
+    } else {
+        console.log(" PASA EL TOKEN ");
+        uploadCloudinary.uploadImagenPerfil(req, res);
+    }
 });
 
 
@@ -233,4 +233,3 @@ app.post('/foto_perfil',checkAuth, fileUpload.single('image'), (req,res)=>{
 });
 */
 console.log("---------registro de todos los endpoints finalizados -----------------");
-

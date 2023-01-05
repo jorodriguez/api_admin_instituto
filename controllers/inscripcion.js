@@ -1,40 +1,38 @@
-
 const inscripcionService = require('../services/inscripcionService');
 const handle = require('../helpers/handlersErrors');
 const { schemaInscripcion } = require('../validacion-shemas/inscripcionShema');
 const alumnoService = require('../services/alumnoService');
 
-const guardarInscripcion = async (request, response) => {
+const guardarInscripcion = async(request, response) => {
     console.log("@guardarInscripcion");
     try {
 
-        const inscripcionData =
-            {
-                co_empresa,
-                co_sucursal,
-                co_curso,
-                cat_genero,
-                nombre,                
-                apellidos, 
-                direccion,
-                telefono,
-                correo,
-                fecha_nacimiento,
-                nota,
-                foto,
-                cat_escolaridad,
-                ocupacion,
-                originario,
-                tutor,
-                telefono_tutor,
-                costo_colegiatura, 
-                costo_inscripcion,
-                usuario_inscribe,
-                genero
-            }
-            = request.body;
+        const inscripcionData = {
+            co_empresa,
+            co_sucursal,
+            co_curso,
+            cat_genero,
+            nombre,
+            apellidos,
+            direccion,
+            telefono,
+            correo,
+            fecha_nacimiento,
+            nota,
+            foto,
+            cat_escolaridad,
+            ocupacion,
+            originario,
+            tutor,
+            telefono_tutor,
+            costo_colegiatura,
+            costo_inscripcion,
+            usuario_inscribe,
+            cat_esquema_pago,
+            genero
+        } = request.body;
 
-            console.log(" casting  "+JSON.stringify(inscripcionData));
+        console.log(" casting  " + JSON.stringify(inscripcionData));
 
         await schemaInscripcion.validateAsync(inscripcionData);
 
@@ -48,16 +46,16 @@ const guardarInscripcion = async (request, response) => {
     }
 };
 
-const getInscripciones = async (request, response) => {
-    
+const getInscripciones = async(request, response) => {
+
     console.log("@getInscripciones");
-    
+
     try {
 
         const id_sucursal = parseInt(request.params.id_sucursal);
 
         const results = await inscripcionService.getInscripciones(id_sucursal);
-        
+
         response.status(200).json(results);
 
     } catch (e) {
@@ -67,14 +65,14 @@ const getInscripciones = async (request, response) => {
 };
 
 
-const getInscripcionesSucursalCurso = async (request, response) => {
+const getInscripcionesSucursalCurso = async(request, response) => {
     console.log("@getInscripcionesSucursalCurso");
     try {
 
         const id_sucursal = parseInt(request.params.id_sucursal);
         const id_curso = parseInt(request.params.id_curso);
-        
-        const results = await inscripcionService.getInscripcionesSucursalCurso(id_sucursal,id_curso);
+
+        const results = await inscripcionService.getInscripcionesSucursalCurso(id_sucursal, id_curso);
         response.status(200).json(results);
 
     } catch (e) {
@@ -83,7 +81,7 @@ const getInscripcionesSucursalCurso = async (request, response) => {
     }
 };
 
-const getInscripcionesAlumno = async (request, response) => {
+const getInscripcionesAlumno = async(request, response) => {
     console.log("@getInscripcionesAlumno");
     try {
 
@@ -98,7 +96,7 @@ const getInscripcionesAlumno = async (request, response) => {
     }
 };
 
-const getInscripcionesCursoActivoAlumno = async (request, response) => {
+const getInscripcionesCursoActivoAlumno = async(request, response) => {
     console.log("@getInscripcionesCursoActivoAlumno");
     try {
 
@@ -115,13 +113,13 @@ const getInscripcionesCursoActivoAlumno = async (request, response) => {
 
 
 
-const confirmarInscripcion = async (request, response) => {
+const confirmarInscripcion = async(request, response) => {
     console.log("@confirmarInscripcion");
     try {
 
         const id_inscripcion = request.params.id_inscripcion;
-        const data = {confirmacion,nota,genero} = request.body;
-        const results = await inscripcionService.confirmarInscripcion(id_inscripcion,data);
+        const data = { confirmacion, nota, genero } = request.body;
+        const results = await inscripcionService.confirmarInscripcion(id_inscripcion, data);
         response.status(200).json(results);
 
     } catch (e) {
@@ -130,14 +128,14 @@ const confirmarInscripcion = async (request, response) => {
     }
 };
 
-const getInscripcionesCurso = async (request, response) => {
+const getInscripcionesCurso = async(request, response) => {
     console.log("@getInscripcionesCurso");
     try {
 
         const uid = request.params.uid;
 
         const results = await inscripcionService.getInscripcionesCurso(uid);
-        
+
         response.status(200).json(results);
 
     } catch (e) {
@@ -147,13 +145,13 @@ const getInscripcionesCurso = async (request, response) => {
 };
 
 
-const modificarColegiaturaInscripcion = async (request, response) => {
+const modificarColegiaturaInscripcion = async(request, response) => {
     console.log("@modificarColegiaturaInscripcion");
     try {
 
         const id_inscripcion = request.params.id_inscripcion;
-        const data = {costo_colegiatura,nota,genero} = request.body;
-        const results = await inscripcionService.modificarCostoColegiaturaInscripcion(id_inscripcion,data);
+        const data = { costo_colegiatura, nota, genero } = request.body;
+        const results = await inscripcionService.modificarCostoColegiaturaInscripcion(id_inscripcion, data);
         response.status(200).json(results);
 
     } catch (e) {
@@ -163,31 +161,31 @@ const modificarColegiaturaInscripcion = async (request, response) => {
 };
 
 
-const enviarCorreoBienvenida = async (request, response) => {
-    
+const enviarCorreoBienvenida = async(request, response) => {
+
     console.log("@enviarCorreoBienvenida");
-    
+
     try {
 
-        const { uuid_alumno,correo,genero } = request.body;
-        
-        console.log("uuid_alumno "+uuid_alumno);
-        console.log("correo "+correo);
+        const { uuid_alumno, correo, genero } = request.body;
 
-        await alumnoService.modificarCorreoAlumno(uuid_alumno,{correo,genero});
+        console.log("uuid_alumno " + uuid_alumno);
+        console.log("correo " + correo);
+
+        await alumnoService.modificarCorreoAlumno(uuid_alumno, { correo, genero });
 
         const inscripciones = await inscripcionService.getInscripcionesAlumno(uuid_alumno);
 
-        for(let i = 0; i < inscripciones.length; i++){
-            
+        for (let i = 0; i < inscripciones.length; i++) {
+
             const inscripcion = inscripciones[i];
 
-            console.log("inscripcion "+JSON.stringify(inscripcion));
-            
+            console.log("inscripcion " + JSON.stringify(inscripcion));
+
             await inscripcionService.enviarCorreoBienvenida(inscripcion.id_inscripcion);
         }
-        
-        response.status(200).json({enviado:true});
+
+        response.status(200).json({ enviado: true });
 
     } catch (e) {
         console.log(e);

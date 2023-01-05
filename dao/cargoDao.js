@@ -261,7 +261,6 @@ const obtenerMesesAdeudaMensualidad = (idAlumno) => {
     console.log("CARGOS.ID_CARGO_MENSUALIDAD " + CARGOS.ID_CARGO_MENSUALIDAD);
 
     return genericDao.findAll(QUERY_MESES_SIN_CARGO_MESUALIDAD, [idAlumno, CARGOS.ID_CARGO_MENSUALIDAD]);
-    //getResultQuery(QUERY_MESES_SIN_CARGO_MESUALIDAD, [id_alumno, CARGOS.ID_CARGO_MENSUALIDAD], response);
 };
 
 
@@ -301,7 +300,7 @@ with  serie_meses as (
            sm.nombre_mes,
            count(cb.*) as count_registro
        from serie_meses sm inner join co_cargo_balance_alumno cb on to_char(cb.fecha,'MMYYYY') = to_char(sm.fecha_mes,'MMYYYY')
-       where cb.co_balance_alumno = (select co_balance_alumno from co_alumno where id = $1 and eliminado = false) 
+       where cb.co_alumno = $1
            and cb.cat_cargo = $2
            and cb.eliminado = false
       group by  sm.nombre_mes,sm.fecha_mes
