@@ -76,7 +76,7 @@ schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_0", { hour: 7, minute: 0, second:
 //schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
 //schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_5", { hour: 7, minute: 5, second: 0 }, async function() {
 
-schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_5", { hour: 18, minute: 20, second: 0 }, async function() {
+schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_5", { hour: 13, minute: 37, second: 0 }, async function() {
     console.log('GENERAR COLEGIATURAS MENSUALES AUTOMATICAS' + new Date());
     try {
 
