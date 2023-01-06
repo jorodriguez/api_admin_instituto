@@ -16,9 +16,9 @@ const registrarCargo = async(cargoData) => {
     console.log("@registrarCargo");
     try {
 
-        const { id_curso, cat_cargo, uid_alumno, id_curso_semanas, cantidad, monto, nota, genero } = cargoData;
+        const { fecha, nombre_mes, id_curso, cat_cargo, uid_alumno, id_curso_semanas, cantidad, monto, nota, cat_esquema_pago, genero } = cargoData;
 
-        console.log("====" + JSON.stringify({ id_curso, cat_cargo, uid_alumno, id_curso_semanas, cantidad, monto, nota, genero }));
+        console.log("====" + JSON.stringify({ fecha, nombre_mes, cat_esquema_pago, id_curso, cat_cargo, uid_alumno, id_curso_semanas, cantidad, monto, nota, genero }));
 
         const alumno = await alumnoService.getAlumnoPorUId(uid_alumno);
 
@@ -26,7 +26,15 @@ const registrarCargo = async(cargoData) => {
 
         if (cat_cargo == CONSTANTES.ID_CARGO_COLEGIATURA) {
             console.log("Es colegiatura");
-            respuesta = await registrarColegiatura(id_curso, alumno.id, id_curso_semanas, genero);
+            if (cat_esquema_pago == 1) { // semanal
+                console.log("semanal");
+                respuesta = await registrarColegiatura(id_curso, alumno.id, id_curso_semanas, genero);
+            }
+            if (cat_esquema_pago == 2) { // mensual
+                console.log("mensual");
+                respuesta = await registrarColegiaturaMensual(id_curso, alumno.id, fecha, nombre_mes, genero);
+            }
+
         }
 
         if (cat_cargo == CONSTANTES.ID_CARGO_INSCRIPCION) {
@@ -92,7 +100,7 @@ const registrarInscripcion = async(idCurso, idAlumno, genero) => {
 
 }
 
-///registrar automaticamente las colegiaturas
+//se usa en el cron
 const registrarColegiaturaAlumnoSemanaActualAutomatico = async() => {
 
     console.log("@registrarColegiaturaAlumnoSemanaActualAutomatico");
@@ -133,7 +141,7 @@ const registrarColegiaturaAlumnoSemanaActualAutomatico = async() => {
                 console.log(`>> YA EXISTE LA COLEGIATURA DE LA SEMANA ${cursoSemanaActual.numero_semana_curso} ALUMNO ${inscripcion.alumno} <<`);
                 console.log("                                          ");
             } else {
-                const idColegiatura = await guardarColegiatura(cursoSemanaActual.co_curso, inscripcion.co_alumno, cursoSemanaActual.id_semana_actual, '', CONSTANTES.USUARIO_DEFAULT);
+                const idColegiatura = await guardarColegiatura(cursoSemanaActual.co_curso, inscripcion.co_alumno, null, cursoSemanaActual.id_semana_actual, '', CONSTANTES.USUARIO_DEFAULT);
                 //await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemanaActual.id_semana_actual,idColegiatura,CONSTANTES.USUARIO_DEFAULT );
                 colegiaturasGeneradas.push(idColegiatura);
                 //console.log("cargo registrado " + idColegiatura);
@@ -144,6 +152,36 @@ const registrarColegiaturaAlumnoSemanaActualAutomatico = async() => {
     return colegiaturasGeneradas;
 
 }
+
+//se usa en el cron
+const registrarColegiaturaAlumnoMensualActualAutomatico = async() => {
+
+    console.log("@registrarColegiaturaAlumnoMensualActualAutomatico");
+
+    const colegiaturasGeneradas = [];
+    //obtener Semana ocurriendo
+    const listaInscripcionesMensuales = await inscripcionDao.getInscripcionesMensualesMesActual();
+
+    console.log("Cursos que se van a generar " + listaInscripcionesMensuales.length);
+
+    for (let i = 0; i < listaInscripcionesMensuales.length; i++) {
+
+        const inscripcion = listaInscripcionesMensuales[i];
+
+        console.log(`${i} - Creando colegiaturas mensual ${inscripcion.nombre_mes} 
+                        del curso ${inscripcion.co_curso} `);
+
+        console.log(`${inscripcion} alumno ${inscripcion.co_alumno}`);
+
+        const idColegiatura = await registrarColegiaturaMensual(inscripcion.co_curso, inscripcion.co_alumno, inscripcion.fecha_mes, inscripcion.nombre_mes, CONSTANTES.USUARIO_DEFAULT);
+
+        colegiaturasGeneradas.push(idColegiatura);
+
+    }
+    return colegiaturasGeneradas;
+
+}
+
 
 
 const registrarColegiaturaAlumnoSemanaActual = async(idCurso, idAlumno, genero) => {
@@ -185,7 +223,6 @@ const registrarColegiatura = async(idCurso, idAlumno, idCursoSemana, genero) => 
 
     const cargoColegiatura = await cargosDao.buscarCargoColegiatura(idCurso, cursoSemana.id, idAlumno);
 
-    //const existeCargoColegiatura = (cursoSemana.co_cargo_colegiatura != null);
 
     console.log("  existe Colegiatura " + JSON.stringify(cargoColegiatura));
 
@@ -194,8 +231,8 @@ const registrarColegiatura = async(idCurso, idAlumno, idCursoSemana, genero) => 
         console.log(">> YA EXISTE LA COLEGIATURA DE LA SEMANA ");
         console.log("                                          ");
     } else {
-        //retId = await  guardarColegiatura(idCurso,idAlumno,cursoSemana.id,'',`Semana ${cursoSemana.numero_semana_curso}`, `${cursoSemana.modulo}-${cursoSemana.materia_modulo}`, genero);
-        retId = await guardarColegiatura(idCurso, idAlumno, cursoSemana.id, '', `Semana ${cursoSemana.numero_semana_curso}`, genero);
+
+        retId = await guardarColegiatura(idCurso, idAlumno, 1, null, cursoSemana.id, '', `Semana ${cursoSemana.numero_semana_curso}`, genero);
 
         //    await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemana.id,retId,genero);
         console.log("cargo registrado " + retId);
@@ -205,7 +242,33 @@ const registrarColegiatura = async(idCurso, idAlumno, idCursoSemana, genero) => 
 
 }
 
-const guardarColegiatura = async(idCurso, idAlumno, coCursoSemana, folio, textoAyuda, genero) => {
+
+const registrarColegiaturaMensual = async(idCurso, idAlumno, fechaMes, nombreMes, genero) => {
+
+    console.log("@registrarColegiaturaMensual");
+
+    let retId = null;
+
+    const cargoColegiatura = await cargosDao.buscarCargoColegiaturaMensual(idCurso, fechaMes, idAlumno);
+
+    console.log("  existe Colegiatura del mes " + JSON.stringify(cargoColegiatura));
+
+    if (cargoColegiatura != null) {
+        console.log("                                          ");
+        console.log(">> YA EXISTE LA COLEGIATURA MENSUAL ");
+        console.log("                                          ");
+    } else {
+
+        retId = await guardarColegiatura(idCurso, idAlumno, 2, fechaMes, null, '', nombreMes, genero);
+
+        console.log("cargo registrado " + retId);
+    }
+
+    return retId;
+
+}
+
+const guardarColegiatura = async(idCurso, idAlumno, catEsquemaPago, fecha, coCursoSemana, folio, textoAyuda, genero) => {
     console.log("@guardarColegiatura");
     //id_alumno, cat_cargo, cantidad,cargo,total, nota,monto,monto_modificado,monto_original,texto_ayuda,genero
 
@@ -219,8 +282,10 @@ const guardarColegiatura = async(idCurso, idAlumno, coCursoSemana, folio, textoA
         console.log(" procediendo a agregar la  colegiatura  ");
 
         idRet = await cargosDao.registrarCargoGeneral({
+            fecha: fecha,
             id_alumno: idAlumno,
             cat_cargo: ID_CARGO_COLEGIATURA,
+            cat_esquema_pago: catEsquemaPago,
             cantidad: 1,
             folio: folio,
             co_curso_semanas: coCursoSemana,
@@ -332,10 +397,10 @@ const eliminarCargos = (idCargos) => {
     return cargosDao.eliminarCargos(idCargos);
 };
 
-const obtenerMesesAdeudaMensualidad = (idAlumno) => {
+const obtenerMesesAdeudaMensualidad = (idAlumno, uuidCurso) => {
     console.log("@obtenerMesesAdeudaMensualidad");
 
-    return cargosDao.obtenerMesesAdeudaMensualidad(idAlumno);
+    return cargosDao.obtenerMesesAdeudaMensualidad(idAlumno, uuidCurso);
 };
 
 const obtenerFiltroAniosCargosSucursal = (idSucursal) => {
@@ -372,6 +437,7 @@ module.exports = {
     registrarCargo,
     registrarInscripcion,
     registrarColegiatura,
+    registrarColegiaturaMensual,
     getCatalogoCargosPorEmpresa,
     getCargosAlumno,
     getBalanceAlumno,
@@ -382,5 +448,6 @@ module.exports = {
     obtenerPreviewEstadoCuenta,
     getCargoExtraMensualidadEmpresa,
     registrarColegiaturaAlumnoSemanaActualAutomatico,
-    getColegiaturasPendientesCobranza
+    getColegiaturasPendientesCobranza,
+    registrarColegiaturaAlumnoMensualActualAutomatico
 };

@@ -4,17 +4,17 @@ const handle = require('../helpers/handlersErrors');
 const { enviarEstadoCuenta } = require('../utils/NotificacionService');
 const notificacionService = require('../utils/NotificacionService');
 
-const registrarCargo = async (request, response) => {
+const registrarCargo = async(request, response) => {
     console.log("@registrarCargo");
-    
+
     try {
         //const params = { fecha_cargo, uid_alumno,co_curso_semanas, cat_cargo, cantidad, monto, nota, genero } = request.body;
-        const params = {id_curso,cat_cargo,uid_alumno,id_curso_semanas,cantidad, monto, nota,genero}  = request.body;
-        
+        const params = { id_curso, cat_cargo, uid_alumno, id_curso_semanas, cantidad, monto, nota, genero } = request.body;
+
         const respuesta = await cargoService.registrarCargo(params);
-        if(respuesta && respuesta.resultado){
+        if (respuesta && respuesta.resultado) {
             //notificacionService.notificarCargo(params.id_alumno,respuesta.id_cargo);
-        }        
+        }
         response.status(200).json(respuesta);
         /*cargoService
             .registrarCargo(params)
@@ -51,59 +51,59 @@ const registrarCargo = async (request, response) => {
 const getCatalogoCargosPorEmpresa = (request, response) => {
     console.log("@getCatalogoCargosPorEmpresa");
 
-try{
-    
-    const {id_empresa,id_sucursal } = request.params;
-
-    cargoService.getCatalogoCargosPorEmpresa(id_empresa,id_sucursal)
-    .then(results=>{
-        response.status(200).json(results);
-    }).catch(error=>{
-        handle.callbackError(error,response);
-    });
-
-} catch (e) {
-    console.log("ERROR "+e);
-    handle.callbackErrorNoControlado(e, response);
-}
-};
-
-
-const getCargosAlumno = async (request, response) => {
-    console.log("@getCargosAlumno");
     try {
-        
-        const id_alumno = request.params.id_alumno;
-        const limite = request.params.limite;
 
-        console.log("id_alumno "+id_alumno);
-        console.log("limite "+limite);
-        
-        const results = await cargoService.getCargosAlumno(id_alumno,limite);
-        
-        response.status(200).json(results);
-        
+        const { id_empresa, id_sucursal } = request.params;
+
+        cargoService.getCatalogoCargosPorEmpresa(id_empresa, id_sucursal)
+            .then(results => {
+                response.status(200).json(results);
+            }).catch(error => {
+                handle.callbackError(error, response);
+            });
+
     } catch (e) {
-        console.log("ERROR "+e);
+        console.log("ERROR " + e);
         handle.callbackErrorNoControlado(e, response);
     }
 };
 
 
-const getColegiaturasPendientesCobranza = async (request, response) => {
+const getCargosAlumno = async(request, response) => {
+    console.log("@getCargosAlumno");
+    try {
+
+        const id_alumno = request.params.id_alumno;
+        const limite = request.params.limite;
+
+        console.log("id_alumno " + id_alumno);
+        console.log("limite " + limite);
+
+        const results = await cargoService.getCargosAlumno(id_alumno, limite);
+
+        response.status(200).json(results);
+
+    } catch (e) {
+        console.log("ERROR " + e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};
+
+
+const getColegiaturasPendientesCobranza = async(request, response) => {
     console.log("@getColegiaturasPendientesCobranza");
     try {
-        
+
         const id_sucursal = request.params.id_sucursal;
 
-        console.log("id_alumno "+id_sucursal);
-                
+        console.log("id_alumno " + id_sucursal);
+
         const results = await cargoService.getColegiaturasPendientesCobranza(id_sucursal);
-        
+
         response.status(200).json(results);
-        
+
     } catch (e) {
-        console.log("ERROR "+e);
+        console.log("ERROR " + e);
         handle.callbackErrorNoControlado(e, response);
     }
 };
@@ -114,14 +114,14 @@ const getBalanceAlumno = (request, response) => {
     console.log("@getBalanceAlumno");
     try {
 
-       console.log("request.params.id_alumno " + request.params.id_alumno);
+        console.log("request.params.id_alumno " + request.params.id_alumno);
 
         const id_alumno = parseInt(request.params.id_alumno || 0);
 
         cargoService
-        .getBalanceAlumno(id_alumno)
-        .then(results=>response.status(200).json(results))
-        .catch(error=>handle.callbackError(error,response));
+            .getBalanceAlumno(id_alumno)
+            .then(results => response.status(200).json(results))
+            .catch(error => handle.callbackError(error, response));
 
     } catch (e) {
         handle.callbackErrorNoControlado(e, response);
@@ -137,27 +137,24 @@ const eliminarCargos = (request, response) => {
         const cargosData = { ids, motivo, genero } = request.body;
 
         cargoService
-        .eliminarCargos(cargosData)
-        .then(results=> response.status(200).json(results))
-        .catch(error=> handle.callbackError(error,response));
+            .eliminarCargos(cargosData)
+            .then(results => response.status(200).json(results))
+            .catch(error => handle.callbackError(error, response));
     } catch (e) {
         handle.callbackErrorNoControlado(e, response);
     }
 };
 
-const obtenerMesesAdeudaMensualidad = (request, response) => {
+const obtenerMesesAdeudaMensualidad = async(request, response) => {
     console.log("@obtenerMesesAdeudaMensualidad");
 
-    //id_alumno
-    //id_cargo sera la constantes del id de la MENSUALIDAD
     try {
 
-        const { id_alumno } = request.params;
+        const { uidCurso, idAlumno } = request.params;
 
-        cargoService
-            .obtenerMesesAdeudaMensualidad(id_alumno)
-            .then(results => response.status(200).json(results))
-            .catch(error => handle.callbackError(error,response));
+        const lista = await cargoService.obtenerMesesAdeudaMensualidad(idAlumno, uidCurso);
+
+        response.status(200).json(lista);
 
     } catch (e) {
         handle.callbackErrorNoControlado(e, response);
@@ -168,7 +165,7 @@ const obtenerMesesAdeudaMensualidad = (request, response) => {
 
 const obtenerFiltroAniosCargosSucursal = (request, response) => {
     console.log("@obtenerFiltroAniosCargosSucursal");
-   
+
     try {
 
         const { id_sucursal } = request.params;
@@ -176,7 +173,7 @@ const obtenerFiltroAniosCargosSucursal = (request, response) => {
         cargoService
             .obtenerFiltroAniosCargosSucursal(id_sucursal)
             .then(results => response.status(200).json(results))
-            .catch(error => handle.callbackError(error,response));
+            .catch(error => handle.callbackError(error, response));
 
     } catch (e) {
         handle.callbackErrorNoControlado(e, response);
@@ -184,15 +181,15 @@ const obtenerFiltroAniosCargosSucursal = (request, response) => {
 };
 
 
-const obtenerEstadoCuentaAlumno = async (request, response) => {
-    console.log("@obtenerEstadoCuentaAlumno");    
+const obtenerEstadoCuentaAlumno = async(request, response) => {
+    console.log("@obtenerEstadoCuentaAlumno");
     try {
 
         const { id_alumno } = request.params;
 
         const estadoCuenta = await cargoService.obtenerEstadoCuentaAlumno(id_alumno);
 
-        response.status(200).json(estadoCuenta);       
+        response.status(200).json(estadoCuenta);
 
     } catch (e) {
         handle.callbackErrorNoControlado(e, response);
@@ -200,15 +197,15 @@ const obtenerEstadoCuentaAlumno = async (request, response) => {
 };
 
 
-const enviarEstadoCuentaAlumno = async (request, response) => {
-    console.log("@enviarEstadoCuentaAlumno");    
+const enviarEstadoCuentaAlumno = async(request, response) => {
+    console.log("@enviarEstadoCuentaAlumno");
     try {
 
-        const { id_alumno,correo_anexo } = request.body;
+        const { id_alumno, correo_anexo } = request.body;
 
-        await enviarEstadoCuenta(id_alumno,correo_anexo);
+        await enviarEstadoCuenta(id_alumno, correo_anexo);
 
-        response.status(200).json({procesado:true});       
+        response.status(200).json({ procesado: true });
 
     } catch (e) {
         console.log(e);
@@ -216,8 +213,8 @@ const enviarEstadoCuentaAlumno = async (request, response) => {
     }
 };
 
-const obtenerHtmlPreviewEstadoCuenta = async (request, response) => {
-    console.log("@obtenerHtmlPreviewEstadoCuenta");    
+const obtenerHtmlPreviewEstadoCuenta = async(request, response) => {
+    console.log("@obtenerHtmlPreviewEstadoCuenta");
     try {
 
         const { id_alumno } = request.params;
@@ -233,13 +230,13 @@ const obtenerHtmlPreviewEstadoCuenta = async (request, response) => {
     }
 };
 
-const obtenerPdfPreviewEstadoCuenta = async (request, response) => {
-    console.log("@obtenerPdfPreviewEstadoCuenta");    
+const obtenerPdfPreviewEstadoCuenta = async(request, response) => {
+    console.log("@obtenerPdfPreviewEstadoCuenta");
     try {
 
         const { id_alumno } = request.params;
-        
-        const options = { format: 'Letter', path: './templates/recibo_pago.pdf' }; 
+
+        const options = { format: 'Letter', path: './templates/recibo_pago.pdf' };
 
         const html = await cargoService.obtenerPreviewEstadoCuenta(id_alumno);
 
@@ -253,26 +250,26 @@ const obtenerPdfPreviewEstadoCuenta = async (request, response) => {
             }
         });
 
-               
-       /* pdf.create(html).toStream((err, pdfStream) => {
-            if (err) {   
-              // handle error and return a error response code
-              console.log(err)
-              return response.sendStatus(500);
-            } else {
-              // send a status code of 200 OK
-              res.statusCode = 200             
-        
-              // once we are done reading end the response
-              pdfStream.on('end', () => {
-                // done reading
-                return response.end();
-              })
-        
-              // pipe the contents of the PDF directly to the response
-              pdfStream.pipe(response);
-            }
-          })*/
+
+        /* pdf.create(html).toStream((err, pdfStream) => {
+             if (err) {   
+               // handle error and return a error response code
+               console.log(err)
+               return response.sendStatus(500);
+             } else {
+               // send a status code of 200 OK
+               res.statusCode = 200             
+         
+               // once we are done reading end the response
+               pdfStream.on('end', () => {
+                 // done reading
+                 return response.end();
+               })
+         
+               // pipe the contents of the PDF directly to the response
+               pdfStream.pipe(response);
+             }
+           })*/
 
         //response.status(200).json(html);               
         //response.status(200).send(html);
@@ -283,13 +280,12 @@ const obtenerPdfPreviewEstadoCuenta = async (request, response) => {
     }
 };
 
-function toPDF (html, options,  output) {
-    return new Promise(function (resolve, reject) {
+function toPDF(html, options, output) {
+    return new Promise(function(resolve, reject) {
         pdf.create(html, options).toFile(output, function(error, response) {
             if (error) {
                 reject(error);
-            }
-            else {
+            } else {
                 resolve(response);
             }
         });
@@ -301,7 +297,7 @@ module.exports = {
     registrarCargo,
     getCatalogoCargosPorEmpresa,
     getCargosAlumno,
-    getBalanceAlumno,    
+    getBalanceAlumno,
     eliminarCargos,
     obtenerMesesAdeudaMensualidad,
     obtenerFiltroAniosCargosSucursal,
@@ -310,5 +306,5 @@ module.exports = {
     obtenerHtmlPreviewEstadoCuenta,
     obtenerPdfPreviewEstadoCuenta,
     getColegiaturasPendientesCobranza
-    
+
 };

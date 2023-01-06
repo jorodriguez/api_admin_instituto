@@ -145,6 +145,26 @@ const findById = async(id) => {
     return await genericDao.findOne(getQueryBase(" i.id = $1 "), [id]);
 }
 
+const getInscripcionesMensualesMesActual = () => {
+
+    console.log("@getInscripcionesMensuales");
+
+    return genericDao.findAll(`
+    select		 
+        (select nombre||' '||to_char(getDate(''),'YY') from si_meses where to_char(getDate(''),'MM')::int = id) as nombre_mes,	     
+        inscripcion.co_curso,
+        inscripcion.co_alumno,
+        to_char(getDate(''),'YYYY-MM-DD') as fecha_mes  	      
+    from co_inscripcion inscripcion inner join co_curso curso on  inscripcion.co_curso = curso.id
+                                inner join co_alumno al on al.id = inscripcion.co_alumno        
+    where       	        
+        inscripcion.cat_esquema_pago = 2 --esquema mensual
+        and inscripcion.eliminado = false
+        and al.eliminado = false
+        and curso.eliminado = false`, []);
+
+}
+
 const getQueryBase = (criterio) => `               
   select i.id as id_inscripcion,
     curso.id as id_curso,
@@ -188,7 +208,9 @@ const getQueryBase = (criterio) => `
     curso.co_sucursal,
     curso.numero_semanas,
     asesor.nombre as inscribio,
-    usuario_genero.nombre as nombre_genero,
+    usuario_genero.nombre as nombre_genero,    
+    esquema.id as cat_esquema_pago,
+    esquema.nombre as esquema_pago,    
     i.genero
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
@@ -196,6 +218,7 @@ from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join co_alumno a on a.id = i.co_alumno
     inner join co_sucursal suc on suc.id = i.co_sucursal
     inner join usuario usuario_genero on usuario_genero.id = i.genero
+    inner join cat_esquema_pago esquema on esquema.id = i.cat_esquema_pago
     left join usuario asesor on asesor.id = i.usuario_inscribe
 where ${criterio}
   and a.eliminado =false
@@ -224,4 +247,5 @@ module.exports = {
     findById,
     getInscripcionesCorteFecha,
     getIncripcionCursoAlumno,
+    getInscripcionesMensualesMesActual,
 };

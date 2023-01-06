@@ -239,12 +239,14 @@ const getInformacionCrearColegiaturaSemanaActual = () => {
   	    c.co_curso,
   	    c.numero_semana_curso,      		  	  	
       	array_to_json(array_agg(row_to_json((inscripcion.*)))) array_inscripciones,
-  	    count(inscripcion.*) as contador_inscripciones
+  	    count(inscripcion.*) as contador_inscripciones,
+        inscripcion.cat_esquema_pago
     from co_curso_semanas c inner join co_curso curso on curso.id = c.co_curso
 		    		  	inner join co_inscripcion inscripcion on inscripcion.co_curso = c.co_curso
             				inner join co_alumno al on al.id = inscripcion.co_alumno        
     where       	  
       c.fecha_clase = getDate('')
+      and inscripcion.cat_esquema_pago = 1 --esquema semanal
       and c.eliminado = false
       and inscripcion.eliminado = false
       and al.eliminado = false

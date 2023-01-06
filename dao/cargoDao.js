@@ -9,8 +9,10 @@ const registrarCargoGeneral = async(cargoData) => {
 
     console.log("@registrarCargoGeneral");
 
-    const { id_alumno, co_curso, folio, co_curso_semanas, cat_cargo, cantidad, cargo, total, nota, monto, monto_modificado, monto_original, texto_ayuda, genero } = cargoData;
+    const { fecha, id_alumno, cat_esquema_pago, co_curso, folio, co_curso_semanas, cat_cargo, cantidad, cargo, total, nota, monto, monto_modificado, monto_original, texto_ayuda, genero } = cargoData;
 
+    console.log('fecha ' + fecha);
+    console.log('esquema_pago ' + cat_esquema_pago);
     console.log('idalumno ' + id_alumno);
     console.log('co_curso ' + co_curso);
     console.log('folio ' + folio);
@@ -28,10 +30,22 @@ const registrarCargoGeneral = async(cargoData) => {
 
     //Aqui ir por el cat_cargo y ver el precio para saber si se modifico el precio y poner la bandeja de monto_modificado
 
-    const id = await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(
-                            CO_ALUMNO,CO_CURSO,FOLIO,CO_CURSO_SEMANAS,FECHA,Cat_Cargo,CANTIDAD,CARGO,
-                            TOTAL,NOTA,MONTO_MODIFICADO,MONTO_ORIGINAL,TEXTO_AYUDA,GENERO)
-                            VALUES($1,$2,$3,$4,(getDate('')+getHora(''))::timestamp,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING ID;`, [id_alumno, co_curso, folio || '', co_curso_semanas, cat_cargo, cantidad, cargo, total, nota, monto_modificado, monto_original, texto_ayuda, genero]);
+    let id = null;
+
+    if (cat_esquema_pago == 1) { //semanal -- (getDate('')+getHora(''))::timestamp
+        console.log("esquema semanal");
+        id = await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(
+            CO_ALUMNO,CO_CURSO,CAT_ESQUEMA_PAGO,FOLIO,CO_CURSO_SEMANAS,FECHA,Cat_Cargo,CANTIDAD,CARGO,
+            TOTAL,NOTA,MONTO_MODIFICADO,MONTO_ORIGINAL,TEXTO_AYUDA,GENERO)
+            VALUES($1,$2,$3,$4,$5,(getDate('')+getHora(''))::timestamp,$6,$7,$8,$9,$10,$11,$12,$13,$14) RETURNING ID;`, [id_alumno, co_curso, cat_esquema_pago, folio || '', co_curso_semanas, cat_cargo, cantidad, cargo, total, nota, monto_modificado, monto_original, texto_ayuda, genero]);
+    } else {
+        console.log("esquema mensual");
+        id = await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(
+            CO_ALUMNO,CO_CURSO,CAT_ESQUEMA_PAGO,FOLIO,CO_CURSO_SEMANAS,FECHA,Cat_Cargo,CANTIDAD,CARGO,
+            TOTAL,NOTA,MONTO_MODIFICADO,MONTO_ORIGINAL,TEXTO_AYUDA,GENERO)
+            VALUES($1,$2,$3,$4,$5,$6::date,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING ID;`, [id_alumno, co_curso, cat_esquema_pago, folio || '', co_curso_semanas, fecha, cat_cargo, cantidad, cargo, total, nota, monto_modificado, monto_original, texto_ayuda, genero]);
+    }
+
     console.log("ID DE CARGO GENERADO " + id);
 
     return id;
@@ -94,8 +108,25 @@ const buscarCargoColegiatura = async(idCurso, idCoCursoSemana, idAlumno) => {
             and co_curso = $1 
             and co_curso_semanas = $2
             and co_alumno = $3
+            AND cat_esquema_pago = 1 -- esquema semanal
         and eliminado = false
      `, [idCurso, idCoCursoSemana, idAlumno]);
+}
+
+
+const buscarCargoColegiaturaMensual = async(idCurso, fechaMes, idAlumno) => {
+    return await genericDao.findOne(
+        `
+        select *
+        from co_cargo_balance_alumno 
+        where cat_cargo = 1 
+            AND cat_esquema_pago = 2 -- esquema mensual
+            AND co_curso = $1
+            AND to_char(fecha::date,'MMYYYY') =  to_char($2::date,'MMYYYY')
+            AND co_alumno = $3            
+            AND eliminado = false
+    
+     `, [idCurso, fechaMes, idAlumno]);
 }
 
 const buscarCargoInscripcion = async(idCurso, idAlumno) => {
@@ -158,7 +189,8 @@ false as checked,
 0 as pago,
     esp.nombre as especialidad,
     semana.numero_semana_curso,
-    semana.numero_semana_curso as materia_modulo    
+    semana.numero_semana_curso as materia_modulo,
+    b.cat_esquema_pago
 FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id
                             inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
                             left join co_curso curso on curso.id = b.co_curso
@@ -254,13 +286,13 @@ const eliminarCargos = (cargosData) => {
     });
 };
 
-const obtenerMesesAdeudaMensualidad = (idAlumno) => {
+const obtenerMesesAdeudaMensualidad = (idAlumno, uuidCurso) => {
     console.log("@obtenerMesesAdeudaMensualidad");
 
     console.log("ID alumno " + idAlumno);
     console.log("CARGOS.ID_CARGO_MENSUALIDAD " + CARGOS.ID_CARGO_MENSUALIDAD);
 
-    return genericDao.findAll(QUERY_MESES_SIN_CARGO_MESUALIDAD, [idAlumno, CARGOS.ID_CARGO_MENSUALIDAD]);
+    return genericDao.findAll(QUERY_MESES_SIN_CARGO_MESUALIDAD, [idAlumno, uuidCurso]);
 };
 
 
@@ -285,15 +317,15 @@ const obtenerFiltroAniosCargosSucursal = (idSucursal) => {
 
 
 const QUERY_MESES_SIN_CARGO_MESUALIDAD = `
-with  serie_meses as (
+   with serie_meses as (
     SELECT g::date as fecha_mes,
            to_char(g::date,'mm')::int as numero_mes,	
            to_char(g::date,'YY')::int as numero_anio,		
            (select nombre from si_meses where id = to_char(g::date,'mm')::int) as nombre_mes         
        FROM  generate_series(
-               date_trunc('year', getDate(''))::timestamp,
-               (date_trunc('year', getDate(''))) + (interval '1 year') - (interval '1 day'),
-             '1 month')  g
+               (select fecha_inicio_previsto from co_curso where uid = $2),
+               (select fecha_fin_previsto - (interval '1 day') from co_curso where uid = $2),
+               '1 month')  g
        ), meses_pagados AS (
        select 
             sm.fecha_mes as fecha_registrado,
@@ -301,13 +333,14 @@ with  serie_meses as (
            count(cb.*) as count_registro
        from serie_meses sm inner join co_cargo_balance_alumno cb on to_char(cb.fecha,'MMYYYY') = to_char(sm.fecha_mes,'MMYYYY')
        where cb.co_alumno = $1
-           and cb.cat_cargo = $2
+           and cb.cat_cargo = 1 --MENSUALIDAD
            and cb.eliminado = false
       group by  sm.nombre_mes,sm.fecha_mes
       order by sm.fecha_mes
     ) select (mp.count_registro is not null) as cargo_registrado,
                 s.fecha_mes::text,
                 s.nombre_mes,
+                s.nombre_mes ||' '|| s.numero_anio as nombre_mes_anio,
                 s.fecha_mes,
                 s.numero_mes,
                 s.numero_anio,
@@ -555,5 +588,6 @@ module.exports = {
     getCatCargo,
     getColegiaturasPendientesCobranza,
     obtenerEstadoCuentaDetallado,
-    obtenerOtrosCargosEstadoCuentaDetallado
+    obtenerOtrosCargosEstadoCuentaDetallado,
+    buscarCargoColegiaturaMensual
 };
