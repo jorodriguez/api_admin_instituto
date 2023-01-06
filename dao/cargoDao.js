@@ -32,7 +32,8 @@ const registrarCargoGeneral = async(cargoData) => {
 
     let id = null;
 
-    if (cat_esquema_pago == 1) { //semanal -- (getDate('')+getHora(''))::timestamp
+    //if (cat_esquema_pago == 1) { //semanal -- (getDate('')+getHora(''))::timestamp
+    if (!fecha) { //semanal -- (getDate('')+getHora(''))::timestamp
         console.log("esquema semanal");
         id = await genericDao.execute(`INSERT INTO CO_CARGO_BALANCE_ALUMNO(
             CO_ALUMNO,CO_CURSO,CAT_ESQUEMA_PAGO,FOLIO,CO_CURSO_SEMANAS,FECHA,Cat_Cargo,CANTIDAD,CARGO,

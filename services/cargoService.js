@@ -78,6 +78,7 @@ const registrarInscripcion = async(idCurso, idAlumno, genero) => {
         console.log(" procediendo a agregar la  inscripcion  " + inscripcionAlumno);
 
         let idCargoInscripcion = await cargosDao.registrarCargoGeneral({
+            
             id_alumno: idAlumno,
             cat_cargo: ID_CARGO_INSCRIPCION,
             cantidad: 1,
