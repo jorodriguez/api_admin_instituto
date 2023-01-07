@@ -36,16 +36,17 @@ const confirmarInscripcion = async(idInscripcion, inscripcionData) => {
 
 const modificarColegiaturaInscripcion = async(idInscripcion, inscripcionData) => {
     console.log("@modificarColegiaturaInscripcion");
-    const { costo_colegiatura, nota, genero } = inscripcionData;
+    const { costo_colegiatura, cat_esquema_pago, nota, genero } = inscripcionData;
 
     return genericDao.execute(`
           UPDATE CO_INSCRIPCION 
             SET COSTO_COLEGIATURA = $2,                
+                CAT_ESQUEMA_PAGO = $3,
                 FECHA_MODIFICO = (getDate('')+getHora(''))::timestamp,
-                NOTA = (NOTA ||' \n '||to_char((getDate('')+getHora('')),'DD-MM-YYYY HH24:MI') ||' '|| $3),                
-                MODIFICO = $4
+                NOTA = (NOTA ||' \n '||to_char((getDate('')+getHora('')),'DD-MM-YYYY HH24:MI') ||' '|| $4),                
+                MODIFICO = $5
           WHERE id = $1 RETURNING ID;              
-  `, [idInscripcion, costo_colegiatura, nota, genero]);
+  `, [idInscripcion, costo_colegiatura,cat_esquema_pago, nota, genero]);
 }
 
 

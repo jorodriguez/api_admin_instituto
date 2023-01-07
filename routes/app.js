@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 
 //version/branch
 
-const version = "v1/2212-mejioras impresion del historial de pagos";
+const version = "v1/2301-colegiaturas-mensuales : integración del esquema de pago mensual";
 
 app.use(bodyParser.json());
 app.use(
