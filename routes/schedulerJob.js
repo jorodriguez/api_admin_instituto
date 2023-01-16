@@ -28,6 +28,26 @@ router.get('/colegiaturas', async(request, response) => {
 });
 
 
+//testing
+router.get('/colegiaturas-mensuales', async(request, response) => {
+    console.log("@Colegiaturas mensuales");
+    try {
+
+        const listaCargosColegiaturas = await cargoService.registrarColegiaturaAlumnoMensualActualAutomatico();
+
+        //enviarcorreos
+        console.log("---------- COLEGIATURAS GENERADAS ---------");
+        console.log(JSON.stringify(listaCargosColegiaturas));
+        response.status(200).json(listaCargosColegiaturas);
+
+    } catch (e) {
+        console.log("Error " + e);
+        response.status(400).json({ error: e })
+    }
+
+});
+
+
 //envio de corte dia
 router.get('/x23/:id_empresa', async(request, response) => {
     console.log("@envio_corte");
@@ -76,7 +96,8 @@ schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_0", { hour: 7, minute: 0, second:
 //schedule.scheduleJob({ hour: 8 , minute:0, second: 0 }, function () {
 //schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_5", { hour: 7, minute: 5, second: 0 }, async function() {
 
-schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_5", { hour: 13, minute: 37, second: 0 }, async function() {
+schedule.scheduleJob("GENERAR_COLEGIATURAS_7_0_5", { hour: 7, minute: 5, second: 0 }, async function() {
+
     console.log('GENERAR COLEGIATURAS MENSUALES AUTOMATICAS' + new Date());
     try {
 

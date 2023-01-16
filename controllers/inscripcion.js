@@ -150,8 +150,11 @@ const modificarColegiaturaInscripcion = async(request, response) => {
     try {
 
         const id_inscripcion = request.params.id_inscripcion;
-        const data = { costo_colegiatura, nota, genero } = request.body;
+        
+        const data = { costo_colegiatura,cat_esquema_pago, nota, genero } = request.body;
+
         const results = await inscripcionService.modificarCostoColegiaturaInscripcion(id_inscripcion, data);
+        
         response.status(200).json(results);
 
     } catch (e) {
