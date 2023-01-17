@@ -3,6 +3,7 @@ const schedule = require('node-schedule');
 const cargoService = require('../services/cargoService');
 const corteService = require('../services/corteService');
 const empresaService = require('../services/empresaService');
+const coFacturacionSucursalService = require('../services/coFacturacionSucursalService');
 //const inscripcionService = require('../services/inscripcionService');
 
 //const inscripcionService = require('../services/inscripcionService');
@@ -162,6 +163,23 @@ schedule.scheduleJob("CORTE_DIARIO_ENVIO_CORREO_6_30", { hour: 18, minute: 30, s
 
 	}
 });*/
+
+schedule.scheduleJob("GENERAR_FACTURACION_SUCURSAL_7_30", { hour: 17, minute: 28, second: 0 }, async function() {
+    console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
+    try {
+
+        const lista = await coFacturacionSucursalService.procesoGenerarFacturacion();
+
+        //enviarcorreos
+
+        console.log("---------- FACTURACION SUCURSAL GENERADAS ---------");
+
+        console.log(JSON.stringify(lista));
+
+    } catch (error) {
+        console.error("ERROR EN EL PROCESO AUTOMATICO DE GENERACION DE COLEGIATURAS  " + error);
+    }
+});
 
 schedule.scheduleJob("TESTING_HOUR", { hour: 8, minute: 0, second: 0 }, function() {
     console.log("TESTING HOUR " + new Date());
