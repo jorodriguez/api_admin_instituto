@@ -34,18 +34,22 @@ const registrarCargo = async(cargoData) => {
                 console.log("mensual");
                 respuesta = await registrarColegiaturaMensual(id_curso, alumno.id, fecha, nombre_mes, genero);
             }
-
+        } else {
+            console.log("Es un cargo especial");
+            respuesta = await guardarCargoGenerico(alumno.id, cat_cargo, cantidad, monto, "", nota, genero);
         }
 
-        if (cat_cargo == CONSTANTES.ID_CARGO_INSCRIPCION) {
+        //cambio para que la inscripcion se maneje de manera normal 
+
+        /*if (cat_cargo == CONSTANTES.ID_CARGO_INSCRIPCION) {
             console.log("Es inscripcion");
             respuesta = await registrarInscripcion(id_curso, alumno.id, genero);
         }
 
-        if (cat_cargo != CONSTANTES.ID_CARGO_INSCRIPCION && cat_cargo != CONSTANTES.ID_CARGO_COLEGIATURA) {
+        if (cat_cargo != CONSTANTES.ID_CARGO_INSCRIPCION && cat_cargo != CONSTANTES.ID_CARGO_COLEGIATURA) {        
             console.log("Es un cargo especial");
             respuesta = await guardarCargoGenerico(alumno.id, cat_cargo, cantidad, monto, "", nota, genero);
-        }
+        }*/
 
         //enviar correo de recibo
 
@@ -64,40 +68,40 @@ const registrarInscripcion = async(idCurso, idAlumno, genero) => {
 
     const ID_CARGO_INSCRIPCION = 2;
 
-    const cargoInscripcion = await cargosDao.buscarCargoInscripcion(idCurso, idAlumno);
+    // const cargoInscripcion = await cargosDao.buscarCargoInscripcion(idCurso, idAlumno);
 
-    if (cargoInscripcion != null) {
+    /*if (cargoInscripcion != null) {
         console.log("                                          ");
         console.log("   YA TIENE INSCRIPCION AGREGADA ");
         console.log("                                          ");
 
-    } else {
+    } else {*/
 
-        const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idAlumno, idCurso);
+    const inscripcionAlumno = await inscripcionDao.getInscripcionAlumnoCurso(idAlumno, idCurso);
 
-        console.log(" procediendo a agregar la  inscripcion  " + inscripcionAlumno);
+    console.log(" procediendo a agregar la  inscripcion  " + inscripcionAlumno);
 
-        let idCargoInscripcion = await cargosDao.registrarCargoGeneral({
-            
-            id_alumno: idAlumno,
-            cat_cargo: ID_CARGO_INSCRIPCION,
-            cantidad: 1,
-            cargo: inscripcionAlumno.costo_inscripcion,
-            total: inscripcionAlumno.costo_inscripcion,
-            nota: `Cargo generado automáticamente.`,
-            monto: inscripcionAlumno.costo_inscripcion,
-            monto_modificado: false,
-            monto_original: inscripcionAlumno.costo_inscripcion,
-            co_curso: inscripcionAlumno.id_curso,
-            genero: genero
-        });
+    let idCargoInscripcion = await cargosDao.registrarCargoGeneral({
+
+        id_alumno: idAlumno,
+        cat_cargo: ID_CARGO_INSCRIPCION,
+        cantidad: 1,
+        cargo: inscripcionAlumno.costo_inscripcion,
+        total: inscripcionAlumno.costo_inscripcion,
+        nota: ``,
+        monto: inscripcionAlumno.costo_inscripcion,
+        monto_modificado: false,
+        monto_original: inscripcionAlumno.costo_inscripcion,
+        co_curso: inscripcionAlumno.id_curso,
+        genero: genero
+    });
 
 
-        //actualizar totales adeuda
-        await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno, inscripcionAlumno.id_curso, genero);
-        await cursoDao.actualizarTotalAdeudaAlumno(idAlumno, genero);
+    //actualizar totales adeuda
+    await inscripcionDao.actualizarTotalAdeudaInscripcion(inscripcionAlumno.id_alumno, inscripcionAlumno.id_curso, genero);
+    await cursoDao.actualizarTotalAdeudaAlumno(idAlumno, genero);
 
-    }
+    // }
 
 }
 
