@@ -2,6 +2,8 @@ const router = require('express').Router();
 const reporteAlumnosController = require('../controllers/reporteAlumnosController');
 const reporteDashboardController = require('../controllers/reporteDashboardController');
 const reportePagosController = require('../controllers/reportePagosController');
+const reporteAlumnosCobrarController = require('../controllers/reporteAlumnosCobrarController');
+
 const checkAuth = require('./check-auth');
 
 router.get('/alumnos/:uidCurso', checkAuth, reporteAlumnosController.getReporteListaAlumnos);
@@ -17,5 +19,9 @@ router.get('/top-alumnos-deudores/:coEmpresa/sucursal/:coSucursal', checkAuth, r
 router.get('/totales-adeudos-por-curso/:coEmpresa/sucursal/:coSucursal', checkAuth, reporteDashboardController.getTotalAdeudoPorCurso);
 
 router.get('/estado-cuenta-detallado/:uidAlumno', checkAuth, reportePagosController.getHtmlReporteEstadoCuentaDetallado);
+
+router.get('/cobranza/alumnos/:coSucursal', checkAuth, reporteAlumnosCobrarController.getReporteListaAlumnosCobrar);
+
+
 
 module.exports = router;

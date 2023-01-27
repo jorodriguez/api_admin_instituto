@@ -1,16 +1,15 @@
-
 const handle = require('../helpers/handlersErrors');
 const reporteAlumnosService = require('../services/reporteAlumnosService');
 
-const getReporteListaAlumnos = async (request, response) => {
+const getReporteListaAlumnos = async(request, response) => {
     console.log("@getReporteListaAlumnos");
     try {
 
         const { uidCurso } = request.params;
 
-        console.log("uidCurso "+uidCurso);
+        console.log("uidCurso " + uidCurso);
 
-        const lista = await reporteAlumnosService.getReporteListaAlumnosCurso({uidCurso});
+        const lista = await reporteAlumnosService.getReporteListaAlumnosCurso({ uidCurso });
 
         response.status(200).json(lista);
 
@@ -20,15 +19,15 @@ const getReporteListaAlumnos = async (request, response) => {
     }
 };
 
-const getHtmlReporteListaAlumnos = async (request, response) => {
+const getHtmlReporteListaAlumnos = async(request, response) => {
     console.log("@getHtmlReporteListaAlumnos");
     try {
 
-        const { uidCurso,idUsuario } = request.params;
+        const { uidCurso, idUsuario } = request.params;
 
-        console.log("uidCurso "+uidCurso);
+        console.log("uidCurso " + uidCurso);
 
-        const lista = await reporteAlumnosService.getReporteHtmlListaAlumnosCurso(uidCurso,idUsuario);
+        const lista = await reporteAlumnosService.getReporteHtmlListaAlumnosCurso(uidCurso, idUsuario);
 
         response.status(200).send(lista);
 
@@ -39,7 +38,7 @@ const getHtmlReporteListaAlumnos = async (request, response) => {
 };
 
 
-
 module.exports = {
-    getReporteListaAlumnos, getHtmlReporteListaAlumnos
+    getReporteListaAlumnos,
+    getHtmlReporteListaAlumnos
 };
