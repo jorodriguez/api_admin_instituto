@@ -53,8 +53,7 @@ select
     curso.numero_semanas,
     asesor.nombre as inscribio,
     esquema.id as cat_esquema_pago,
-    esquema.nombre as esquema_pago,    
-    --(select age(getDate('')::date,max(fecha::date)) from co_pago_balance_alumno where co_alumno = a.id ) as ultimo_pago
+    esquema.nombre as esquema_pago,        
     (select to_char(max(fecha::date),'YYYY-MM-DD') from co_pago_balance_alumno where co_alumno = a.id and eliminado = false ) as ultimo_pago 
 from co_inscripcion i inner join co_curso curso on curso.id = i.co_curso
     inner join cat_especialidad esp on esp.id = curso.cat_especialidad    
@@ -68,7 +67,7 @@ where a.co_sucursal = $1
         and a.eliminado =false
         and i.eliminado = false
         and curso.eliminado = false  
-    order by (a.total_adeudo > 0) desc, a.total_adeudo, ultimo_pago desc           
+order by a.total_adeudo desc, ultimo_pago desc           
 `;
 
 
