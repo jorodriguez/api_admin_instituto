@@ -251,7 +251,7 @@ const getInformacionCrearColegiaturaSemanaActual = () => {
       and inscripcion.eliminado = false
       and al.eliminado = false
       and curso.eliminado = false
-      group by c.id,c.co_curso,c.numero_semana_curso
+      group by c.id,c.co_curso,c.numero_semana_curso,inscripcion.cat_esquema_pago
 
   `, []);
 }
