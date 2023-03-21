@@ -11,7 +11,7 @@ const coFacturacionSucursalService = require('../services/coFacturacionSucursalS
 
 //testing
 router.get('/colegiaturas', async(request, response) => {
-    console.log("@Colegiaturas");
+    console.log("@Colegiaturas semanales");
     try {
 
         const listaCargosColegiaturas = await cargoService.registrarColegiaturaAlumnoSemanaActualAutomatico();

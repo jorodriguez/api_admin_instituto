@@ -146,7 +146,7 @@ const registrarColegiaturaAlumnoSemanaActualAutomatico = async() => {
                 console.log(`>> YA EXISTE LA COLEGIATURA DE LA SEMANA ${cursoSemanaActual.numero_semana_curso} ALUMNO ${inscripcion.alumno} <<`);
                 console.log("                                          ");
             } else {
-                const idColegiatura = await guardarColegiatura(cursoSemanaActual.co_curso, inscripcion.co_alumno, null, cursoSemanaActual.id_semana_actual, '', CONSTANTES.USUARIO_DEFAULT);
+                const idColegiatura = await guardarColegiatura(cursoSemanaActual.co_curso, inscripcion.co_alumno, 1, null, cursoSemanaActual.id_semana_actual, '', CONSTANTES.USUARIO_DEFAULT);
                 //await cursoSemanasService.guardarRealcionCargoCursoSemana(cursoSemanaActual.id_semana_actual,idColegiatura,CONSTANTES.USUARIO_DEFAULT );
                 colegiaturasGeneradas.push(idColegiatura);
                 //console.log("cargo registrado " + idColegiatura);
