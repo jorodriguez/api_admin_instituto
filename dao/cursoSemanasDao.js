@@ -256,6 +256,33 @@ const getInformacionCrearColegiaturaSemanaActual = () => {
   `, []);
 }
 
+
+
+// Unicamente para generar las colegiaturas que no se generaron 
+const getInformacionCrearColegiaturaSemanaNoGeneradas = () => {
+    return genericDao.findAll(`
+  select	
+      c.id as id_semana_actual,
+      c.co_curso,
+      c.numero_semana_curso,      		  	  	
+      array_to_json(array_agg(row_to_json((inscripcion.*)))) array_inscripciones,
+      count(inscripcion.*) as contador_inscripciones,
+      inscripcion.cat_esquema_pago
+  from co_curso_semanas c inner join co_curso curso on curso.id = c.co_curso
+              inner join co_inscripcion inscripcion on inscripcion.co_curso = c.co_curso
+                  inner join co_alumno al on al.id = inscripcion.co_alumno        
+  where       	  
+    c.fecha_clase = '2023/01/27'
+    and inscripcion.cat_esquema_pago = 1 --esquema semanal
+    and c.eliminado = false
+    and inscripcion.eliminado = false
+    and al.eliminado = false
+    and curso.eliminado = false
+    group by c.id,c.co_curso,c.numero_semana_curso,inscripcion.cat_esquema_pago
+
+`, []);
+}
+
 const getQueryBaseSemanasCurso = (criterio) => `
 select sem.id, 
 		  curso.id as id_curso,
@@ -310,5 +337,6 @@ module.exports = {
     guardarRealcionCargoCursoSemana,
     getInformacionCrearColegiaturaSemanaActual,
     getSemanasColegiaturasParaCargo,
-    getSemanasCalculadasPreviewPorFecha
+    getSemanasCalculadasPreviewPorFecha,
+    getInformacionCrearColegiaturaSemanaNoGeneradas
 };

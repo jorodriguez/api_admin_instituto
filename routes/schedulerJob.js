@@ -29,6 +29,26 @@ router.get('/colegiaturas', async(request, response) => {
 });
 
 
+router.get('/colegiaturas-no-generadas', async(request, response) => {
+    console.log("@Colegiaturas semanales no generadas");
+    try {
+
+        const listaCargosColegiaturas = await cargoService.registrarColegiaturaAlumnoSemanaActualAutomaticoNoGeneradas();
+
+        //enviarcorreos
+        console.log("---------- COLEGIATURAS  ---------");
+        console.log(JSON.stringify(listaCargosColegiaturas));
+        response.status(200).json(listaCargosColegiaturas);
+
+    } catch (e) {
+        console.log("Error " + e);
+        response.status(400).json({ error: e })
+    }
+
+});
+
+
+
 //testing
 router.get('/colegiaturas-mensuales', async(request, response) => {
     console.log("@Colegiaturas mensuales");

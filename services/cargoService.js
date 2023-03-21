@@ -158,6 +158,59 @@ const registrarColegiaturaAlumnoSemanaActualAutomatico = async() => {
 
 }
 
+
+
+
+//********XXXXX SOLO SE OCUPA PARA GENERAR LAS COLEGIATURAS QUE NO SE GENERARON DESPUES DEL 27 DE ENERO
+
+const registrarColegiaturaAlumnoSemanaActualAutomaticoNoGeneradas = async() => {
+
+    console.log("@registrarColegiaturaAlumnoSemanaActualAutomaticoNoGeneradas");
+
+    const colegiaturasGeneradas = [];
+    //obtener Semana ocurriendo
+    const listaInfoCrearColegiaturasSemanaActual = await cursoSemanasService.getInformacionCrearColegiaturaSemanaNoGeneradas();
+
+    console.log("Cursos que se van a generar " + listaInfoCrearColegiaturasSemanaActual.length);
+
+    for (let i = 0; i < listaInfoCrearColegiaturasSemanaActual.length; i++) {
+
+        const cursoSemanaActual = listaInfoCrearColegiaturasSemanaActual[i];
+
+        console.log(`${i} - Creando colegiaturas para la semana ${cursoSemanaActual.numero_semana_curso} 
+                        del curso ${cursoSemanaActual.co_curso} total de alumnos a generar colegiaturas ${cursoSemanaActual.contador_inscripciones}`);
+
+        const listaInscripciones = cursoSemanaActual.array_inscripciones ? cursoSemanaActual.array_inscripciones : [];
+
+        for (let x = 0; x < listaInscripciones.length; x++) {
+
+            const inscripcion = listaInscripciones[x];
+
+            console.log(`${x} alumno ${inscripcion.co_alumno}`);
+
+            //verificar existencia del registro
+            const cargoColegiatura = await cargosDao.buscarCargoColegiatura(cursoSemanaActual.co_curso, cursoSemanaActual.id_semana_actual, inscripcion.co_alumno);
+
+            console.log("      Colegiatura encontrada  " + (cargoColegiatura != null));
+
+            if (cargoColegiatura != null) {
+                console.log("                                          ");
+                console.log(`>> YA EXISTE LA COLEGIATURA DE LA SEMANA ${cursoSemanaActual.numero_semana_curso} ALUMNO ${inscripcion.alumno} <<`);
+                console.log("                                          ");
+            } else {
+                const idColegiatura = await guardarColegiatura(cursoSemanaActual.co_curso, inscripcion.co_alumno, 1, null, cursoSemanaActual.id_semana_actual, '', CONSTANTES.USUARIO_DEFAULT);
+
+                colegiaturasGeneradas.push(idColegiatura);
+
+                console.log(`AGREGAR COLEGIATURA CURSO=${cursoSemanaActual.co_curso},ALUMNO=${inscripcion.co_alumno} SEMANA=${cursoSemanaActual.id_semana_actual}`);
+            }
+        }
+    }
+    return colegiaturasGeneradas;
+
+}
+
+
 //se usa en el cron
 const registrarColegiaturaAlumnoMensualActualAutomatico = async() => {
 
@@ -454,5 +507,6 @@ module.exports = {
     getCargoExtraMensualidadEmpresa,
     registrarColegiaturaAlumnoSemanaActualAutomatico,
     getColegiaturasPendientesCobranza,
-    registrarColegiaturaAlumnoMensualActualAutomatico
+    registrarColegiaturaAlumnoMensualActualAutomatico,
+    registrarColegiaturaAlumnoSemanaActualAutomaticoNoGeneradas
 };
