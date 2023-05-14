@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 
 //version/branch
 
-const version = "v1/2301-colegiaturas-mensuales : integración del esquema de pago mensual";
+const version = "v1/2305-correo-gasto: envio de correo al registrar un gasto";
 
 app.use(bodyParser.json());
 app.use(
