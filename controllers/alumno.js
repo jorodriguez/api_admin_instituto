@@ -93,6 +93,7 @@ const modificarAlumno = async (request, response) => {
 
 
 
+
 // DELETE—/alumnos/:id | deleteAlumno()
 const bajaAlumno = async (request, response) => {
     console.log("@bajaAlumno");
