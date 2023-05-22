@@ -78,7 +78,8 @@ router.get('/x23/:id_empresa', async(request, response) => {
 
         console.log("EMPRESA = " + id_empresa);
 
-        const infoEnvio = await corteService.enviarCorteEmpresaCorreo({ coEmpresa: id_empresa });
+        //const infoEnvio = await corteService.enviarCorteEmpresaCorreo({ coEmpresa: id_empresa });
+        const infoEnvio = await corteService.enviarCorreoPrueba();
 
         response.status(200).json(infoEnvio);
 

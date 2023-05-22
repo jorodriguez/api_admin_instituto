@@ -1,6 +1,6 @@
 const moment = require('moment');
 moment().format('ll');
-require('moment/locale/es');  // without this line it didn't work
+require('moment/locale/es'); // without this line it didn't work
 moment.locale('es');
 const gastoDao = require('../dao/gastoDao');
 const cortesDao = require('../dao/cortesDao');
@@ -9,83 +9,83 @@ const inscripcionDao = require('../dao/inscripcionDao');
 const utilDao = require('../dao/utilDao');
 const sucursalDao = require('../dao/sucursalDao');
 const templateService = require('./templateService');
-const temaNotificacionService  = require('./temaNotificacionService');
+const temaNotificacionService = require('./temaNotificacionService');
 const correoService = require('../utils/CorreoService');
-const {TEMPLATES,TEMA_NOTIFICACION,USUARIO_DEFAULT, TIPO_TEMPLATE} = require('../utils/Constantes');
-const {formatCurrency} = require('../utils/format');
+const { TEMPLATES, TEMA_NOTIFICACION, USUARIO_DEFAULT, TIPO_TEMPLATE } = require('../utils/Constantes');
+const { formatCurrency } = require('../utils/format');
 
-const getCorteDiaSucursal = async (corteData) => {
+const getCorteDiaSucursal = async(corteData) => {
     console.log("@getCorteDiaSucursal");
-    
-    const {idSucursal,fechaInicio,fechaFin,idUsuario} = corteData;
-        
-    const sumaIngreso = await cortesDao.getSumaPagosPorRango({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
 
-    const resultsIngreso = await cortesDao.getDetallePagos({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
+    const { idSucursal, fechaInicio, fechaFin, idUsuario } = corteData;
 
-    const sumaGastos = await gastoDao.getGastosSumaCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
+    const sumaIngreso = await cortesDao.getSumaPagosPorRango({ idSucursal: parseInt(idSucursal), fechaInicio: fechaInicio, fechaFin: fechaFin });
 
-    const resultsGastos = await gastoDao.getGastosCortePorSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
+    const resultsIngreso = await cortesDao.getDetallePagos({ idSucursal: parseInt(idSucursal), fechaInicio: fechaInicio, fechaFin: fechaFin });
 
-    const sumaIngresoVentas = await ventaDao.getSumaVentaSucursal({idSucursal:parseInt(idSucursal),fechaInicio:fechaInicio,fechaFin:fechaFin});
+    const sumaGastos = await gastoDao.getGastosSumaCortePorSucursal({ idSucursal: parseInt(idSucursal), fechaInicio: fechaInicio, fechaFin: fechaFin });
+
+    const resultsGastos = await gastoDao.getGastosCortePorSucursal({ idSucursal: parseInt(idSucursal), fechaInicio: fechaInicio, fechaFin: fechaFin });
+
+    const sumaIngresoVentas = await ventaDao.getSumaVentaSucursal({ idSucursal: parseInt(idSucursal), fechaInicio: fechaInicio, fechaFin: fechaFin });
 
     const sumaIngresoSucursal = (parseFloat(sumaIngreso.total) + parseFloat(sumaIngresoVentas.total));
 
     const totalCaja = (parseFloat(sumaIngresoSucursal) - parseFloat(sumaGastos.total));
 
-    console.log("Fecha "+fechaInicio+"  fecha fin"+fechaFin );
-    console.log("suc "+idSucursal);
-    console.log("sumaIngreso "+ formatCurrency(sumaIngreso.total));
-    console.log("sumaVenta "+ formatCurrency(sumaIngresoVentas.total));    
-    console.log("sumaGastos "+ formatCurrency(sumaGastos.total));
-    console.log("sumaIngresoSucursal "+ formatCurrency(sumaIngresoSucursal));
-    console.log("totalCaja "+ formatCurrency(totalCaja));
-    
-    
+    console.log("Fecha " + fechaInicio + "  fecha fin" + fechaFin);
+    console.log("suc " + idSucursal);
+    console.log("sumaIngreso " + formatCurrency(sumaIngreso.total));
+    console.log("sumaVenta " + formatCurrency(sumaIngresoVentas.total));
+    console.log("sumaGastos " + formatCurrency(sumaGastos.total));
+    console.log("sumaIngresoSucursal " + formatCurrency(sumaIngresoSucursal));
+    console.log("totalCaja " + formatCurrency(totalCaja));
+
+
     return {
-            fecha:fechaInicio,
-            fechaFin:fechaFin,
-            totalIngreso: (sumaIngreso ? sumaIngreso.total : 0),
-            detalleIngreso:resultsIngreso,
-            totalGasto: (sumaGastos ? sumaGastos.total : 0), 
-            detalleGasto:resultsGastos,
-            totalIngresoVenta:sumaIngresoVentas.total,
-            totalIngresoSucursal:sumaIngresoSucursal,
-            totalCaja:totalCaja
-           };
+        fecha: fechaInicio,
+        fechaFin: fechaFin,
+        totalIngreso: (sumaIngreso ? sumaIngreso.total : 0),
+        detalleIngreso: resultsIngreso,
+        totalGasto: (sumaGastos ? sumaGastos.total : 0),
+        detalleGasto: resultsGastos,
+        totalIngresoVenta: sumaIngresoVentas.total,
+        totalIngresoSucursal: sumaIngresoSucursal,
+        totalCaja: totalCaja
+    };
 };
 
 
-const getHtmlCorteDiaSucursal = async (corteData)=>{
+const getHtmlCorteDiaSucursal = async(corteData) => {
     console.log("@getHtmlCorteDiaSucursal");
-    
+
     const corte = await getCorteDiaSucursal(corteData);
 
-    const {idSucursal} = corteData;
-    const sucursal =  await sucursalDao.getSucursalPorId(idSucursal);    
+    const { idSucursal } = corteData;
+    const sucursal = await sucursalDao.getSucursalPorId(idSucursal);
 
-   //leer el template
-   const params = {
-        dia_corte_inicio:corte.fecha,
-        dia_corte_fin:corte.fechaFin,
-        total_ingreso: formatCurrency(corte.totalIngreso),        
-        total_ingreso_venta: formatCurrency(corte.totalIngresoVenta),        
-        total_ingreso_sucursal: formatCurrency(corte.totalIngresoSucursal),        
-        total_gasto:formatCurrency(corte.totalGasto),
-        total_caja:formatCurrency(corte.totalCaja),
-        nombre_sucursal:sucursal.nombre,
-        direccion_sucursal:sucursal.direccion,
-        telefono_sucursal:sucursal.telefono
-   };
+    //leer el template
+    const params = {
+        dia_corte_inicio: corte.fecha,
+        dia_corte_fin: corte.fechaFin,
+        total_ingreso: formatCurrency(corte.totalIngreso),
+        total_ingreso_venta: formatCurrency(corte.totalIngresoVenta),
+        total_ingreso_sucursal: formatCurrency(corte.totalIngresoSucursal),
+        total_gasto: formatCurrency(corte.totalGasto),
+        total_caja: formatCurrency(corte.totalCaja),
+        nombre_sucursal: sucursal.nombre,
+        direccion_sucursal: sucursal.direccion,
+        telefono_sucursal: sucursal.telefono
+    };
 
-   const html = await  templateService
-   .loadTemplateEmpresa({
-           params:params,
-           idEmpresa:sucursal.co_empresa,
-           idUsuario:corteData.idUsuario,
-           tipoTemplate:corteData.tipoTemplate //TIPO_TEMPLATE.CORTE_DIARIO
-       });
-          
+    const html = await templateService
+        .loadTemplateEmpresa({
+            params: params,
+            idEmpresa: sucursal.co_empresa,
+            idUsuario: corteData.idUsuario,
+            tipoTemplate: corteData.tipoTemplate //TIPO_TEMPLATE.CORTE_DIARIO
+        });
+
     return html;
 };
 /*
@@ -121,71 +121,71 @@ const getHtmlCorteDiaSucursalEnvioCorreo = async (corteData)=>{
 
 
 
-const enviarCorteEmpresaCorreo = async (corteData)=>{
+const enviarCorteEmpresaCorreo = async(corteData) => {
 
     console.log("@enviarCorteEmpresaCorreo");
-   
+
     // enviar junto todos los cortes de las sucursales de la empresa por c
-    const {coEmpresa} = corteData;
+    const { coEmpresa } = corteData;
 
     const informacionFecha = await utilDao.getFechaHoy();
 
     console.log(`enviado corte de ${JSON.stringify(informacionFecha)}`)
 
     const fechaHoy = new Date(`${informacionFecha.fecha_actual_format} 00:00:00`);
-    
-    console.log("FECHA "+fechaHoy)
-    
+
+    console.log("FECHA " + fechaHoy)
+
     //obtener las sucursales de la empresa
-    const listaSucursales = await sucursalDao.getSucursalPorEmpresa(coEmpresa);    
-    
-    if(listaSucursales == null && listaSucursales.length == 0){
-        console.log("CORREO NO ENVIADO -  NO HAY SUCURSALES DE LA EMPRESA "+coEmpresa);
-        return ;
+    const listaSucursales = await sucursalDao.getSucursalPorEmpresa(coEmpresa);
+
+    if (listaSucursales == null && listaSucursales.length == 0) {
+        console.log("CORREO NO ENVIADO -  NO HAY SUCURSALES DE LA EMPRESA " + coEmpresa);
+        return;
     }
-    
-  
-    let cortesSucursal =  new Map();
+
+
+    let cortesSucursal = new Map();
 
     console.log("LLENAR EL MAP DE CORTES");
 
-    for(let i =0; i< listaSucursales.length;i++){
+    for (let i = 0; i < listaSucursales.length; i++) {
 
         const sucursal = listaSucursales[i];
-        
-        let htmlCorteDiaSucursal = '' ;
+
+        let htmlCorteDiaSucursal = '';
 
         console.log(`===== SUCURSAL ${sucursal.nombre}===== `)
-           
-        const htmlCorteDiario = await getHtmlCorteDiaSucursal(
-                    {   idUsuario:USUARIO_DEFAULT ,
-                        idSucursal:sucursal.id,
-                        fecha:fechaHoy,
-                        tipoTemplate: TIPO_TEMPLATE.CORTE_DIARIO_ENVIO_CORREO
-                    });            
-        
-        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteDiario);               
-               
+
+        const htmlCorteDiario = await getHtmlCorteDiaSucursal({
+            idUsuario: USUARIO_DEFAULT,
+            idSucursal: sucursal.id,
+            fecha: fechaHoy,
+            tipoTemplate: TIPO_TEMPLATE.CORTE_DIARIO_ENVIO_CORREO
+        });
+
+        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteDiario);
+
         //corte semanal
-        const htmlCorteSemanalSucursal = await getCorteSemanalSucursal(informacionFecha,sucursal);       
+        const htmlCorteSemanalSucursal = await getCorteSemanalSucursal(informacionFecha, sucursal);
 
         //Contador de inscripciones
-        const htmlCorteInscripciones = await getCorteInscripcionesSucursal(informacionFecha.fecha_actual_format,sucursal);
-        
-        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteSemanalSucursal).concat(htmlCorteInscripciones);
-               
-        cortesSucursal.set(sucursal.id,htmlCorteDiaSucursal);        
-                
-    }   
+        const htmlCorteInscripciones = await getCorteInscripcionesSucursal(informacionFecha.fecha_actual_format, sucursal);
 
-    let infoEnvio = {enviado:'pendiente'};
+        htmlCorteDiaSucursal = htmlCorteDiaSucursal.concat(htmlCorteSemanalSucursal).concat(htmlCorteInscripciones);
+
+        cortesSucursal.set(sucursal.id, htmlCorteDiaSucursal);
+
+    }
+
+    let infoEnvio = { enviado: 'pendiente' };
 
 
     //obtener los usuarios con el rol de direccion
     //const usuariosEnviar = await temaNotificacionService.getCorreosTemaPorEmpresa({coEmpresa:coEmpresa,coTemaNotificacion:TEMA_NOTIFICACION.ID_TEMA_CORTE_DIARIO})
     const infoCorreosEnviarCorte = await temaNotificacionService.getUsuariosEnvioCorte(coEmpresa);
 
-    if(!infoCorreosEnviarCorte){
+    if (!infoCorreosEnviarCorte) {
         console.log("XXXXX NO existen correos del tema para enviar el corte XXXXXX");
         return;
     }
@@ -193,46 +193,46 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
     let asunto = `Corte del ${informacionFecha.fecha_actual_asunto}`;
 
     const body = `<p><strong>Corte correspondiente al día ${informacionFecha.fecha_actual_asunto}</strong></p> 
-    <p><small>Enviado ${informacionFecha.fecha_actual_asunto} ${informacionFecha.hora_actual_format}</small></p>` ;
+    <p><small>Enviado ${informacionFecha.fecha_actual_asunto} ${informacionFecha.hora_actual_format}</small></p>`;
 
 
-    for(let i =0 ; i < infoCorreosEnviarCorte.length; i++){
+    for (let i = 0; i < infoCorreosEnviarCorte.length; i++) {
 
-        const infoCorreosEnviar = infoCorreosEnviarCorte[i];       
+        const infoCorreosEnviar = infoCorreosEnviarCorte[i];
 
         const sucursalesEnviar = JSON.parse(infoCorreosEnviar.sucursales || []);
 
-        const para = infoCorreosEnviar.correos || [];               
+        const para = infoCorreosEnviar.correos || [];
 
-        console.log(` ENVIADO CORTE A LA SUCS ${sucursalesEnviar} correos ${para}`);       
+        console.log(` ENVIADO CORTE A LA SUCS ${sucursalesEnviar} correos ${para}`);
 
-        let cc = '';//usuariosEnviar.correos_copia || [];
+        let cc = ''; //usuariosEnviar.correos_copia || [];
 
         //obtener la informacion html ya creada en el mapa        
-        
+
         let htmlSucursalesEnviar = body; //  Object.assign(htmlSucursalesEnviar,body);
 
-        for(let s=0; s < sucursalesEnviar.length;s++){
+        for (let s = 0; s < sucursalesEnviar.length; s++) {
             const idSucursal = sucursalesEnviar[s];
             const htmlCorte = cortesSucursal.get(idSucursal);
-            if(s > 0){
-                htmlSucursalesEnviar = htmlSucursalesEnviar.concat("<br/>"); 
-            } 
+            if (s > 0) {
+                htmlSucursalesEnviar = htmlSucursalesEnviar.concat("<br/>");
+            }
             htmlSucursalesEnviar = htmlSucursalesEnviar.concat(htmlCorte || '');
         }
-        
-        const htmlMergeTemplateMain = await templateService.loadAndMergeHtmlTemplateEmpresa({
-                             params:{},
-                             html:htmlSucursalesEnviar,
-                             idEmpresa:coEmpresa            
-         });        
-         
-         console.log("=========================");
-         console.log(htmlMergeTemplateMain);
-         console.log("=========================")
 
-        infoEnvio = await correoService.enviarCorreoAsync({para:para,cc:cc,asunto:asunto,html:htmlMergeTemplateMain,idEmpresa:coEmpresa});
-        console.log("=== ENVIO DE CORTE =="+ JSON.stringify(infoEnvio))
+        const htmlMergeTemplateMain = await templateService.loadAndMergeHtmlTemplateEmpresa({
+            params: {},
+            html: htmlSucursalesEnviar,
+            idEmpresa: coEmpresa
+        });
+
+        console.log("=========================");
+        console.log(htmlMergeTemplateMain);
+        console.log("=========================")
+
+        infoEnvio = await correoService.enviarCorreoAsync({ para: para, cc: cc, asunto: asunto, html: htmlMergeTemplateMain, idEmpresa: coEmpresa });
+        console.log("=== ENVIO DE CORTE ==" + JSON.stringify(infoEnvio))
 
         console.log("======= ENVIO DE CORREO =====");
     }
@@ -242,68 +242,82 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
 };
 
 
+const enviarCorreoPrueba = async() => {
 
-const getCorteSemanalSucursal = async(informacionFecha,sucursalData)=>{
+    const html = `<p>Calando emojis  😄 </p> <br/> <p style="color:red;">I am red</p> <p style="color:blue;">I am blue</p>
+    <p style="font-size:50px;">I am big</p>`;
 
-                   
-    const fechasSemana = informacionFecha.fechas_semana_ocurriendo || [];        
-
-    let table = `<br/><table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: center;"> `;
-    let tdDiasNombre = `<tr style="background-color:#DBDBDB;padding:0px 0px 0px 10px;" ><td></td>`;
-    let tdDias = `<tr style="background-color:#DBDBDB;padding:0px 0px 0px 10px;" ><td></td>`;
-    let tdValoresIngreso = `<tr><td style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;" ><span class="h2"> <strong> Ingreso</strong></span></td>`;
-    let tdValoresVentas = `<tr><td style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;" ><span class="h2"> <strong> Ventas</strong></span></td>`;
-    let tdValoresGasto = `<tr><td style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;"><span class="h2"><strong>Gasto</strong></span></td>`;
-    let tdValoresCaja = `<tr><td class="borderbottomTotal borderbottom"  style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;"><span class="h2"><strong>Caja</strong></span></td>`;
-
-    for(let f =0; f < fechasSemana.length;f++){
-
-        const fecha = fechasSemana[f];
-
-        const isFechaDespuesFechaCorte =  moment(fecha).isAfter(informacionFecha.fecha_actual_format);
-        const esHoy =  (informacionFecha.fecha_actual_format==fecha);
-        
-        const _fechaFormatNombre = moment(new Date(`${fecha} 00:00:00`)).format('dddd');
-        //const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('MMM dd YY');
-        const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('D MMM');
-
-        const estiloValores=`${esHoy ? 'font-size:13px;border-left: 2px solid #3CA473;border-right: 2px solid #3CA473;background-color:#BAE1CF':'font-size:13px;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;'}`;
-
-        tdDiasNombre = tdDiasNombre.concat(`<td style="font-size:11px;${estiloValores}" >${_fechaFormatNombre}</td>`)
-        tdDias = tdDias.concat(`<td style="font-size:12px;${estiloValores}">${_fechaFormat}</td>`);
-        
-          const corteDiaSemana = await getCorteDiaSucursal({idSucursal:sucursalData.id,
-                                                        fechaInicio:new Date(`${fecha} 00:00:00`),
-                                                        fechaFin:new Date(`${fecha} 00:00:00`),           
-                                                        idUsuario:USUARIO_DEFAULT});
-        //ingreso
-        
-
-       
-        tdValoresIngreso = tdValoresIngreso.concat(`<td style="${estiloValores}">  ${isFechaDespuesFechaCorte ?  '': '$'+  formatCurrency(corteDiaSemana.totalIngreso)}</td>`);
-        tdValoresVentas = tdValoresVentas.concat(`<td style="${estiloValores}">  ${isFechaDespuesFechaCorte ?  '': '$'+  formatCurrency(corteDiaSemana.totalIngresoVenta)}</td>`);
-        tdValoresGasto = tdValoresGasto.concat(`<td style="${estiloValores}">${isFechaDespuesFechaCorte ?  '' : '$'+formatCurrency(corteDiaSemana.totalGasto)}</td>`);            
-        tdValoresCaja = tdValoresCaja.concat(`<td class="borderbottomTotal borderbottom" style="${estiloValores}" ><strong>${ isFechaDespuesFechaCorte ? '' : '$'+formatCurrency(corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto)}</strong></td>`);            
-             
-    }
-
-    const corteSemana = await getCorteDiaSucursal({idSucursal:sucursalData.id,
-        fechaInicio:new Date(`${informacionFecha.fecha_inicio_semana_format} 00:00:00`),
-        fechaFin:new Date(`${informacionFecha.fecha_fin_semana_format} 00:00:00`),
-        idUsuario:USUARIO_DEFAULT});
+    const infoEnvio = await correoService.enviarCorreoAsync({ para: 'htienda@ihsa.mx,jorodriguez@ihsa.mx', cc: "sia@ihsa.mx", asunto: " PRUEBA FROM NODE", html: html, idEmpresa: 3 });
+    console.log("=== ENVIO  ==" + JSON.stringify(infoEnvio))
+}
 
 
-    tdDias = tdDias.concat("</tr>");
-    tdValoresIngreso = tdValoresIngreso.concat("</tr>");
-    tdValoresVentas = tdValoresVentas.concat("</tr>");
-    tdValoresGasto = tdValoresGasto.concat("</tr>");
-    tdValoresCaja = tdValoresCaja.concat("</tr>");
 
-    //let totalSemana = `<h4>Ingreso Semana : $${corteSemana.totalIngreso}</h4>`;
-    //totalSemana = totalSemana.concat(`<h4>Gasto Semana : $${corteSemana.totalGasto}</h4>`);
-    //totalSemana = totalSemana.concat(`<h4>Caja Semana : $${corteSemana.totalIngreso - corteSemana.totalGasto}</h4>`);
+const getCorteSemanalSucursal = async(informacionFecha, sucursalData) => {
 
-    let totalSemana = `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: left;"> 
+
+        const fechasSemana = informacionFecha.fechas_semana_ocurriendo || [];
+
+        let table = `<br/><table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: center;"> `;
+        let tdDiasNombre = `<tr style="background-color:#DBDBDB;padding:0px 0px 0px 10px;" ><td></td>`;
+        let tdDias = `<tr style="background-color:#DBDBDB;padding:0px 0px 0px 10px;" ><td></td>`;
+        let tdValoresIngreso = `<tr><td style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;" ><span class="h2"> <strong> Ingreso</strong></span></td>`;
+        let tdValoresVentas = `<tr><td style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;" ><span class="h2"> <strong> Ventas</strong></span></td>`;
+        let tdValoresGasto = `<tr><td style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;"><span class="h2"><strong>Gasto</strong></span></td>`;
+        let tdValoresCaja = `<tr><td class="borderbottomTotal borderbottom"  style="vertical-align: middle;text-align: left;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;"><span class="h2"><strong>Caja</strong></span></td>`;
+
+        for (let f = 0; f < fechasSemana.length; f++) {
+
+            const fecha = fechasSemana[f];
+
+            const isFechaDespuesFechaCorte = moment(fecha).isAfter(informacionFecha.fecha_actual_format);
+            const esHoy = (informacionFecha.fecha_actual_format == fecha);
+
+            const _fechaFormatNombre = moment(new Date(`${fecha} 00:00:00`)).format('dddd');
+            //const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('MMM dd YY');
+            const _fechaFormat = moment(new Date(`${fecha} 00:00:00`)).format('D MMM');
+
+            const estiloValores = `${esHoy ? 'font-size:13px;border-left: 2px solid #3CA473;border-right: 2px solid #3CA473;background-color:#BAE1CF':'font-size:13px;border-left: 1px solid #BBBBBB;border-right: 1px solid #BBBBBB;'}`;
+
+            tdDiasNombre = tdDiasNombre.concat(`<td style="font-size:11px;${estiloValores}" >${_fechaFormatNombre}</td>`)
+            tdDias = tdDias.concat(`<td style="font-size:12px;${estiloValores}">${_fechaFormat}</td>`);
+
+            const corteDiaSemana = await getCorteDiaSucursal({
+                idSucursal: sucursalData.id,
+                fechaInicio: new Date(`${fecha} 00:00:00`),
+                fechaFin: new Date(`${fecha} 00:00:00`),
+                idUsuario: USUARIO_DEFAULT
+            });
+            //ingreso
+
+
+
+            tdValoresIngreso = tdValoresIngreso.concat(`<td style="${estiloValores}">  ${isFechaDespuesFechaCorte ?  '': '$'+  formatCurrency(corteDiaSemana.totalIngreso)}</td>`);
+            tdValoresVentas = tdValoresVentas.concat(`<td style="${estiloValores}">  ${isFechaDespuesFechaCorte ?  '': '$'+  formatCurrency(corteDiaSemana.totalIngresoVenta)}</td>`);
+            tdValoresGasto = tdValoresGasto.concat(`<td style="${estiloValores}">${isFechaDespuesFechaCorte ?  '' : '$'+formatCurrency(corteDiaSemana.totalGasto)}</td>`);
+            tdValoresCaja = tdValoresCaja.concat(`<td class="borderbottomTotal borderbottom" style="${estiloValores}" ><strong>${ isFechaDespuesFechaCorte ? '' : '$'+formatCurrency(corteDiaSemana.totalIngreso - corteDiaSemana.totalGasto)}</strong></td>`);
+
+        }
+
+        const corteSemana = await getCorteDiaSucursal({
+            idSucursal: sucursalData.id,
+            fechaInicio: new Date(`${informacionFecha.fecha_inicio_semana_format} 00:00:00`),
+            fechaFin: new Date(`${informacionFecha.fecha_fin_semana_format} 00:00:00`),
+            idUsuario: USUARIO_DEFAULT
+        });
+
+
+        tdDias = tdDias.concat("</tr>");
+        tdValoresIngreso = tdValoresIngreso.concat("</tr>");
+        tdValoresVentas = tdValoresVentas.concat("</tr>");
+        tdValoresGasto = tdValoresGasto.concat("</tr>");
+        tdValoresCaja = tdValoresCaja.concat("</tr>");
+
+        //let totalSemana = `<h4>Ingreso Semana : $${corteSemana.totalIngreso}</h4>`;
+        //totalSemana = totalSemana.concat(`<h4>Gasto Semana : $${corteSemana.totalGasto}</h4>`);
+        //totalSemana = totalSemana.concat(`<h4>Caja Semana : $${corteSemana.totalIngreso - corteSemana.totalGasto}</h4>`);
+
+        let totalSemana = `<table width="100%" border="0" cellspacing="0" cellpadding="0" style="vertical-align: middle;text-align: left;"> 
                         <tr >
                             <td width="80%"><span > + Cobranza Semanal</span></td>
                             <td><span ><strong>$${formatCurrency(corteSemana.totalIngreso)}<strong></span></td>
@@ -550,7 +564,6 @@ const enviarCorteEmpresaCorreo = async (corteData)=>{
 module.exports = {
     getCorteDiaSucursal,
     getHtmlCorteDiaSucursal,
-    enviarCorteEmpresaCorreo
+    enviarCorteEmpresaCorreo,
+    enviarCorreoPrueba
 };
-
-
