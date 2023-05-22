@@ -96,6 +96,23 @@ const getInscripcionesAlumno = async(request, response) => {
     }
 };
 
+/* pendiente
+const cambiarTallerAlumno = async(request, response) => {
+    console.log("@cambiarTallerAlumno");
+    try {
+
+        const uid_alumno = request.params.uid_alumno;
+        const { id_curso_cambiar } = request.body;
+
+        const results = await inscripcionService.
+        response.status(200).json(results);
+
+    } catch (e) {
+        console.log(e);
+        handle.callbackErrorNoControlado(e, response);
+    }
+};*/
+
 const getInscripcionesCursoActivoAlumno = async(request, response) => {
     console.log("@getInscripcionesCursoActivoAlumno");
     try {

@@ -8,7 +8,7 @@ const registrarGasto = (request, response) => {
     console.log("@registrarGasto");
     try {
 
-        var gastoData = request.body;
+        const gastoData = request.body;
 
         gastoService.registrarGasto(gastoData)
         .then(id=>{

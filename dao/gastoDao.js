@@ -12,8 +12,8 @@ const registrarGasto = (gastoData) => {
       const { cat_tipo_gasto, co_forma_pago, co_sucursal, fecha, gasto, observaciones, genero } = gastoData;
 
         getQueryInstance(
-            `INSERT INTO CO_GASTO(cat_tipo_gasto,co_forma_pago,co_sucursal,fecha,gasto,observaciones,genero)
-                    VALUES($1,$2,$3,$4,$5,$6,$7) returning id;`,
+            `INSERT INTO CO_GASTO(cat_tipo_gasto,co_forma_pago,co_sucursal,fecha,gasto,observaciones,genero,fecha_genero)
+                    VALUES($1,$2,$3,$4,$5,$6,$7,(getDate('')+getHora(''))) returning id;`,
             [cat_tipo_gasto, co_forma_pago, co_sucursal, new Date(fecha), gasto, observaciones, genero])
             .then((results) => {
                 resolve(results.rowCount > 0 ? results.rows[0].id : 0);
@@ -82,6 +82,14 @@ const getGastosPorSucursal = (idSucursal, anioMes) => {
         , [co_sucursal, anio_mes]);
 };
 
+const findById = (id) => {
+    console.log("@findById");
+    console.log("id " + id);
+    return genericDao.findOne(
+            queryBaseGastoSucursal(" g.id = $1 ")       
+        , [id]);
+};
+
 
 const getGastosSumaCortePorSucursal = async (corteData) => {
     
@@ -118,16 +126,21 @@ fpago.nombre as nombre_tipo_pago,
 suc.nombre as nombre_sucursal,
 g.fecha,
 to_char(g.fecha::date,'dd-mm-yyyy') as fecha_text,
+to_char(g.fecha_genero,'dd-mm-yyyy HH24:mm') as fecha_hora_text,
 g.id,
 g.cat_tipo_gasto,
 g.co_forma_pago,
 g.co_sucursal,
+suc.co_empresa,
 g.gasto,
 g.observaciones,
-(g.fecha_genero::date = getDate('')) as es_nuevo
+(g.fecha_genero::date = getDate('')) as es_nuevo,
+u.nombre as registro,
+g.genero
 from co_gasto g inner join cat_tipo_gasto tipo on g.cat_tipo_gasto = tipo.id
     inner join co_forma_pago fpago on g.co_forma_pago = fpago.id
     inner join co_sucursal suc on g.co_sucursal = suc.id
+    inner join usuario u on u.id = g.genero     
 where ${criterio ? criterio+" and ":''} 
        g.eliminado  = false          
 order by g.fecha desc       
@@ -154,6 +167,26 @@ const getSumaMesGastosPorSucursal = (idSucursal) => {
             [idSucursal]);
        
 };
+
+
+const getSumaGastoMesActual = (idSucursal) => {
+    console.log("@getSumaGastoMesActual"); 
+       return genericDao.findOne(
+            `
+            select coalesce(
+                (                
+                    select         
+                	    sum(g.gasto) as gasto_sucursal
+                    from co_gasto g                        
+                    where  g.eliminado  = false
+                        and g.co_sucursal = $1
+                        and to_char(g.fecha,'YYYY-MM') = to_char(getDate(''),'YYYY-MM')                        
+                ) ,0) as suma_mensual_sucursal                         
+        `,
+            [idSucursal]);
+       
+};
+
 
 
 
@@ -187,6 +220,8 @@ module.exports = {
     getSumaMesGastosPorSucursal,
     getGastosAgrupadosPorSucursal,
     getGastosCortePorSucursal,
-    getGastosSumaCortePorSucursal
+    getGastosSumaCortePorSucursal,
+    getSumaGastoMesActual,
+    findById
 
 };

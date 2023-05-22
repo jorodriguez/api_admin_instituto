@@ -65,6 +65,9 @@ const loadTemplateEmpresa = async(templateData = { params, idEmpresa, idUsuario,
                 case TIPO_TEMPLATE.ESTADO_CUENTA_DETALLADO:
                     html = mustache.to_html((template.template_estado_cuenta_detallado || ''), paramsSend);
                     break;
+                case TIPO_TEMPLATE.NOTIFICACION_GASTO:
+                        html = mustache.to_html((template.template_gasto || ''), paramsSend);
+                        break;
                 default:
                     console.log("====================");
                     console.log("NINGUN TEMPLATE ENCONTRADO");

@@ -1,12 +1,22 @@
 
 const gastoDao = require("../dao/gastoDao");
-/*
-const registrarGasto = (gastoData) =>{
+const notificacionGastoService = require('../utils/NotificacionGastoService');
 
-    return gastoDao.registrarGasto(gastoData);
+
+const registrarGasto = async (gastoData) =>{
+
+    const idGastoRegistrado = await  gastoDao.registrarGasto(gastoData);  
     
+    //enviar correo 
+    if(idGastoRegistrado){
+        notificacionGastoService.enviarNotificacionGasto(idGastoRegistrado,"Registro");
+    }
+
+    return idGastoRegistrado;
+
 }
 
+/*
 const modificarGasto = (gastoData) => {
     console.log("@modificarGasto");   
     return gastoDao.modificarGasto(gastoData);
@@ -66,4 +76,18 @@ const getGastosPorSucursal = (request, response) => {
 
 module.exports={registrarGasto,modificarGasto,eliminarGasto,getCatalogoTipoGasto}*/
 
-module.exports = gastoDao;
+module.exports = {registrarGasto, 
+                modificarGasto: gastoDao.modificarGasto,
+                eliminarGasto:gastoDao.eliminarGasto,
+                getCatalogoTipoGasto : gastoDao.getCatalogoTipoGasto,
+                getGastosPorSucursal : gastoDao.getGastosPorSucursal,
+                findById : gastoDao.findById,
+                getSumaMesGastosPorSucursal: gastoDao.getSumaMesGastosPorSucursal,
+                getGastosAgrupadosPorSucursal: gastoDao.getGastosAgrupadosPorSucursal,
+                getGastosCortePorSucursal: gastoDao.getGastosCortePorSucursal,
+                getGastosSumaCortePorSucursal: gastoDao.getGastosSumaCortePorSucursal,
+                getSumaGastoMesActual : gastoDao.getSumaGastoMesActual,
+                findById : gastoDao.findById
+
+
+};
