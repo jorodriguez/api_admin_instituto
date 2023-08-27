@@ -5,9 +5,10 @@ function getCorreosTokenAlumno(idAlumno) {
     return  alumnoDao.getCorreosTokensAlumno(idAlumno);    
 }
 
-const getAlumnos = (idSucursal)=>{
-    return alumnoDao.getAlumnos(idSucursal);
+const getAlumnos = (idSucursal,eliminados)=>{
+    return  eliminados ? alumnoDao.getAlumnosEliminados(idSucursal) : alumnoDao.getAlumnos(idSucursal);
 }
+
 
 
 module.exports = { 

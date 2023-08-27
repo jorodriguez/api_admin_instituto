@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 
 //version/branch
 
-const version = "v1/2305-correo-gasto: envio de correo al registrar un gasto";
+const version = "2308-estatus-inscripcion : poner un estatus a la inscripción";
 
 app.use(bodyParser.json());
 app.use(
