@@ -165,6 +165,7 @@ const bajaAlumno = (idAlumno, fechaBaja, observaciones, genero) => {
                                 observaciones_baja=$3,
                                 fecha_modifico = (current_date+current_time),                                
                                 modifico = $4,
+                                dio_baja = $4
                                 eliminado = true
                              WHERE id = $1 RETURNING id;`, [idAlumno, new Date(fechaBaja), observaciones, genero]);
 }
@@ -172,12 +173,18 @@ const bajaAlumno = (idAlumno, fechaBaja, observaciones, genero) => {
 
 const getAlumnos = (idSucursal) => {
     console.log("Consultando alumnos de la suc " + idSucursal);
-    return genericDao.findAll(getQueryAlumno(" a.co_sucursal = $1 "), [idSucursal]);
+    return genericDao.findAll(getQueryAlumno(" a.co_sucursal = $1 AND a.eliminado = false "), [idSucursal]);
 }
+
+const getAlumnosEliminados = (idSucursal) => {
+    console.log("Consultando alumnos eliminados de la suc " + idSucursal);
+    return genericDao.findAll(getQueryAlumno(" a.co_sucursal = $1 AND a.eliminado = true "), [idSucursal]);
+}
+
 
 const getAlumnosCurso = (uidCurso) => {
     console.log("Consultando alumnos del curso " + uidCurso);
-    return genericDao.findAll(getQueryAlumno(" curso.uid = $1 "), [uidCurso]);
+    return genericDao.findAll(getQueryAlumno(" curso.uid = $1 AND a.eliminado = false "), [uidCurso]);
 }
 
 const getQueryAlumno = (criterio) => `
@@ -212,14 +219,17 @@ SELECT
     a.cat_escolaridad,
     (select nombre from cat_escolaridad where id = a.cat_escolaridad) as escolaridad,
     a.tutor,    
-    a.telefono_tutor
+    a.telefono_tutor,
+    to_char(a.fecha_baja,'DD-MM-YYYY HH24:MI') as fecha_baja,    
+    a.observaciones_baja,
+    dio_baja.nombre as dio_baja
 FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
              inner join cat_genero genero on genero.id = a.cat_genero
              inner join co_sucursal s on i.co_sucursal = s.id             				
              inner join co_curso curso on curso.id = i.co_curso             					             					
-             inner join cat_especialidad esp on esp.id = curso.cat_especialidad             
-            -- inner join cat_horario horario on horario.id = curso.cat_horario
-    WHERE i.eliminado = false 
+             inner join cat_especialidad esp on esp.id = curso.cat_especialidad                         
+            inner join usuario dio_baja on dio_baja.id = a.dio_baja
+    WHERE 1 = 1
           ${criterio ? ' AND '+criterio : ''}        
     ORDER BY i.fecha_genero DESC
 `;
@@ -228,6 +238,7 @@ FROM co_inscripcion i inner join co_alumno a on a.id = i.co_alumno
 module.exports = {
     guardarAlumno,    
     getAlumnos,
+    getAlumnosEliminados,
     getAlumnosCurso,        
     getCorreosTokensAlumno,
     modificarFotoPerfil,

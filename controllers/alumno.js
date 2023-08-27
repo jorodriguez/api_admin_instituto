@@ -13,7 +13,12 @@ const getAlumnos = async (request, response) => {
             const id_sucursal = parseInt(request.params.id_sucursal);
             console.log("Consultando alumnos de la suc " + id_sucursal);
 
-            const results = await alumnoService.getAlumnos(id_sucursal);
+            const eliminados = request.params.eliminado;
+
+            console.log(" =  alumnos eliminados "+eliminados);
+            
+            const results = await alumnoService.getAlumnos(id_sucursal,eliminados);
+            
             response.status(200).json(results);
             
     } catch (e) {
