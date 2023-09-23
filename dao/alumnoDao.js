@@ -165,7 +165,7 @@ const bajaAlumno = (idAlumno, fechaBaja, observaciones, genero) => {
                                 observaciones_baja=$3,
                                 fecha_modifico = (current_date+current_time),                                
                                 modifico = $4,
-                                dio_baja = $4
+                                dio_baja = $4,
                                 eliminado = true
                              WHERE id = $1 RETURNING id;`, [idAlumno, new Date(fechaBaja), observaciones, genero]);
 }
