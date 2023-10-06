@@ -58,6 +58,7 @@ const siUsuarioSucursalRol = require('./routes/siUsuarioSucursalRol');
 const reportesController = require('./routes/reportesController');
 const esquemaPagoController = require('./routes/catEsquemaPago');
 const coFacturacionSucursal = require('./routes/coFacturacionSucursal');
+const sucursal = require('./routes/sucursal');
 
 
 app.use('/auth', loginRoutes);
@@ -85,6 +86,7 @@ app.use('/usuario-rol', siUsuarioSucursalRol);
 app.use('/reportes', reportesController);
 app.use('/esquema-pago', esquemaPagoController);
 app.use('/facturacion', coFacturacionSucursal);
+app.use('/sucursal', sucursal);
 
 app.use('/jobs', schedulerJob);
 
