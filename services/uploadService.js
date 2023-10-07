@@ -1,4 +1,5 @@
 const uploadCloudinaryDao = require('../dao/uploadCoudinaryDao');
+const facturacionRecursoDao = require('../dao/facturacionRecursoDao');
 const alumnoDao = require('../dao/alumnoDao');
 const articuloDao = require('../dao/articuloDao');
 const CONSTANTES = require('../utils/Constantes');
@@ -37,6 +38,15 @@ async function upload(idAlumno, genero, imagen) {
             if (resultImagen.upload) {
                 console.log("@actualizando foto de alumno");
                 idResult = await alumnoDao.modificarFotoPerfil(idAlumno, resultImagen, genero);
+
+                 //aqui guardar el log de facturacion
+        await facturacionRecursoDao.guardarItemFacturacionRecurso({
+            tipoFacturacionRecursos: facturacionRecursoDao.TIPO_RECURSO.ALTA_FOTO,
+            coSucursal: alumno.co_sucursal,
+            nota: `Alumno ${alumno.nombre} ${alumno.apellidos}`,
+            textoAyuda: `${resultImagen.secure_url}`,            
+            genero            
+          });
             }
         }
         console.log("termino");
