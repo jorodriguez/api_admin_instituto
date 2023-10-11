@@ -46,7 +46,7 @@ const aceptarPago = async(id, data) => {
                             fecha_pago_aceptado = (getDate('')+ getHora(''))::timestamp,
                             fecha_modifico = (getDate('')+getHora('')),
                             modifico = $1 
-                        where id = $1 return id;
+                        where id = $1 returning id;
                         
             `, [id, genero]);
 
@@ -73,7 +73,7 @@ const rechazarPago = async(id, data) => {
                             nota_rechazo,
                             fecha_modifico = (getDate('')+getHora('')),
                             modifico = $1 
-                        where id = $1 return id;
+                        where id = $1 returning id;
                         
             `, [id, genero]);
 
@@ -100,7 +100,7 @@ const updateComprobante = async(id, data) => {
                         set comprobante_pago_url = $2,
                             fecha_adjunto_comprobante = (getDate('')),
                             fecha_modifico = (getDate('')+getHora(''))
-                    where id = $1 return id;
+                    where id = $1 returning id;
             `, [id, url, genero]);
 
         return result;
@@ -120,7 +120,7 @@ const crear = async(data = { coSucursal, nombreMensualidad, nota, monto, genero 
 
         const result = await genericDao.execute(`
                     insert into co_facturacion_sucursal(co_sucursal,nombre_mensualidad,nota,monto,genero) 
-                    values($1,$2,$3,$4,$5) return id;
+                    values($1,$2,$3,$4,$5) returning id;
             `, [coSucursal, nombreMensualidad, nota, monto, genero]);
 
         return result;

@@ -39,6 +39,7 @@ const getTemplateEmpresa = async(idEmpresa) => {
             tem.template_estado_cuenta_detallado,
             tem.logo_correo as logotipo,            
             tem.template_gasto,
+            tem.template_credencial,
 			em.pagina_oficial,            
             to_char(getDate('') + getHora(''),'dd-mm-yyyy HH24:mi') as fecha_impresion,
             to_char(getDate('') + getHora(''),'dd-mm-yyyy') as fecha_actual

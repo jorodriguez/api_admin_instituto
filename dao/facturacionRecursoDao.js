@@ -7,39 +7,53 @@ const {
 } = require('../exception/exeption');
 const genericDao = require('./genericDao');
 
-const TIPO_RECURSO = { MESUALIDAD:1,DESARROLLO_NUEVO:2,ALTA_FOTO:3,IMPRESION_CREDENCUAL:4 };
+const TIPO_RECURSO = { MESUALIDAD: 1, DESARROLLO_NUEVO: 2, ALTA_FOTO: 3, IMPRESION_CREDENCUAL: 4 };
 
-const guardarItemFacturacionRecurso = async (itemData ) => {    
+const guardarItemFacturacionRecurso = async(itemData) => {
 
-	console.log("@guardarItemFacturacionRecurso");
-	
-	const { coSucursal,tipoFacturacionRecursos, nota, textoAyuda, genero } = itemData;
+    console.log("@guardarItemFacturacionRecurso");
 
-	console.log("sucursal "+ coSucursal);
-	console.log("tipo "+ tipoFacturacionRecursos);
-	console.log("nota "+ nota);
-	console.log("textoayuda "+ textoAyuda);
-	console.log("gener "+ genero);
-    
+    const { coSucursal, tipoFacturacionRecursos, nota, textoAyuda, genero } = itemData;
+
+    console.log("sucursal " + coSucursal);
+    console.log("tipo " + tipoFacturacionRecursos);
+    console.log("nota " + nota);
+    console.log("textoayuda " + textoAyuda);
+    console.log("gener " + genero);
+
     const tipoRecurso = await getTipoRecursoId(tipoFacturacionRecursos);
-	console.log(tipoRecurso);
-	
-    return await genericDao.execute(`        
+    console.log(tipoRecurso);
+
+    const ret = await genericDao.execute(`        		
             INSERT INTO si_facturacion_recursos(si_tipo_facturacion_recurso,precio,co_sucursal,nota,texto_ayuda,genero)
             VALUES($1,$2,$3,$4,$5,$6) RETURNING ID;
-    `, [tipoFacturacionRecursos,tipoRecurso.precio,coSucursal,nota,textoAyuda, genero]);
+    `, [tipoFacturacionRecursos, tipoRecurso.precio, coSucursal, nota, textoAyuda, genero]);
 
-	
-	
+    await actualizarCreditoFotosSucursal(coSucursal, genero);
 
+    return ret;
 }
+
+const actualizarCreditoFotosSucursal = async(idSucursal, genero) => {
+    //set credito_fotos = credito_fotos -  (select count(*) as contador from si_facturacion_recursos where si_tipo_facturacion_recurso = $1 and co_sucursal = $2 and eliminado = false),
+    await genericDao.execute(`        		
+			update co_sucursal 
+				set credito_fotos = (credito_fotos - 1),
+				fecha_modifico = (getDate('')+getHora('')),
+				modifico = $2
+			where id = $1 ;
+    `, [idSucursal, genero]);
+};
+
+
+
 
 const getTipoRecursoId = (id) => {
     console.log("@getTipoRecursoId ");
     return genericDao.findOne(`SELECT * FROM SI_TIPO_FACTURACION_RECURSO WHERE eliminado = false AND  ID = $1 `, [id]);
 };
 
-const getAllRecursosFacturacionSucursal = (idSucursal) => {    
+const getAllRecursosFacturacionSucursal = (idSucursal) => {
     return genericDao.findAll(getQuery(), [idSucursal]);
 }
 
@@ -73,7 +87,7 @@ group by u.sucursal,to_char(u.fecha_genero,'MMYYYY'),to_char(u.fecha_genero,'MON
 
 
 module.exports = {
-	TIPO_RECURSO,
+    TIPO_RECURSO,
     guardarItemFacturacionRecurso,
     getAllRecursosFacturacionSucursal
 }

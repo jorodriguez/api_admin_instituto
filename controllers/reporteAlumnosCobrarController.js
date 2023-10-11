@@ -9,7 +9,7 @@ const getReporteListaAlumnosCobrar = async(request, response) => {
 
         console.log("coSucursal  " + coSucursal);
 
-        const lista = await reporteAlumnosCobrarService.getAlumnosCobrar({ coSucusal: coSucursal });
+        const lista = await reporteAlumnosCobrarService.getAlumnoreturnsCobrar({ coSucusal: coSucursal });
 
         response.status(200).json(lista);
 
