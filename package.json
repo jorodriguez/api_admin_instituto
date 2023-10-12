@@ -9,8 +9,7 @@
         "debug": "DEBUG=http,mail,express:* node index.js",
         "local": "heroku local -e .env.local",
         "lint": "eslint .",
-        "lint:fix": "eslint --fix",
-        "heroku-postbuild": "bash postbuild.bash"
+        "lint:fix": "eslint --fix"
     },
     "author": "",
     "license": "ISC",
