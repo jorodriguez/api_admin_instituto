@@ -70,6 +70,8 @@ const getFormatoCredencial = async(uuidAlumno, genero) => {
             tipoTemplate: TIPO_TEMPLATE.FORMATO_CREDENCIAL
         });
 
+    console.log("TEMRINA PROCESO DE GENERACION DE CREDENCIAL");
+
     return html;
 };
 

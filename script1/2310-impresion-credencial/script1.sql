@@ -41,29 +41,38 @@ alter table co_sucursal add column credito_fotos integer not null default 0;
 
 
 update co_template set template_credencial = '
-
-
 <!DOCTYPE html>
 <html>
 <head>
-<title>Page Title</title>
+<title>Credencial</title>
 <style type="text/css" media="print">
-#print {
- --height: 415px;
- --width: 302px;
- margin: 0px 0px 10px 0px;  
+#print { 
+	margin: 0px 0px 10px 0px;  
 }
 @page{
    margin: 10;
    size: A4;
-
+   
 }
+@media print {
+            body {
+                -webkit-print-color-adjust: exact;
+                -moz-print-color-adjust: exact;
+                -ms-print-color-adjust: exact;
+                print-color-adjust: exact;
+                /*box-shadow: inset 0 0 0 1000px gray;*/
+            }
+
+            .noprint {
+                display: none;
+            }
+        }
 </style>
 
 </head>
-<body style="font-family: ''Trebuchet MS'', sans-serif;font-size:12px">
+<body style="font-family: ''Trebuchet MS'', sans-serif;font-size:12px;">
 
-<table id="print" width="416px" style="border: 1px dashed gray; border-radius:5px; " cellspacing="2" cellpadding="0">
+<table id="print" width="416px" style="border: 1px dashed gray; border-radius:5px; background-image: url(''https://res.cloudinary.com/dyabmkg2p/image/upload/v1697131138/prepa_cecan/suc_cecan/fondo3_npq8de.png''); background-repeat: no-repeat; "  cellspacing="2" cellpadding="0">
 	<tr>
     		<!-- parte delantera-->
         <td style="width:208px; border: 1px solid gray;  border-radius:5px; padding:1px">
@@ -193,6 +202,7 @@ update co_template set template_credencial = '
 </table>
 </body>
 </html>
-
+' 
+where id = 4
 ' 
 where id = 4
