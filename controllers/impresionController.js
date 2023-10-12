@@ -2,11 +2,12 @@ const handle = require('../helpers/handlersErrors');
 const impresionService = require('../services/impresionService');
 const html_to_pdf = require('html-pdf-node');
 
+
 const getFormatoCredencial = async(request, response) => {
     console.log("@getFormatoCredencial");
     try {
 
-        const { uidAlumno, genero } = request.params;
+        const { uidAlumno, format, genero } = request.params;
 
         console.log("uid " + uidAlumno);
 
@@ -16,14 +17,20 @@ const getFormatoCredencial = async(request, response) => {
 
         let file = { content: html };
 
-        html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
-            console.log("PDF Buffer:-", pdfBuffer);
 
-        });
 
-        res.setHeader('Content-Type', 'application/pdf');
+        if (format == 'PDF') {
+            html_to_pdf.generatePdf(file, options).then(pdfBuffer => {
+                console.log("PDF Buffer:-", pdfBuffer);
+                response.setHeader('Content-disposition', 'inline; filename="credencial.pdf"');
+                response.setHeader('Content-type', 'application/pdf');
+                response.send(pdfBuffer);
+                //pdfBuffer.pipe(response);
+            });
 
-        //        response.status(200).send(html);
+        } else {
+            response.status(200).send(html);
+        }
 
     } catch (e) {
         console.log(e);

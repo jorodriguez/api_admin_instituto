@@ -553,6 +553,45 @@ const obtenerDetalleEstadoCuenta = async(idAlumno) => {
               ORDER by b.pagado,cargo.nombre asc, b.fecha desc`, [idAlumno]);
 };
 
+
+
+const obtenerDetalleEstadoCuentaUuidAlumno = async(uuidAlumno) => {
+    console.log("obtenerDetalleEstadoCuentaUuidAlumno")
+
+    return await genericDao.findAll(` SELECT a.co_balance_alumno,
+               b.id as id_cargo_balance_alumno,
+               b.fecha,
+               to_char(b.fecha,'dd-mm-yyyy') as fecha_format,
+               to_char(b.fecha,'HH24:MI') as hora_format,
+               b.cantidad,
+               cargo.nombre as nombre_cargo,
+               cargo.aplica_descuento,
+               b.texto_ayuda,
+               cat_cargo as id_cargo,
+               cargo.es_facturable,
+               b.total as total,
+               b.cargo,
+               b.total_pagado,
+               b.nota,
+               b.pagado,                              
+               b.descuento, 
+               cargo.id <> ${CARGOS.ID_CARGO_MENSUALIDAD} as mostrar_nota,
+               esp.nombre as especialidad,
+                semana.numero_semana_curso,
+                semana.numero_semana_curso as materia_modulo
+             FROM co_cargo_balance_alumno b inner join co_alumno a on b.co_alumno = a.id 
+                                           inner join cat_cargo cargo on b.cat_cargo = cargo.id					                                           
+                                           left join co_curso curso on curso.id = b.co_curso
+                                           left join cat_especialidad esp on esp.id = curso.cat_especialidad
+                                           left join co_curso_semanas semana on semana.id = b.co_curso_semanas                            
+             WHERE a.uid = $1                  
+					and b.pagado = false
+			 		and b.eliminado = false
+					and a.eliminado = false
+              ORDER by b.pagado,cargo.nombre asc, b.fecha desc`, [uuidAlumno]);
+};
+
+
 const getCargoExtraMensualidadEmpresa = (idEmpresa) => {
     console.log("@getCargoExtraEmpresa");
     return genericDao.findAll(`SELECT * 
@@ -590,5 +629,6 @@ module.exports = {
     getColegiaturasPendientesCobranza,
     obtenerEstadoCuentaDetallado,
     obtenerOtrosCargosEstadoCuentaDetallado,
-    buscarCargoColegiaturaMensual
+    buscarCargoColegiaturaMensual,
+    obtenerDetalleEstadoCuentaUuidAlumno
 };

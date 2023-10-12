@@ -39,7 +39,9 @@ values(1,'Sistema',650,1),
 alter table co_sucursal add column credito_fotos integer not null default 0;
 
 
+
 update co_template set template_credencial = '
+
 
 <!DOCTYPE html>
 <html>
@@ -47,21 +49,19 @@ update co_template set template_credencial = '
 <title>Page Title</title>
 <style type="text/css" media="print">
 #print {
- height: 415px;
- width: 302px;
- margin: 0px 0px 10px 0px;
- padding: 10px;     
- font-size:.25em !important;
+ --height: 415px;
+ --width: 302px;
+ margin: 0px 0px 10px 0px;  
 }
 @page{
    margin: 10;
+   size: A4;
 
 }
 </style>
 
 </head>
 <body style="font-family: ''Trebuchet MS'', sans-serif;font-size:12px">
-
 
 <table id="print" width="416px" style="border: 1px dashed gray; border-radius:5px; " cellspacing="2" cellpadding="0">
 	<tr>
@@ -86,9 +86,7 @@ update co_template set template_credencial = '
           				
                     </td>
                     <td  width="40%"  align="right">
-                    	<!--<img style="height:70px;" src="{{& foto}}" />-->
-                        <img style="height:80px;border: 2px solid #1B72C0; border-radius:5px;" src="https://res.cloudinary.com/dyabmkg2p/image/upload/v1696709568/prepa_cecan/suc_cecan/perfiles_alumnos/hozmm8grmbsg9jx3bteg.jpg" />
-                        
+                    	<img style="height:80px; width:100%; border: 2px solid #1B72C0; border-radius:5px;" src="{{& foto}}" />                                                
                     </td>       
                     <td width="30%">
           				
@@ -134,14 +132,19 @@ update co_template set template_credencial = '
                 	<td align="center" style="height:50px; "  >           				
                         <table width="100%" style="height: 150px; text-align: center;"  >
                         	<tr >
-                            <td style="border-bottom: 0px solid gray;text-align: center;">
-                    			
-                            </td>
+                            	<td style="border-bottom: 0px solid gray;text-align: center;">
+                    				
+                            	</td>
                             </tr>
                             <tr>
                             	<td style=" vertical-align:top">
-                    			<img style="height:40px;"
+                    			<img style="height:30px;"
                         src="https://res.cloudinary.com/dyabmkg2p/image/upload/v1696957520/prepa_cecan/suc_cecan/31369099_781212635421940_2008629288055603200_n_b8wm82.png" />                         
+                                </td>
+                            </tr>
+                            <tr>
+                            	<td>
+                                	<img style="height:100px;" src="{{& qr}}"/>                                             			
                                 </td>
                             </tr>
                              <tr>
@@ -190,5 +193,6 @@ update co_template set template_credencial = '
 </table>
 </body>
 </html>
+
 ' 
 where id = 4

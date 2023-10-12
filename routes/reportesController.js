@@ -3,6 +3,7 @@ const reporteAlumnosController = require('../controllers/reporteAlumnosControlle
 const reporteDashboardController = require('../controllers/reporteDashboardController');
 const reportePagosController = require('../controllers/reportePagosController');
 const reporteAlumnosCobrarController = require('../controllers/reporteAlumnosCobrarController');
+const cargos = require('../controllers/cargos');
 
 const checkAuth = require('./check-auth');
 
@@ -19,6 +20,8 @@ router.get('/top-alumnos-deudores/:coEmpresa/sucursal/:coSucursal', checkAuth, r
 router.get('/totales-adeudos-por-curso/:coEmpresa/sucursal/:coSucursal', checkAuth, reporteDashboardController.getTotalAdeudoPorCurso);
 
 router.get('/estado-cuenta-detallado/:uidAlumno', checkAuth, reportePagosController.getHtmlReporteEstadoCuentaDetallado);
+
+router.get('/estado-cuenta/:id_alumno', checkAuth, cargos.obtenerEstadoCuentaAlumno);
 
 router.get('/cobranza/alumnos/:coSucursal', checkAuth, reporteAlumnosCobrarController.getReporteListaAlumnosCobrar);
 
