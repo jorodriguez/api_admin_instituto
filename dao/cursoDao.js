@@ -173,7 +173,7 @@ const abrirInscripcionesCurso = async(id, cursoData) => {
 };
 
 
-const actualizarPublicIdFoto = async(uid, publicIdFoto, genero) => {
+const actualizarPublicIdFoto = async(uid, publicIdFoto, url,genero) => {
     console.log("@actualizarPublicIdFoto");
 
     return await genericDao.execute(
@@ -181,11 +181,12 @@ const actualizarPublicIdFoto = async(uid, publicIdFoto, genero) => {
                                     UPDATE CO_CURSO
                                     SET 
                                         public_id_foto = $2,                                                                                
+                                        foto = $3,
                                         fecha_modifico = (getDate('')+getHora('')),
-                                        modifico = $3
+                                        modifico = $4::int
                                     WHERE uid = $1
                                     RETURNING ID;
-                                    `, [uid, publicIdFoto, genero]
+                                    `, [uid, publicIdFoto,url, genero]
     );
 };
 

@@ -40,6 +40,8 @@ alter table co_sucursal add column credito_fotos integer not null default 0;
 
 update co_sucursal set credito_fotos = 10,plan_foto_alumnos =true ; --creditos para las fotos 
 
+alter table co_template add column template_credencial text;
+
 update co_template set template_credencial = '
 <!DOCTYPE html>
 <html>
@@ -377,3 +379,7 @@ update co_template set template_credencial = '
 where id <> 4;
 
 alter table co_curso add column public_id_foto text;
+
+alter table co_sucursal add column plan_foto_cursos boolean default false;
+
+update co_sucursal set plan_foto_cursos = true;

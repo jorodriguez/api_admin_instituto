@@ -33,9 +33,9 @@ const getFormatoCredencial = async(uuidAlumno, genero) => {
     const qrText = await QRCode.toDataURL(url);
 
     const params = {
-        nombre_sucursal: `${inscripcionCurso.alumno} ${inscripcionCurso.apellidos}`,
-        domicilio_sucursal: sucursal.direccion,
+        nombre_alumno: `${inscripcionCurso.alumno} ${inscripcionCurso.apellidos}`,
         nombre_carrera: nombreGrupo,
+        domicilio_sucursal: sucursal.direccion,        
         ciclo: "-",
         foto: inscripcionCurso.foto,
         qr: qrText

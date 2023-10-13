@@ -135,9 +135,9 @@ async function uploadFotoCurso(uuidCurso, genero, imagen) {
             console.log("se procede a subir la nueva imagen del curso");
 
             const sucursal = await sucursalDao.getSucursalPorId(curso.co_sucursal);
-            const empresa = await empresaDao.getSucursalPorId(curso.co_empresa);
+            const empresa = await empresaDao.getEmpresaId(curso.co_empresa);
 
-            const ruta = `${empresa.nombre_folder}/${sucursal.sucursal}/${CONSTANTES.FOLDER_FOTO_CURSO_CLOUDNARY}`;
+            const ruta = `${empresa.nombre_folder}/${sucursal.nombre_folder}/${CONSTANTES.FOLDER_FOTO_CURSO_CLOUDNARY}`;
 
             let resultImagen = await uploadCloudinaryDao.uploadCloud(imagen, ruta);
 
@@ -146,13 +146,15 @@ async function uploadFotoCurso(uuidCurso, genero, imagen) {
             if (resultImagen.upload) {
                 console.log("@actualizando foto de alumno");
 
-                idResult = await cursoDao.actualizarPublicIdFoto(idAlumno, resultImagen.public_id, genero);
+                idResult = await cursoDao.actualizarPublicIdFoto(uuidCurso, resultImagen.public_id,resultImagen.secure_url, genero);
+            
+                console.log("procediendo a guardar la facturacion");
 
                 //aqui guardar el log de facturacion
                 await facturacionRecursoDao.guardarItemFacturacionRecurso({
                     tipoFacturacionRecursos: facturacionRecursoDao.TIPO_RECURSO.ALTA_FOTO,
                     coSucursal: curso.co_sucursal,
-                    nota: `Curso ${curso.especialidad} ${alumno.apellidos}`,
+                    nota: `Curso ${curso.especialidad} `,
                     textoAyuda: `${resultImagen.secure_url}`,
                     genero
                 });

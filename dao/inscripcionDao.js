@@ -202,6 +202,8 @@ const getQueryBase = (criterio) => `
     a.correo,
     a.foto,
     to_char(a.fecha_nacimiento,'DD-MM-YYYY') as fecha_nacimiento_format,          
+    (a.fecha_nacimiento::date = getDate('')) as cumpleanos,
+    a.total_adeudo,    
     a.uid,    
     curso.foto as foto_curso,
     curso.activo,
