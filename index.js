@@ -225,6 +225,19 @@ app.post('/foto_perfil', checkAuth, fileUpload.single('image'), (req, res) => {
 });
 
 
+app.post('/foto_curso', checkAuth, fileUpload.single('image'), (req, res) => {
+
+    let respuesta = validarTokenCompleto(req, res);
+
+    if (!respuesta.tokenValido) {
+        console.log(" ((((( Token invalido  )))))");
+        return req.status(respuesta.status).send(respuesta);
+    } else {
+        console.log(" PASA EL TOKEN ");
+        uploadCloudinary.uploadFotoCurso(req, res);
+    }
+});
+
 //Subir imagen articulo
 /*app.post('/foto_articulo',checkAuth, fileUpload.single('image'), (req,res)=>{
 	let respuesta = validarTokenCompleto(req, res);

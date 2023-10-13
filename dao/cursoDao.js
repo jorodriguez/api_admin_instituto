@@ -1,79 +1,81 @@
 const genericDao = require("./genericDao");
 const {
-  ExceptionDatosFaltantes,
-  ExceptionBD,
+    ExceptionDatosFaltantes,
+    ExceptionBD,
 } = require("../exception/exeption");
 const { isEmptyOrNull } = require("../utils/Utils");
 
 
-const createCurso = async (cursoData) => {
-  console.log("@dao.createCurso");    
-  try{
-    
-    const {
-      cat_especialidad,            
-      cat_dia,      
-      hora_inicio,
-      hora_fin,
-      co_empresa,
-      co_sucursal,
-      costo_colegiatura_base,
-      costo_inscripcion_base,
-      nota,
-      fecha_inicio_previsto,
-      numero_semanas,
-      genero    
-    } = cursoData;
+const createCurso = async(cursoData) => {
+    console.log("@dao.createCurso");
+    try {
 
-    console.log(JSON.stringify(cursoData));
+        const {
+            cat_especialidad,
+            cat_dia,
+            hora_inicio,
+            hora_fin,
+            co_empresa,
+            co_sucursal,
+            costo_colegiatura_base,
+            costo_inscripcion_base,
+            nota,
+            fecha_inicio_previsto,
+            numero_semanas,
+            genero
+        } = cursoData;
 
-    const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1",[cat_especialidad]);
+        console.log(JSON.stringify(cursoData));
 
-    const id =  await genericDao.execute(`
+        const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1", [cat_especialidad]);
+
+        const id = await genericDao.execute(`
           insert into co_curso(cat_especialidad,cat_dia,hora_inicio,hora_fin,co_empresa,costo_colegiatura_base,costo_inscripcion_base,nota,fecha_inicio_previsto,fecha_fin_previsto,co_sucursal,numero_semanas,foto,genero)
           values($1,$2,$3,$4,$5,$6,$7,$8,$9::date,($9::date + interval '${numero_semanas} weeks'),$10,$11,$12,$13) RETURNING ID;
-    `,[cat_especialidad,
-      cat_dia,
-      hora_inicio,//3
-      hora_fin,//4
-      co_empresa, //5
-      costo_colegiatura_base,//6
-      costo_inscripcion_base,//7
-      nota,//8
-      new Date(fecha_inicio_previsto),            //9
-      co_sucursal,//10
-      numero_semanas,//11
-      especialidad.foto,//12
-      genero]);      //13
+    `, [cat_especialidad,
+            cat_dia,
+            hora_inicio, //3
+            hora_fin, //4
+            co_empresa, //5
+            costo_colegiatura_base, //6
+            costo_inscripcion_base, //7
+            nota, //8
+            new Date(fecha_inicio_previsto), //9
+            co_sucursal, //10
+            numero_semanas, //11
+            especialidad.foto, //12
+            genero
+        ]); //13
 
-      console.log("nuevo id del curso "+id);
+        console.log("nuevo id del curso " + id);
 
-      return id;
-  }catch(e){  
-    console.log("Error al insertar el curso "+e);
-    throw new ExceptionBD("Error");
-  }
+        return id;
+    } catch (e) {
+        console.log("Error al insertar el curso " + e);
+        throw new ExceptionBD("Error");
+    }
 };
 
-const updateCurso = async (id,cursoData) => {
-  console.log("@updateCurso");
-  
-  const {     
-    cat_dia,    
-    //cat_horario,        
-    hora_inicio,
-    hora_fin,
-    costo_colegiatura_base,
-    costo_inscripcion_base,
-    numero_semanas,
-    nota,
-    fecha_inicio_previsto,        
-    genero} = cursoData;
+const updateCurso = async(id, cursoData) => {
+    console.log("@updateCurso");
 
-  //const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1",[cat_especialidad]);
+    const {
+        cat_dia,
+        //cat_horario,        
+        hora_inicio,
+        hora_fin,
+        costo_colegiatura_base,
+        costo_inscripcion_base,
+        numero_semanas,
+        nota,
+        fecha_inicio_previsto,
+        genero
+    } = cursoData;
 
-  return await genericDao.execute(
-    `
+    //const especialidad = await genericDao.findOne("SELECT * FROM cat_especialidad where id = $1",[cat_especialidad]);
+
+    return await genericDao.execute(
+        `
                                     UPDATE CO_CURSO
                                     SET 
                                         cat_dia = $2,
@@ -88,26 +90,25 @@ const updateCurso = async (id,cursoData) => {
                                         modifico = $9
                                     WHERE id = $1
                                     RETURNING ID;
-                                    `,
-    [id,//1      
-      cat_dia,//2
-      hora_inicio,//3
-      hora_fin,//4
-      costo_colegiatura_base,//5
-      costo_inscripcion_base,//6
-      nota,//7
-      fecha_inicio_previsto,      //8
-      genero//9
-    ]
-  );
+                                    `, [id, //1      
+            cat_dia, //2
+            hora_inicio, //3
+            hora_fin, //4
+            costo_colegiatura_base, //5
+            costo_inscripcion_base, //6
+            nota, //7
+            fecha_inicio_previsto, //8
+            genero //9
+        ]
+    );
 };
 
 
-const marcarCursoComoIniciado = async (uid,genero) => {
-  console.log("@marcarCursoComoIniciado");
-        
-   return await genericDao.execute(
-    `
+const marcarCursoComoIniciado = async(uid, genero) => {
+    console.log("@marcarCursoComoIniciado");
+
+    return await genericDao.execute(
+        `
                                     UPDATE CO_CURSO
                                     SET 
                                         fecha_inicio = getDate(''),
@@ -117,18 +118,17 @@ const marcarCursoComoIniciado = async (uid,genero) => {
                                         modifico = $2
                                     WHERE uid = $1
                                     RETURNING ID;
-                                    `,
-    [uid,genero]
-  );
+                                    `, [uid, genero]
+    );
 };
 
-const eliminarCurso = async (id,cursoData) => {
-  console.log("@eliminarCurso");
-  
-  const { motivo,genero } = cursoData;
+const eliminarCurso = async(id, cursoData) => {
+    console.log("@eliminarCurso");
 
-  return await genericDao.execute(
-    `
+    const { motivo, genero } = cursoData;
+
+    return await genericDao.execute(
+        `
                                     UPDATE CO_CURSO
                                     SET eliminado = true,
                                         motivo_baja = $2,
@@ -136,17 +136,16 @@ const eliminarCurso = async (id,cursoData) => {
                                         modifico = $3
                                     WHERE id = $1
                                     RETURNING ID;
-                                    `,
-    [id,motivo, genero]
-  );
+                                    `, [id, motivo, genero]
+    );
 };
 
-const cerrarInscripcionesCurso = async (id,cursoData) => {
-  console.log("@cerrarInscripcionesCurso");
-  
-  const { motivo,genero } = cursoData;
+const cerrarInscripcionesCurso = async(id, cursoData) => {
+    console.log("@cerrarInscripcionesCurso");
 
-  return await genericDao.execute(    `
+    const { motivo, genero } = cursoData;
+
+    return await genericDao.execute(`
                                     UPDATE CO_CURSO
                                     SET inscripciones_cerradas = true,
                                         motivo_inscripciones_cerradas = $2,
@@ -154,17 +153,15 @@ const cerrarInscripcionesCurso = async (id,cursoData) => {
                                         modifico = $3
                                     WHERE id = $1
                                     RETURNING ID;
-                                    `,
-    [id,motivo, genero]
-  );
+                                    `, [id, motivo, genero]);
 };
 
-const abrirInscripcionesCurso = async (id,cursoData) => {
-  console.log("@abrirInscripcionesCurso");
-  
-  const { motivo,genero } = cursoData;
+const abrirInscripcionesCurso = async(id, cursoData) => {
+    console.log("@abrirInscripcionesCurso");
 
-  return await genericDao.execute(    `
+    const { motivo, genero } = cursoData;
+
+    return await genericDao.execute(`
                                     UPDATE CO_CURSO
                                     SET inscripciones_cerradas = false,
                                         motivo_inscripciones_cerradas = $2,
@@ -172,17 +169,29 @@ const abrirInscripcionesCurso = async (id,cursoData) => {
                                         modifico = $3
                                     WHERE id = $1
                                     RETURNING ID;
-                                    `,
-    [id,motivo, genero]
-  );
+                                    `, [id, motivo, genero]);
 };
 
 
+const actualizarPublicIdFoto = async(uid, publicIdFoto, genero) => {
+    console.log("@actualizarPublicIdFoto");
 
+    return await genericDao.execute(
+        `
+                                    UPDATE CO_CURSO
+                                    SET 
+                                        public_id_foto = $2,                                                                                
+                                        fecha_modifico = (getDate('')+getHora('')),
+                                        modifico = $3
+                                    WHERE uid = $1
+                                    RETURNING ID;
+                                    `, [uid, publicIdFoto, genero]
+    );
+};
 
-const getCursosSucursal = async (idSucursal) => {
+const getCursosSucursal = async(idSucursal) => {
     console.log("@getCursosSucursal");
-    return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 '),[idSucursal]);  
+    return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 '), [idSucursal]);
 };
 
 /*const getCursosSucursalEstatusInscripciones = async (idSucursal,estatusInscripciones) => {
@@ -190,64 +199,61 @@ const getCursosSucursal = async (idSucursal) => {
   return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 and curso.inscripciones_cerradas = $2 '),[idSucursal,estatusInscripciones]);  
 };
 */
-const getCursosActivoSucursal = async (idSucursal) => {
-  console.log("@getCursosActivoSucursal");  
-  return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1  '),[idSucursal]);
+const getCursosActivoSucursal = async(idSucursal) => {
+    console.log("@getCursosActivoSucursal");
+    return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1  '), [idSucursal]);
 };
-  
+
 //para las inscripciones
-const getCursosActivosInscripcionesAbiertas = async (idSucursal,idEspecialidad) => {
-  console.log("@getcursosActivos");
-  return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 and esp.id = $2 AND curso.inscripciones_cerradas = false'),[idSucursal,idEspecialidad]);
+const getCursosActivosInscripcionesAbiertas = async(idSucursal, idEspecialidad) => {
+    console.log("@getcursosActivos");
+    return await genericDao.findAll(getQueryBase(' curso.co_sucursal = $1 and esp.id = $2 AND curso.inscripciones_cerradas = false'), [idSucursal, idEspecialidad]);
 };
 
-const getCursosInicianHoy = async () => {
-  console.log("@getCursosInicianHoy");
-  return await genericDao.findAll(getQueryBase(` curso.fecha_inicio_previsto::date <= getDate('') and curso.activo = false and curso.semana_actual = 0  `),[]);
+const getCursosInicianHoy = async() => {
+    console.log("@getCursosInicianHoy");
+    return await genericDao.findAll(getQueryBase(` curso.fecha_inicio_previsto::date <= getDate('') and curso.activo = false and curso.semana_actual = 0  `), []);
 };
 
-const getCursosInicianProximosDias = async (idSucursal) => {
-  console.log("@getCursosInicianHoy");
-  return await genericDao.findAll(
-                  getQueryBase(` curso.fecha_inicio_previsto::date <= (getDate('') + interval '7 days') and suc.id = $1 and curso.activo = false and curso.semana_actual = 0  `)
-                  ,[idSucursal]
-                );
-};
-
-
-const getCursoByUid = async (uid) => {
-  console.log("@getCursoByUid");
-  return await genericDao.findOne(
-                  getQueryBase(` curso.uid = $1  `)
-                ,[uid]);
-};
-
-const getCursoById = async (id) => {
-  console.log("@getCursoById");
-  return await genericDao.findOne(`select * from co_curso where id = $1 and eliminado = false`,[id]);
-};
-
-const findByUuId = async (uuid) => {
-  console.log("@findByUuId");
-  return await genericDao.findOne(`select * from co_curso where uid = $1 and eliminado = false`,[id]);
+const getCursosInicianProximosDias = async(idSucursal) => {
+    console.log("@getCursosInicianHoy");
+    return await genericDao.findAll(
+        getQueryBase(` curso.fecha_inicio_previsto::date <= (getDate('') + interval '7 days') and suc.id = $1 and curso.activo = false and curso.semana_actual = 0  `), [idSucursal]
+    );
 };
 
 
-const actualizarTotalAdeudaAlumno = async (idAlumno,genero) => {
-  console.log("@actualizarTotalAdeudaAlumno");  
+const getCursoByUid = async(uid) => {
+    console.log("@getCursoByUid");
+    return await genericDao.findOne(
+        getQueryBase(` curso.uid = $1  `), [uid]);
+};
 
-  return genericDao.execute(` UPDATE CO_ALUMNO SET 
+const getCursoById = async(id) => {
+    console.log("@getCursoById");
+    return await genericDao.findOne(`select * from co_curso where id = $1 and eliminado = false`, [id]);
+};
+
+const findByUuId = async(uuid) => {
+    console.log("@findByUuId");
+    return await genericDao.findOne(`select * from co_curso where uid = $1 and eliminado = false`, [id]);
+};
+
+
+const actualizarTotalAdeudaAlumno = async(idAlumno, genero) => {
+    console.log("@actualizarTotalAdeudaAlumno");
+
+    return genericDao.execute(` UPDATE CO_ALUMNO SET 
                                   total_adeudo = (select case when sum(total) is null then 0 else sum(total) end from co_cargo_balance_alumno where co_alumno = $1 and eliminado = false),
                                   fecha_modifico = (getDate('')+getHora(''))::timestamp,
                                   modifico = $2
                             WHERE  id=$1
-                              returning id`
-        ,[idAlumno,genero]);
+                              returning id`, [idAlumno, genero]);
 };
 
 
 
-const getQueryBase = (criterio)=>` select curso.id,
+const getQueryBase = (criterio) => ` select curso.id,
 curso.costo_colegiatura_base,
 curso.costo_inscripcion_base,
 curso.nota,
@@ -272,6 +278,7 @@ suc.id as co_sucursal,
 suc.nombre as sucursal,
 suc.direccion as direccion_sucursal,
 curso.activo,
+curso.public_id_foto,
 curso.co_empresa,
 curso.numero_semanas,
 curso.uid,
@@ -294,19 +301,20 @@ order by curso.fecha_inicio_previsto desc`;
 
 
 module.exports = {
-  createCurso,
-  getCursoById,
-  updateCurso,
-  getCursosInicianProximosDias,
-  eliminarCurso,
-  getCursosInicianHoy,
-  getCursosActivosInscripcionesAbiertas,
-  getCursosSucursal,
-  getCursoByUid,  
-  marcarCursoComoIniciado,
-  actualizarTotalAdeudaAlumno,
-  getCursosActivoSucursal,
-  cerrarInscripcionesCurso,
-  abrirInscripcionesCurso,
-  findByUuId
+    createCurso,
+    getCursoById,
+    updateCurso,
+    getCursosInicianProximosDias,
+    eliminarCurso,
+    getCursosInicianHoy,
+    getCursosActivosInscripcionesAbiertas,
+    getCursosSucursal,
+    getCursoByUid,
+    marcarCursoComoIniciado,
+    actualizarTotalAdeudaAlumno,
+    getCursosActivoSucursal,
+    cerrarInscripcionesCurso,
+    abrirInscripcionesCurso,
+    findByUuId,
+    actualizarPublicIdFoto
 };
