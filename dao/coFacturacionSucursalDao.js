@@ -21,6 +21,24 @@ const getSucursalesAgregarRegistro = async() => {
 `, []);
 };
 
+const getEstadosCuentaSucursalesLimitesPago = async() => {
+    console.log("@getEstadosCuentaSucursales");
+
+    return await genericDao.findAll(`
+    select suc.id, 
+            suc.dia_limite_pago, 
+            to_char(getDate(''),'DD')::int as dia_actual,  
+            (to_char(getDate(''),'DD')::int > dia_limite_pago) as adeuda,	   		
+            sum(fac.monto) FILTER (WHERE fac.pago_aceptado = false or fac.pago_aceptado is null) as total_adeuda
+        from co_sucursal suc inner join co_facturacion_sucursal fac on fac.co_sucursal = suc.id
+        where suc.eliminado = false
+        GROUP by suc.id
+`, []);
+};
+
+
+
+
 
 const getSumaAdeudaSucursal = async(coSucursal) => {
     console.log("@getSumaAdeudaSucursal");
@@ -131,6 +149,30 @@ const crear = async(data = { coSucursal, nombreMensualidad, nota, monto, genero 
     }
 }
 
+const bloquearSucursal = async(id, data) => {
+    console.log("@bloquearSucursal");
+
+    try {
+
+        const dataSeg = { genero } = data;
+
+        const result = await genericDao.execute(`
+                    update co_sucursal                      
+                        set  pago_pendiente = true 
+                            fecha_modifico = (getDate('')+getHora('')),
+                            modifico = $1 
+                        where id = $1 returning id;
+                        
+            `, [id, genero]);
+
+        return result;
+
+    } catch (error) {
+        console.log(error);
+        return null;
+    }
+}
+
 
 const queryBase = () => `
     select f.id,f.fecha_mensualidad,f.nombre_mensualidad,f.nota,f.comprobante_pago_url,f.monto,f.pago_aceptado,f.fecha_pago_aceptado,
@@ -151,5 +193,7 @@ module.exports = {
     crear,
     updateComprobante,
     getSucursalesAgregarRegistro,
-    getSumaAdeudaSucursal
+    getSumaAdeudaSucursal,
+    getEstadosCuentaSucursalesLimitesPago,
+    bloquearSucursal
 };

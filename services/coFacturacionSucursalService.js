@@ -32,6 +32,36 @@ const procesoGenerarFacturacion = async() => {
     return ret;
 }
 
+const procesoBloquearSucursales = async() => {
+    console.log("@@procesoBloquearSucursales");
+
+    const lista = await coFacturacionSucursalDao.getEstadosCuentaSucursalesLimitesPago();
+
+    const ret = [];
+
+    if (!lista) {
+        console.log("No existen sucursales para registrar facturación");
+        return;
+    }
+
+    for (let i = 0; i < lista.length; i++) {
+
+        const suc = lista[i];
+
+        console.log("======================");
+        console.log(JSON.stringify(suc));
+        console.log("======================");
+
+        if (suc.adeuda && suc.total_adeuda > 0) {
+            //bloquear
+            await coFacturacionSucursalDao.bloquearSucursal(suc.id, { genero: 1 });
+        }
+
+        ret.push(res);
+    }
+
+    return ret;
+}
 
 
-module.exports = { procesoGenerarFacturacion, ...coFacturacionSucursalDao };
+module.exports = { procesoGenerarFacturacion, procesoBloquearSucursales, ...coFacturacionSucursalDao };

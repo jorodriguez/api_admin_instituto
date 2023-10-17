@@ -185,11 +185,12 @@ schedule.scheduleJob("CORTE_DIARIO_ENVIO_CORREO_6_30", { hour: 18, minute: 30, s
 	}
 });*/
 
-schedule.scheduleJob("GENERAR_FACTURACION_SUCURSAL_7_30", { hour: 17, minute: 28, second: 0 }, async function() {
+schedule.scheduleJob("GENERAR_FACTURACION_SUCURSAL_7_10", { hour: 7, minute: 10, second: 0 }, async function() {
     console.log('GENERAR COLEGIATURAS AUTOMATICAS' + new Date());
     try {
 
         const lista = await coFacturacionSucursalService.procesoGenerarFacturacion();
+        await coFacturacionSucursalService.procesoBloquearSucursales();
 
         //enviarcorreos
 
