@@ -4,6 +4,7 @@ const reporteDashboardController = require('../controllers/reporteDashboardContr
 const reportePagosController = require('../controllers/reportePagosController');
 const reporteAlumnosCobrarController = require('../controllers/reporteAlumnosCobrarController');
 const cargos = require('../controllers/cargos');
+const reporte = require('../controllers/reporte');
 
 const checkAuth = require('./check-auth');
 
@@ -24,6 +25,11 @@ router.get('/estado-cuenta-detallado/:uidAlumno', checkAuth, reportePagosControl
 router.get('/estado-cuenta/:id_alumno', checkAuth, cargos.obtenerEstadoCuentaAlumno);
 
 router.get('/cobranza/alumnos/:coSucursal', checkAuth, reporteAlumnosCobrarController.getReporteListaAlumnosCobrar);
+
+
+//modulo de reportes
+router.get('/lista-reportes', checkAuth, reporte.getReportes);
+router.put('/ejecucion-reporte', checkAuth, reporte.getEjecucionReporte);
 
 
 
