@@ -6,7 +6,7 @@ const port = process.env.PORT || 5000;
 
 //version/branch
 
-const version = "2308-estatus-inscripcion : poner un estatus a la inscripción";
+const version = "2402-reportes opcion de reporte";
 
 app.use(bodyParser.json());
 app.use(
