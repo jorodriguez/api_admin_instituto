@@ -22,6 +22,7 @@ console.log(`HOST ${configEnv.HOST_DB}`);
 console.log(`DATABASE_NAME ${configEnv.DATABASE_NAME}`);
 console.log(`PASSWORD_DB ${configEnv.PASSWORD_DB}`);
 console.log(`PORT_DB ${configEnv.PORT_DB}`);
+console.log(`SSL_DB ${configEnv.SSL_DB}`);
 
 const pool = new Pool({
     user: configEnv.USER_DB,
@@ -29,8 +30,8 @@ const pool = new Pool({
     database: configEnv.DATABASE_NAME,
     password: configEnv.PASSWORD_DB,
     port: configEnv.PORT_DB,
-    max: 5,   
-    ssl: { rejectUnauthorized: false }
+    max: 10,   
+    ssl: configEnv.SSL_DB == 'true' ? { rejectUnauthorized: false } : false
 });
 /*
 const pool = new Pool({
@@ -90,7 +91,7 @@ const knex = require('knex')({
       password :  configEnv.PASSWORD_DB,
       database :configEnv.DATABASE_NAME,
     },
-    pool: { min: 0, max: 4 }
+    pool: { min: 0, max: 10 }
   });
 
 
