@@ -293,12 +293,12 @@ curso.fecha_inicio_previsto >= getDate('') as fecha_inicio_previsto_pasada,
 from co_curso curso inner join cat_especialidad esp on esp.id = curso.cat_especialidad  
 inner join cat_dia dia on dia.id = curso.cat_dia
   inner join co_sucursal suc on suc.id = curso.co_sucursal
-where 
+where  
   ${criterio}  
   ${criterio ? ' and ':''} 
   curso.eliminado = false 	
   --and curso.fecha_fin < current_date	       
-order by curso.fecha_inicio_previsto desc`;
+order by esp.nombre,dia.id,curso.hora_inicio desc`;
 
 
 module.exports = {
